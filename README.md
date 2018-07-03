@@ -1,20 +1,5 @@
 # Ablaze.Net
 
-       CCCCCCCCCCCCC        ######    ######
-     CCC::::::::::::C       #::::#    #::::#
-   CC:::::::::::::::C       #::::#    #::::#
-  C:::::CCCCCCCC::::C  ######::::######::::######
- C:::::C       CCCCC   #::::::::::::::::::::::::#
-C:::::C                ######::::######::::######
-C:::::C                     #::::#    #::::#
-C:::::C                     #::::#    #::::#
-C:::::C                ######::::######::::######
- C:::::C       CCCCC   #::::::::::::::::::::::::#
-  C:::::CCCCCCCC::::C  ######::::######::::######
-   CC:::::::::::::::C       #::::#    #::::#
-     CCC::::::::::::C       #::::#    #::::#
-       CCCCCCCCCCCCC        ######    ######
-
 An open-source C# framework for multithreaded 3D graphics and game development
 
 Manual Plaform Retarget:
@@ -69,3 +54,18 @@ Matrix4x4 -> Matrix4
 Parallel.For -> ParallelLoop.For
 Random -> UniformRandom (unless using a particular seed)
 Buffer.BlockCopy -> Extensions.MemoryCopy
+
+       CCCCCCCCCCCCC        ######    ######
+     CCC::::::::::::C       #::::#    #::::#
+   CC:::::::::::::::C       #::::#    #::::#
+  C:::::CCCCCCCC::::C  ######::::######::::######
+ C:::::C       CCCCC   #::::::::::::::::::::::::#
+C:::::C                ######::::######::::######
+C:::::C                     #::::#    #::::#
+C:::::C                     #::::#    #::::#
+C:::::C                ######::::######::::######
+ C:::::C       CCCCC   #::::::::::::::::::::::::#
+  C:::::CCCCCCCC::::C  ######::::######::::######
+   CC:::::::::::::::C       #::::#    #::::#
+     CCC::::::::::::C       #::::#    #::::#
+       CCCCCCCCCCCCC        ######    ######
