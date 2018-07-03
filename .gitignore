@@ -2,8 +2,7 @@
 *.ncb
 *.user
 *.pdb
-*.cache
-*.Cache
+*.[Cc]ache
 *.resources
 *.force
 Thumbs.db
