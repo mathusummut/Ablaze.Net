@@ -1,0 +1,11 @@
+*.suo
+*.ncb
+*.user
+*.pdb
+*.cache
+*.Cache
+*.resources
+*.force
+Thumbs.db
+[Dd]esktop.ini
+*.vshost.exe

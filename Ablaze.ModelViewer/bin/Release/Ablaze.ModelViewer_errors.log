@@ -1,0 +1,496 @@
+
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 9), handle: 9 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 5), handle: 5 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 6), handle: 6 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 2, Name: Truck.jpg }, handle: 2 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 3), handle: 3 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 5), handle: 5 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 18), handle: 18 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 17), handle: 17 }
+=>An error occurred on 25/11/2017 at 14:37:05.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 14), handle: 14 }
+=>An error occurred on 25/11/2017 at 14:46:06.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 18), handle: 18 }
+=>An error occurred on 25/11/2017 at 14:46:06.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 6), handle: 6 }
+=>An error occurred on 25/11/2017 at 14:46:06.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 3), handle: 3 }
+=>An error occurred on 25/11/2017 at 14:46:06.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 9), handle: 9 }
+=>An error occurred on 25/11/2017 at 14:46:06.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 2, Name: Truck.jpg }, handle: 2 }
+=>An error occurred on 25/11/2017 at 15:28:26.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 13), handle: 13 }
+=>An error occurred on 25/11/2017 at 15:28:26.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 7), handle: 7 }
+=>An error occurred on 25/11/2017 at 15:28:26.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 14), handle: 14 }
+=>An error occurred on 25/11/2017 at 15:28:26.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 5), handle: 5 }
+=>An error occurred on 25/11/2017 at 15:28:26.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 9), handle: 9 }
+=>An error occurred on 25/11/2017 at 16:01:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 18), handle: 18 }
+=>An error occurred on 25/11/2017 at 16:05:20. 
+
+Exception details:
+
+   An error occurred while invoking a method.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.InvalidOperationException:
+
+Message:
+
+   Collection was modified; enumeration operation may not execute.
+
+Source: mscorlib
+
+Stack Trace:
+
+   at System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   at System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   at Ablaze.ModelViewer.ModelViewer.Dispose3DModel(Object param) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.ModelViewer\ModelViewer.cs:line 616
+   at Ablaze.ModelViewer.ModelViewer.OnUnload() in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.ModelViewer\ModelViewer.cs:line 610
+   at System.Windows.Forms.GraphicsForm.CallUnload(Object param) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Windows.Forms\GraphicsForm.cs:line 991
+   at System.Threading.Dispatch.DispatcherSlim.InvokeInner(InvocationData e) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\System\Threading\Dispatch\DispatcherSlim.cs:line 341
+
+=>An error occurred on 25/11/2017 at 16:14:31.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 18), handle: 18 }
+=>An error occurred on 25/11/2017 at 16:14:31.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 5), handle: 5 }
+=>An error occurred on 25/11/2017 at 17:12:42.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 14), handle: 14 }
+=>An error occurred on 25/11/2017 at 17:12:42.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 7), handle: 7 }
+=>An error occurred on 25/11/2017 at 17:12:42.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 13), handle: 13 }
+=>An error occurred on 25/11/2017 at 17:12:42.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 5), handle: 5 }
+=>An error occurred on 25/11/2017 at 17:12:42.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 9), handle: 9 }
+=>An error occurred on 25/11/2017 at 17:12:42.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 10), handle: 10 }
+=>An error occurred on 25/11/2017 at 17:26:23.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 7), handle: 7 }
+=>An error occurred on 25/11/2017 at 17:26:23.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 18), handle: 18 }
+=>An error occurred on 25/11/2017 at 17:26:23.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: VertexArrayBuffer, identifier: Vertex array buffer (handle 9), handle: 9 }
+=>An error occurred on 25/11/2017 at 17:56:49.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 2, Name: Truck.jpg }, handle: 2 }
+=>An error occurred on 25/11/2017 at 17:57:20.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 5, Name: 1-walls-stone-seamless-textures.jpg }, handle: 5 }
+=>An error occurred on 25/11/2017 at 17:57:20.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 6, Name: palm leafs.png }, handle: 6 }
+=>An error occurred on 25/11/2017 at 17:57:20.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 4, Name: Skybox2.jpg }, handle: 4 }
+=>An error occurred on 25/11/2017 at 17:57:20.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 3, Name: ground texture.png }, handle: 3 }
+=>An error occurred on 25/11/2017 at 17:57:20.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 7, Name: palm_bark.png }, handle: 7 }
+=>An error occurred on 25/11/2017 at 18:08:55.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: Texture2D, identifier: { Handle: 2, Name: Truck.jpg }, handle: 2 }
+=>An error occurred on 28/11/2017 at 22:36:48. 
+
+Exception details:
+
+   GL failed to initialize.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.InvalidProgramException:
+
+Message:
+
+   The specified shaders failed to link.
+The fragment shader uses varying cameraPos, but previous shader does not write to it.
+Out of resource error.
+
+Source: Ablaze.Graphics
+
+Stack Trace:
+
+   at System.Graphics.Models.Shader.Bind(Boolean throwOnError) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Graphics\Models\Shader.cs:line 621
+   at System.Graphics.Models.GlobalShader.Bind(Boolean throwOnError) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Graphics\Models\GlobalShader.cs:line 226
+   at System.Windows.Forms.GraphicsForm.InitGLInner(Object param) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Windows.Forms\GraphicsForm.cs:line 1050
+
+=>An error occurred on 17/01/2018 at 12:46:11. 
+
+Exception details:
+
+   GL failed to initialize.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.NullReferenceException:
+
+Message:
+
+   Object reference not set to an instance of an object.
+
+Source: Ablaze.Graphics
+
+Stack Trace:
+
+   at System.Graphics.OGL.GL.CreateProgram() in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Graphics\OGL\GL.cs:line 34083
+   at System.Graphics.Models.Shader.Bind(Boolean throwOnError) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Graphics\Models\Shader.cs:line 655
+   at System.Graphics.Models.GlobalShader.Bind(Boolean throwOnError) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Graphics\Models\GlobalShader.cs:line 212
+   at System.Windows.Forms.GraphicsForm.InitGLInner(Object param) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Graphics\System\Windows.Forms\GraphicsForm.cs:line 1049

@@ -1,0 +1,15 @@
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\src\obj\Release\System.COre.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\bin\Release\System.Core.xml
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\bin\Release\System.Core.dll
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\bin\Release\System.Core.pdb
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\src\obj\Release\System.Core.dll
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\src\obj\Release\System.Core.pdb
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\src\bin\Release\System.Core.xml
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\src\bin\Release\System.Core.dll
+C:\Users\mathu\Downloads\linqbridge-master\linqbridge-master\src\bin\Release\System.Core.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\bin\Release\System.Core.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\bin\Release\System.Core.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\bin\Release\System.Core.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\obj\Release\System.Core.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\obj\Release\System.Core.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\obj\Release\System.Core.csprojResolveAssemblyReference.cache

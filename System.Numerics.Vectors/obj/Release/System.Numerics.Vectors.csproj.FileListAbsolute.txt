@@ -1,0 +1,11 @@
+C:\Users\mathu\Downloads\lol gaf\System.Numerics.Vectors\obj\Release\System.Numerics.Vectors.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Downloads\lol gaf\System.Numerics.Vectors\bin\Release\System.Numerics.Vectors.dll
+C:\Users\mathu\Downloads\lol gaf\System.Numerics.Vectors\bin\Release\System.Numerics.Vectors.pdb
+C:\Users\mathu\Downloads\lol gaf\System.Numerics.Vectors\obj\Release\System.Numerics.Vectors.dll
+C:\Users\mathu\Downloads\lol gaf\System.Numerics.Vectors\obj\Release\System.Numerics.Vectors.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\bin\Release\System.Numerics.Vectors.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\bin\Release\System.Numerics.Vectors.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\bin\Release\System.Numerics.Vectors.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\obj\Release\System.Numerics.Vectors.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\obj\Release\System.Numerics.Vectors.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\obj\Release\System.Numerics.Vectors.csprojResolveAssemblyReference.cache

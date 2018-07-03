@@ -1,0 +1,1 @@
+Retrieves the Window Message (WM_*) associated with the specified integer code.

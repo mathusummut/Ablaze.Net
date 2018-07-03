@@ -1,0 +1,1838 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PlatformAPI</name>
+    </assembly>
+    <members>
+        <member name="M:System.NativeMath.InverseSqrtFast(System.Single)">
+            <summary>
+            Returns an approximation of the inverse square root of left number.
+            </summary>
+            <param name="x">A number.</param>
+            <returns>An approximation of the inverse square root of the specified number, with an upper error bound of 0.001</returns>
+            <remarks>
+            This is an improved implementation of the the method known as Carmack's inverse square root
+            which is found in the Quake III source code. This implementation comes from
+            http://www.codemaestro.com/reviews/review00000105.html. For the history of this method, see
+            http://www.beyond3d.com/content/articles/8/
+            </remarks>
+        </member>
+        <member name="T:System.Platforms.Windows.PixelFormatDescriptor">
+            <summary>
+            Describes a pixel format. It is used when interfacing with the WINAPI to create a new Context.
+            Found in WinGDI.h
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.Sizes">
+            <summary>
+            For public use by System only!
+            Exposes useful native WINAPI methods and structures.
+            </summary>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.AdjustWindowRect(System.Platforms.Windows.Win32Rectangle@,System.Platforms.Windows.WindowStyle,System.Boolean)">
+            <summary>
+            Calculates the required size of the window rectangle, based on the desired client-rectangle size. The window rectangle can then be passed to the CreateWindow function to create a window whose client area is the desired size.
+            </summary>
+            <param name="lpRect">[in, out] Pointer to a RECT structure that contains the coordinates of the top-left and bottom-right corners of the desired client area. When the function returns, the structure contains the coordinates of the top-left and bottom-right corners of the window to accommodate the desired client area.</param>
+            <param name="dwStyle">[in] Specifies the window style of the window whose required size is to be calculated. Note that you cannot specify the WS_OVERLAPPED style.</param>
+            <param name="bMenu">[in] Specifies whether the window has a menu.</param>
+            <returns>
+            If the function succeeds, the return value is nonzero.
+            If the function fails, the return value is zero. To get extended error information, call GetLastError.
+            </returns>
+            <remarks>
+            A client rectangle is the smallest rectangle that completely encloses a client area. A window rectangle is the smallest rectangle that completely encloses the window, which includes the client area and the nonclient area. 
+            The AdjustWindowRect function does not add extra space when a menu bar wraps to two or more rows. 
+            The AdjustWindowRect function does not take the WS_VSCROLL or WS_HSCROLL styles into account. To account for the scroll bars, call the GetSystemMetrics function with SM_CXVSCROLL or SM_CYHSCROLL.
+            Found Winuser.h, user32.dll
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.PeekMessage(System.Platforms.Windows.MSG@,System.IntPtr,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Low-level WINAPI function that checks the next message in the queue.
+            </summary>
+            <param name="msg">The pending message (if any) is stored here.</param>
+            <param name="hWnd">Not used</param>
+            <param name="messageFilterMin">Not used</param>
+            <param name="messageFilterMax">Not used</param>
+            <param name="flags">Not used</param>
+            <returns>True if there is a message pending.</returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetMessage(System.Platforms.Windows.MSG@,System.IntPtr,System.Int32,System.Int32)">
+            <summary>
+            Low-level WINAPI function that retrieves the next message in the queue.
+            </summary>
+            <param name="msg">The pending message (if any) is stored here.</param>
+            <param name="windowHandle">Not used</param>
+            <param name="messageFilterMin">Not used</param>
+            <param name="messageFilterMax">Not used</param>
+            <returns>
+            Nonzero indicates that the function retrieves a message other than WM_QUIT.
+            Zero indicates that the function retrieves the WM_QUIT message, or that lpMsg is an invalid pointer.
+            1 indicates that an error occurred  for example, the function fails if hWnd is an invalid window handle.
+            To get extended error information, call GetLastError.
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetQueueStatus(System.Platforms.Windows.QueueStatusFlags)">
+            <summary>
+            Indicates the type of messages found in the calling thread's message queue.
+            </summary>
+            <param name="flags"></param>
+            <returns>
+            The high-order word of the return value indicates the types of messages currently in the queue.
+            The low-order word indicates the types of messages that have been added to the queue and that are still
+            in the queue since the last call to the GetQueueStatus, GetMessage, or PeekMessage function.
+            </returns>
+            <remarks>
+            The presence of a QS_ flag in the return value does not guarantee that
+            a subsequent call to the GetMessage or PeekMessage function will return a message.
+            GetMessage and PeekMessage perform some public filtering that may cause the message
+            to be processed internally. For this reason, the return value from GetQueueStatus
+            should be considered only a hint as to whether GetMessage or PeekMessage should be called. 
+            <para>
+            The QS_ALLPOSTMESSAGE and QS_POSTMESSAGE type differ in when they are cleared.
+            QS_POSTMESSAGE is cleared when you call GetMessage or PeekMessage, whether or not you are filtering messages.
+            QS_ALLPOSTMESSAGE is cleared when you call GetMessage or PeekMessage without filtering messages
+            (wMsgFilterMin and wMsgFilterMax are 0). This can be useful when you call PeekMessage multiple times
+            to get messages in different ranges.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.TimeBeginPeriod(System.Int32)">
+            <summary>
+            Sets the timing resolution of the GetTime (?) method.
+            </summary>
+            <param name="period">Timing resolution in msec (?)</param>
+            <returns>(?)</returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetDC(System.IntPtr)">
+            <summary>
+            
+            </summary>
+            <param name="hwnd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.ReleaseDC(System.IntPtr,System.IntPtr)">
+            <summary>
+            
+            </summary>
+            <param name="hwnd"></param>
+            <param name="DC"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.SetPixelFormat(System.IntPtr,System.Int32,System.Platforms.Windows.PixelFormatDescriptor@)">
+            <summary>
+            
+            </summary>
+            <param name="dc"></param>
+            <param name="format"></param>
+            <param name="pfd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetProcAddress(System.IntPtr,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="handle"></param>
+            <param name="funcname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.LoadLibrary(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="dllName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.FreeLibrary(System.IntPtr)">
+            <summary>
+            
+            </summary>
+            <param name="handle"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.ShowWindow(System.IntPtr,System.Platforms.Windows.ShowWindowCommand)">
+            <summary>
+            The ShowWindow function sets the specified window's show state.
+            </summary>
+            <param name="hWnd">[in] Handle to the window.</param>
+            <param name="nCmdShow">[in] Specifies how the window is to be shown. This parameter is ignored the first time an application calls ShowWindow, if the program that launched the application provides a STARTUPINFO structure. Otherwise, the first time ShowWindow is called, the value should be the value obtained by the WinMain function in its nCmdShow parameter. In subsequent calls, this parameter can be one of the ShowWindowEnum values.</param>
+            <returns>If the window was previously visible, the return value is true. Otherwise false.</returns>
+            <remarks>
+            <para>To perform certain special effects when showing or hiding a window, use AnimateWindow.</para>
+            <para>The first time an application calls ShowWindow, it should use the WinMain function's nCmdShow parameter as its nCmdShow parameter. Subsequent calls to ShowWindow must use one of the values in the given list, instead of the one specified by the WinMain function's nCmdShow parameter.</para>
+            <para>As noted in the discussion of the nCmdShow parameter, the nCmdShow value is ignored in the first call to ShowWindow if the program that launched the application specifies startup information in the structure. In this case, ShowWindow uses the information specified in the STARTUPINFO structure to show the window. On subsequent calls, the application must call ShowWindow with nCmdShow set to SW_SHOWDEFAULT to use the startup information provided by the program that launched the application. This behavior is designed for the following situations:</para>
+            <list type="">
+            <item>Applications create their main window by calling CreateWindow with the WS_VISIBLE flag set.</item>
+            <item>Applications create their main window by calling CreateWindow with the WS_VISIBLE flag cleared, and later call ShowWindow with the SW_SHOW flag set to make it visible.</item>
+            </list>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.SetWindowText(System.IntPtr,System.String)">
+            <summary>
+            The SetWindowText function changes the text of the specified window's title bar (if it has one). If the specified window is a control, the text of the control is changed. However, SetWindowText cannot change the text of a control in another application.
+            </summary>
+            <param name="hWnd">[in] Handle to the window or control whose text is to be changed.</param>
+            <param name="lpString">[in] Pointer to a null-terminated string to be used as the new title or control text.</param>
+            <returns>
+            <para>If the function succeeds, the return value is nonzero.</para>
+            <para>If the function fails, the return value is zero. To get extended error information, call GetLastError.</para>
+            </returns>
+            <remarks>
+            <para>If the target window is owned by the current process, SetWindowText causes a WM_SETTEXT message to be sent to the specified window or control. If the control is a list box control created with the WS_CAPTION style, however, SetWindowText sets the text for the control, not for the list box entries. </para>
+            <para>To set the text of a control in another process, send the WM_SETTEXT message directly instead of calling SetWindowText. </para>
+            <para>The SetWindowText function does not expand tab characters (ASCII code 0x09). Tab characters are displayed as vertical bar (|) characters. </para>
+            <para>Windows 95/98/Me: SetWindowTextW is supported by the Microsoft Layer for Unicode (MSLU). To use this, you must add certain files to your application, as outlined in Microsoft Layer for Unicode on Windows 95/98/Me Systems .</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetWindowText(System.IntPtr,System.Text.StringBuilder,System.Int32)">
+            <summary>
+            The GetWindowText function copies the text of the specified window's title bar (if it has one) into a buffer. If the specified window is a control, the text of the control is copied. However, GetWindowText cannot retrieve the text of a control in another application.
+            </summary>
+            <param name="hWnd">[in] Handle to the window or control containing the text.</param>
+            <param name="lpString">[out] Pointer to the buffer that will receive the text. If the string is as long or longer than the buffer, the string is truncated and terminated with a NULL character.</param>
+            <param name="nMaxCount">[in] Specifies the maximum number of characters to copy to the buffer, including the NULL character. If the text exceeds this limit, it is truncated.</param>
+            <returns>
+            If the function succeeds, the return value is the length, in characters, of the copied string, not including the terminating NULL character. If the window has no title bar or text, if the title bar is empty, or if the window or control handle is invalid, the return value is zero. To get extended error information, call GetLastError.
+            <para>This function cannot retrieve the text of an edit control in another application.</para>
+            </returns>
+            <remarks>
+            <para>If the target window is owned by the current process, GetWindowText causes a WM_GETTEXT message to be sent to the specified window or control. If the target window is owned by another process and has a caption, GetWindowText retrieves the window caption text. If the window does not have a caption, the return value is a null string. This behavior is by design. It allows applications to call GetWindowText without becoming unresponsive if the process that owns the target window is not responding. However, if the target window is not responding and it belongs to the calling application, GetWindowText will cause the calling application to become unresponsive.</para>
+            <para>To retrieve the text of a control in another process, send a WM_GETTEXT message directly instead of calling GetWindowText.</para>
+            <para>Windows 95/98/Me: GetWindowTextW is supported by the Microsoft Layer for Unicode (MSLU). To use this, you must add certain files to your application, as outlined in Microsoft Layer for Unicode on Windows 95/98/Me</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.ScreenToClient(System.IntPtr,System.Drawing.Point@)">
+            <summary>
+            Converts the screen coordinates of a specified point on the screen to client-area coordinates.
+            </summary>
+            <param name="hWnd">Handle to the window whose client area will be used for the conversion.</param>
+            <param name="point">Pointer to a POINT structure that specifies the screen coordinates to be converted.</param>
+            <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. Windows NT/2000/XP: To get extended error information, call GetLastError.</returns>
+            <remarks>
+            <para>The function uses the window identified by the hWnd parameter and the screen coordinates given in the POINT structure to compute client coordinates. It then replaces the screen coordinates with the client coordinates. The new coordinates are relative to the upper-left corner of the specified window's client area. </para>
+            <para>The ScreenToClient function assumes the specified point is in screen coordinates. </para>
+            <para>All coordinates are in device units.</para>
+            <para>Do not use ScreenToClient when in a mirroring situation, that is, when changing from left-to-right layout to right-to-left layout. Instead, use MapWindowPoints. For more information, see "Window Layout and Mirroring" in Window Features.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.ClientToScreen(System.IntPtr,System.Drawing.Point@)">
+            <summary>
+            Converts the client-area coordinates of a specified point to screen coordinates.
+            </summary>
+            <param name="hWnd">Handle to the window whose client area will be used for the conversion.</param>
+            <param name="point">Pointer to a POINT structure that contains the client coordinates to be converted. The new screen coordinates are copied into this structure if the function succeeds.</param>
+            <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. Windows NT/2000/XP: To get extended error information, call GetLastError.</returns>
+            <remarks>
+            <para>The ClientToScreen function replaces the client-area coordinates in the POINT structure with the screen coordinates. The screen coordinates are relative to the upper-left corner of the screen. Note, a screen-coordinate point that is above the window's client area has a negative y-coordinate. Similarly, a screen coordinate to the left of a client area has a negative x-coordinate.</para>
+            <para>All coordinates are device coordinates.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetClientRect(System.IntPtr,System.Platforms.Windows.Win32Rectangle@)">
+            <summary>
+            The GetClientRect function retrieves the coordinates of a window's client area. The client coordinates specify the upper-left and lower-right corners of the client area. Because client coordinates are relative to the upper-left corner of a window's client area, the coordinates of the upper-left corner are (0,0).
+            </summary>
+            <param name="windowHandle">Handle to the window whose client coordinates are to be retrieved.</param>
+            <param name="clientRectangle">Pointer to a RECT structure that receives the client coordinates. The left and top members are zero. The right and bottom members contain the width and height of the window.</param>
+            <returns>
+            <para>If the function succeeds, the return value is nonzero.</para>
+            <para>If the function fails, the return value is zero. To get extended error information, call GetLastError.</para>
+            </returns>
+            <remarks>In conformance with conventions for the RECT structure, the bottom-right coordinates of the returned rectangle are exclusive. In other words, the pixel at (right, bottom) lies immediately outside the rectangle.</remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetWindowRect(System.IntPtr,System.Platforms.Windows.Win32Rectangle@)">
+            <summary>
+            The GetWindowRect function retrieves the dimensions of the bounding rectangle of the specified window. The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
+            </summary>
+            <param name="windowHandle">Handle to the window whose client coordinates are to be retrieved.</param>
+            <param name="windowRectangle"> Pointer to a structure that receives the screen coordinates of the upper-left and lower-right corners of the window.</param>
+            <returns>
+            <para>If the function succeeds, the return value is nonzero.</para>
+            <para>If the function fails, the return value is zero. To get extended error information, call GetLastError.</para>
+            </returns>
+            <remarks>In conformance with conventions for the RECT structure, the bottom-right coordinates of the returned rectangle are exclusive. In other words, the pixel at (right, bottom) lies immediately outside the rectangle.</remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.ChangeDisplaySettings(System.Platforms.Windows.DeviceMode,System.Platforms.Windows.ChangeDisplaySettingsEnum)">
+            <summary>
+            The ChangeDisplaySettings function changes the settings of the default display device to the specified graphics mode.
+            </summary>
+            <param name="device_mode">[in] Pointer to a DEVMODE structure that describes the new graphics mode. If lpDevMode is NULL, all the values currently in the registry will be used for the display setting. Passing NULL for the lpDevMode parameter and 0 for the dwFlags parameter is the easiest way to return to the default mode after a dynamic mode change.</param>
+            <param name="flags">[in] Indicates how the graphics mode should be changed.</param>
+            <returns></returns>
+            <remarks>To change the settings of a specified display device, use the ChangeDisplaySettingsEx function.
+            <para>To ensure that the DEVMODE structure passed to ChangeDisplaySettings is valid and contains only values supported by the display driver, use the DEVMODE returned by the EnumDisplaySettings function.</para>
+            <para>When the display mode is changed dynamically, the WM_DISPLAYCHANGE message is sent to all running applications.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetCursorPos(System.Platforms.Windows.POINT@)">
+            <summary>
+            Retrieves the cursor's position, in screen coordinates.
+            </summary>
+            <param name="point">Pointer to a POINT structure that receives the screen coordinates of the cursor.</param>
+            <returns>Returns nonzero if successful or zero otherwise. To get extended error information, call GetLastError.</returns>
+            <remarks>
+            <para>The cursor position is always specified in screen coordinates and is not affected by the mapping mode of the window that contains the cursor.</para>
+            <para>The calling process must have WINSTA_READATTRIBUTES access to the window station.</para>
+            <para>The input desktop must be the current desktop when you call GetCursorPos. Call OpenInputDesktop to determine whether the current desktop is the input desktop. If it is not, call SetThreadDesktop with the HDESK returned by OpenInputDesktop to switch to that desktop.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.DefRawInputProc(System.Platforms.Windows.RawInput[],System.Int32,System.UInt32)">
+            <summary>
+            calls the default raw input procedure to provide default processing for
+            any raw input messages that an application does not process.
+            This function ensures that every message is processed.
+            DefRawInputProc is called with the same parameters received by the window procedure.
+            </summary>
+            <param name="RawInput">Pointer to an array of RawInput structures.</param>
+            <param name="Input">Number of RawInput structures pointed to by paRawInput.</param>
+            <param name="SizeHeader">Size, in bytes, of the RawInputHeader structure.</param>
+            <returns>If successful, the function returns S_OK. Otherwise it returns an error value.</returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.RegisterRawInputDevices(System.Platforms.Windows.RawInputDevice[],System.UInt32,System.UInt32)">
+            <summary>
+            Registers the devices that supply the raw input data.
+            </summary>
+            <param name="RawInputDevices">
+            Pointer to an array of RawInputDevice structures that represent the devices that supply the raw input.
+            </param>
+            <param name="NumDevices">
+            Number of RawInputDevice structures pointed to by RawInputDevices.
+            </param>
+            <param name="Size">
+            Size, in bytes, of a RAWINPUTDEVICE structure.
+            </param>
+            <returns>
+            TRUE if the function succeeds; otherwise, FALSE. If the function fails, call GetLastError for more information.
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputBuffer(System.Platforms.Windows.RawInput[],System.UInt32@,System.UInt32)">
+            <summary>
+            Does a buffered read of the raw input data.
+            </summary>
+            <param name="Data">
+            Pointer to a buffer of RawInput structures that contain the raw input data.
+            If NULL, the minimum required buffer, in bytes, is returned in Size.
+            </param>
+            <param name="Size">Pointer to a variable that specifies the size, in bytes, of a RawInput structure.</param>
+            <param name="SizeHeader">Size, in bytes, of RawInputHeader.</param>
+            <returns>
+            If Data is NULL and the function is successful, the return value is zero.
+            If Data is not NULL and the function is successful, the return value is the number
+            of RawInput structures written to Data.
+            If an error occurs, the return value is (UINT)-1. Call GetLastError for the error code.
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRegisteredRawInputDevices(System.Platforms.Windows.RawInput[],System.UInt32@,System.UInt32)">
+            <summary>
+            Gets the information about the raw input devices for the current application.
+            </summary>
+            <param name="RawInputDevices">
+            Pointer to an array of RawInputDevice structures for the application.
+            </param>
+            <param name="NumDevices">
+            Number of RawInputDevice structures in RawInputDevices.
+            </param>
+            <param name="cbSize">
+            Size, in bytes, of a RawInputDevice structure.
+            </param>
+            <returns>
+            <para>
+            If successful, the function returns a non-negative number that is
+            the number of RawInputDevice structures written to the buffer. 
+            </para>
+            <para>
+            If the pRawInputDevices buffer is too small or NULL, the function sets
+            the last error as ERROR_INSUFFICIENT_BUFFER, returns -1,
+            and sets NumDevices to the required number of devices.
+            </para>
+            <para>
+            If the function fails for any other reason, it returns -1. For more details, call GetLastError.
+            </para>
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputDeviceList(System.Platforms.Windows.RawInputDeviceList[],System.UInt32@,System.UInt32)">
+            <summary>
+            Enumerates the raw input devices attached to the system.
+            </summary>
+            <param name="RawInputDeviceList">
+            ointer to buffer that holds an array of RawInputDeviceList structures
+            for the devices attached to the system.
+            If NULL, the number of devices are returned in NumDevices.
+            </param>
+            <param name="NumDevices">
+            Pointer to a variable. If RawInputDeviceList is NULL, it specifies the number
+            of devices attached to the system. Otherwise, it contains the size, in bytes,
+            of the preallocated buffer pointed to by pRawInputDeviceList.
+            However, if NumDevices is smaller than needed to contain RawInputDeviceList structures,
+            the required buffer size is returned here.
+            </param>
+            <param name="Size">
+            Size of a RawInputDeviceList structure.
+            </param>
+            <returns>
+            If the function is successful, the return value is the number of devices stored in the buffer
+            pointed to by RawInputDeviceList.
+            If RawInputDeviceList is NULL, the return value is zero. 
+            If NumDevices is smaller than needed to contain all the RawInputDeviceList structures,
+            the return value is (UINT) -1 and the required buffer is returned in NumDevices.
+            Calling GetLastError returns ERROR_INSUFFICIENT_BUFFER.
+            On any other error, the function returns (UINT) -1 and GetLastError returns the error indication.
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputDeviceList(System.IntPtr,System.UInt32@,System.UInt32)">
+            <summary>
+            Enumerates the raw input devices attached to the system.
+            </summary>
+            <param name="RawInputDeviceList">
+            ointer to buffer that holds an array of RawInputDeviceList structures
+            for the devices attached to the system.
+            If NULL, the number of devices are returned in NumDevices.
+            </param>
+            <param name="NumDevices">
+            Pointer to a variable. If RawInputDeviceList is NULL, it specifies the number
+            of devices attached to the system. Otherwise, it contains the size, in bytes,
+            of the preallocated buffer pointed to by pRawInputDeviceList.
+            However, if NumDevices is smaller than needed to contain RawInputDeviceList structures,
+            the required buffer size is returned here.
+            </param>
+            <param name="Size">
+            Size of a RawInputDeviceList structure.
+            </param>
+            <returns>
+            If the function is successful, the return value is the number of devices stored in the buffer
+            pointed to by RawInputDeviceList.
+            If RawInputDeviceList is NULL, the return value is zero. 
+            If NumDevices is smaller than needed to contain all the RawInputDeviceList structures,
+            the return value is (UINT) -1 and the required buffer is returned in NumDevices.
+            Calling GetLastError returns ERROR_INSUFFICIENT_BUFFER.
+            On any other error, the function returns (UINT) -1 and GetLastError returns the error indication.
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputDeviceInfo(System.IntPtr,System.Platforms.Windows.RawInputDeviceInfoEnum,System.IntPtr,System.UInt32@)">
+            <summary>
+            Gets information about the raw input device.
+            </summary>
+            <param name="Device">
+            Handle to the raw input device. This comes from the lParam of the WM_INPUT message,
+            from RawInputHeader.Device, or from GetRawInputDeviceList.
+            It can also be NULL if an application inserts input data, for example, by using SendInput.
+            </param>
+            <param name="Command">
+            Specifies what data will be returned in pData. It can be one of the following values. 
+            RawInputDeviceInfoEnum.PREPARSEDDATA
+            Data points to the previously parsed data.
+            RawInputDeviceInfoEnum.DEVICENAME
+            Data points to a string that contains the device name. 
+            For this Command only, the value in Size is the character count (not the byte count).
+            RawInputDeviceInfoEnum.DEVICEINFO
+            Data points to an RawInputDeviceInfo structure.
+            </param>
+            <param name="Data">
+            ointer to a buffer that contains the information specified by Command.
+            If Command is RawInputDeviceInfoEnum.DEVICEINFO, set RawInputDeviceInfo.Size to sizeof(RawInputDeviceInfo)
+            before calling GetRawInputDeviceInfo. (This is done automatically in System)
+            </param>
+            <param name="Size">
+            Pointer to a variable that contains the size, in bytes, of the data in Data.
+            </param>
+            <returns>
+            <para>If successful, this function returns a non-negative number indicating the number of bytes copied to Data.</para>
+            <para>If Data is not large enough for the data, the function returns -1. If Data is NULL, the function returns a value of zero. In both of these cases, Size is set to the minimum size required for the Data buffer.</para>
+            <para>Call GetLastError to identify any other errors.</para>
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputDeviceInfo(System.IntPtr,System.Platforms.Windows.RawInputDeviceInfoEnum,System.Platforms.Windows.RawInputDeviceInfo,System.UInt32@)">
+            <summary>
+            Gets information about the raw input device.
+            </summary>
+            <param name="Device">
+            Handle to the raw input device. This comes from the lParam of the WM_INPUT message,
+            from RawInputHeader.Device, or from GetRawInputDeviceList.
+            It can also be NULL if an application inserts input data, for example, by using SendInput.
+            </param>
+            <param name="Command">
+            Specifies what data will be returned in pData. It can be one of the following values. 
+            RawInputDeviceInfoEnum.PREPARSEDDATA
+            Data points to the previously parsed data.
+            RawInputDeviceInfoEnum.DEVICENAME
+            Data points to a string that contains the device name. 
+            For this Command only, the value in Size is the character count (not the byte count).
+            RawInputDeviceInfoEnum.DEVICEINFO
+            Data points to an RawInputDeviceInfo structure.
+            </param>
+            <param name="Data">
+            ointer to a buffer that contains the information specified by Command.
+            If Command is RawInputDeviceInfoEnum.DEVICEINFO, set RawInputDeviceInfo.Size to sizeof(RawInputDeviceInfo)
+            before calling GetRawInputDeviceInfo. (This is done automatically in System)
+            </param>
+            <param name="Size">
+            Pointer to a variable that contains the size, in bytes, of the data in Data.
+            </param>
+            <returns>
+            <para>If successful, this function returns a non-negative number indicating the number of bytes copied to Data.</para>
+            <para>If Data is not large enough for the data, the function returns -1. If Data is NULL, the function returns a value of zero. In both of these cases, Size is set to the minimum size required for the Data buffer.</para>
+            <para>Call GetLastError to identify any other errors.</para>
+            </returns>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputData(System.IntPtr,System.Platforms.Windows.GetRawInputDataEnum,System.IntPtr,System.Int32@,System.Int32)">
+            <summary>
+            Gets the raw input from the specified device.
+            </summary>
+            <param name="RawInput">Handle to the RawInput structure. This comes from the lParam in WM_INPUT.</param>
+            <param name="Command">
+            Command flag. This parameter can be one of the following values. 
+            RawInputDateEnum.INPUT
+            Get the raw data from the RawInput structure.
+            RawInputDateEnum.HEADER
+            Get the header information from the RawInput structure.
+            </param>
+            <param name="Data">Pointer to the data that comes from the RawInput structure. This depends on the value of uiCommand. If Data is NULL, the required size of the buffer is returned in Size.</param>
+            <param name="Size">Pointer to a variable that specifies the size, in bytes, of the data in Data.</param>
+            <param name="SizeHeader">Size, in bytes, of RawInputHeader.</param>
+            <returns>
+            <para>If Data is NULL and the function is successful, the return value is 0. If Data is not NULL and the function is successful, the return value is the number of bytes copied into Data.</para>
+            <para>If there is an error, the return value is (UINT)-1.</para>
+            </returns>
+            <remarks>
+            GetRawInputData gets the raw input one RawInput structure at a time. In contrast, GetRawInputBuffer gets an array of RawInput structures.
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.Windows.NativeApi.GetRawInputData(System.IntPtr,System.Platforms.Windows.GetRawInputDataEnum,System.Platforms.Windows.RawInput@,System.Int32@,System.Int32)">
+            <summary>
+            Gets the raw input from the specified device.
+            </summary>
+            <param name="RawInput">Handle to the RawInput structure. This comes from the lParam in WM_INPUT.</param>
+            <param name="Command">
+            Command flag. This parameter can be one of the following values. 
+            RawInputDateEnum.INPUT
+            Get the raw data from the RawInput structure.
+            RawInputDateEnum.HEADER
+            Get the header information from the RawInput structure.
+            </param>
+            <param name="Data">Pointer to the data that comes from the RawInput structure. This depends on the value of uiCommand. If Data is NULL, the required size of the buffer is returned in Size.</param>
+            <param name="Size">Pointer to a variable that specifies the size, in bytes, of the data in Data.</param>
+            <param name="SizeHeader">Size, in bytes, of RawInputHeader.</param>
+            <returns>
+            <para>If Data is NULL and the function is successful, the return value is 0. If Data is not NULL and the function is successful, the return value is the number of bytes copied into Data.</para>
+            <para>If there is an error, the return value is (UINT)-1.</para>
+            </returns>
+            <remarks>
+            GetRawInputData gets the raw input one RawInput structure at a time. In contrast, GetRawInputBuffer gets an array of RawInput structures.
+            </remarks>
+        </member>
+        <member name="T:System.Platforms.Windows.NCHITTEST">
+            <summary>
+            Location of cursor hot spot returnet in WM_NCHITTEST.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTERROR">
+            <summary>
+            On the screen background or on a dividing line between windows 
+            (same as HTNOWHERE, except that the DefWindowProc function produces a system beep to indicate an error).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTTRANSPARENT">
+            <summary>
+            In a window currently covered by another window in the same thread 
+            (the message will be sent to underlying windows in the same thread until one of them returns a code that is not HTTRANSPARENT).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTNOWHERE">
+            <summary>
+            On the screen background or on a dividing line between windows.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTCLIENT">
+            <summary>In a client area.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTCAPTION">
+            <summary>In a title bar.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTSYSMENU">
+            <summary>In a window menu or in a Close button in a child window.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTGROWBOX">
+            <summary>In a size box (same as HTSIZE).</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTMENU">
+            <summary>In a menu.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTHSCROLL">
+            <summary>In a horizontal scroll bar.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTVSCROLL">
+            <summary>In the vertical scroll bar.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTMINBUTTON">
+            <summary>In a Minimize button.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTMAXBUTTON">
+            <summary>In a Maximize button.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTLEFT">
+            <summary>In the left border of a resizable window 
+            (the user can click the mouse to resize the window horizontally).</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTRIGHT">
+            <summary>
+            In the right border of a resizable window 
+            (the user can click the mouse to resize the window horizontally).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTTOP">
+            <summary>In the upper-horizontal border of a window.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTTOPLEFT">
+            <summary>In the upper-left corner of a window border.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTTOPRIGHT">
+            <summary>In the upper-right corner of a window border.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTBOTTOM">
+            <summary>	In the lower-horizontal border of a resizable window 
+            (the user can click the mouse to resize the window vertically).</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTBOTTOMLEFT">
+            <summary>In the lower-left corner of a border of a resizable window 
+            (the user can click the mouse to resize the window diagonally).</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTBOTTOMRIGHT">
+            <summary>	In the lower-right corner of a border of a resizable window 
+            (the user can click the mouse to resize the window diagonally).</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTBORDER">
+            <summary>In the border of a window that does not have a sizing border.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTCLOSE">
+            <summary>In a Close button.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.NCHITTEST.HTHELP">
+            <summary>In a Help button.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.lpCreateParams">
+            <summary>
+            Contains additional data which may be used to create the window.
+            </summary>
+            <remarks>
+             If the window is being created as a result of a call to the CreateWindow
+             or CreateWindowEx function, this member contains the value of the lpParam 
+             parameter specified in the function call.
+             <para>
+            If the window being created is a multiple-document interface (MDI) client window,
+            this member contains a pointer to a CLIENTCREATESTRUCT structure. If the window
+            being created is a MDI child window, this member contains a pointer to an 
+            MDICREATESTRUCT structure.
+             </para>
+            <para>
+            Windows NT/2000/XP: If the window is being created from a dialog template,
+            this member is the address of a SHORT value that specifies the size, in bytes,
+            of the window creation data. The value is immediately followed by the creation data.
+            </para>
+            <para>
+            Windows NT/2000/XP: You should access the data represented by the lpCreateParams member
+            using a pointer that has been declared using the UNALIGNED type, because the pointer
+            may not be DWORD aligned.
+            </para>
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.hInstance">
+            <summary>
+            Handle to the module that owns the new window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.hMenu">
+            <summary>
+            Handle to the menu to be used by the new window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.hwndParent">
+            <summary>
+            Handle to the parent window, if the window is a child window.
+            If the window is owned, this member identifies the owner window.
+            If the window is not a child or owned window, this member is NULL.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.cy">
+            <summary>
+            Specifies the height of the new window, in pixels.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.cx">
+            <summary>
+            Specifies the width of the new window, in pixels.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.y">
+            <summary>
+            Specifies the y-coordinate of the upper left corner of the new window.
+            If the new window is a child window, coordinates are relative to the parent window.
+            Otherwise, the coordinates are relative to the screen origin.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.x">
+            <summary>
+            Specifies the x-coordinate of the upper left corner of the new window.
+            If the new window is a child window, coordinates are relative to the parent window.
+            Otherwise, the coordinates are relative to the screen origin.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.style">
+            <summary>
+            Specifies the style for the new window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.lpszName">
+            <summary>
+            Pointer to a null-terminated string that specifies the name of the new window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.lpszClass">
+            <summary>
+            Either a pointer to a null-terminated string or an atom that specifies the public class name
+            of the new window.
+            <remarks>
+            Note  Because the lpszClass member can contain a pointer to a local (and thus inaccessable) atom,
+            do not obtain the public class name by using this member. Use the GetClassName function instead.
+            </remarks>
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.CreateStruct.dwExStyle">
+            <summary>
+            Specifies the extended window style for the new window.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.WindowsDisplayDevice">
+            \public
+            <summary>
+            The DISPLAY_DEVICE structure receives information about the display device specified by the iDevNum parameter of the EnumDisplayDevices function.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.MINMAXINFO">
+            \public
+            <summary>
+            Struct pointed to by WM_GETMINMAXINFO lParam
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.WindowPosition">
+            \public
+            <summary>
+            The WindowPosition structure contains information about the size and position of a window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.hwnd">
+            <summary>
+            Handle to the window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.hwndInsertAfter">
+            <summary>
+            Specifies the position of the window in Z order (front-to-back position).
+            This member can be a handle to the window behind which this window is placed,
+            or can be one of the special values listed with the SetWindowPos function.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.x">
+            <summary>
+            Specifies the position of the left edge of the window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.y">
+            <summary>
+            Specifies the position of the top edge of the window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.cx">
+            <summary>
+            Specifies the window width, in pixels.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.cy">
+            <summary>
+            Specifies the window height, in pixels.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowPosition.flags">
+            <summary>
+            Specifies the window position.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOSIZE">
+            <summary>
+            Retains the current size (ignores the cx and cy parameters).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOMOVE">
+            <summary>
+            Retains the current position (ignores the x and y parameters).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOZORDER">
+            <summary>
+            Retains the current Z order (ignores the hwndInsertAfter parameter).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOREDRAW">
+            <summary>
+            Does not redraw changes. If this flag is set, no repainting of any kind occurs.
+            This applies to the client area, the nonclient area (including the title bar and scroll bars),
+            and any part of the parent window uncovered as a result of the window being moved.
+            When this flag is set, the application must explicitly invalidate or redraw any parts
+            of the window and parent window that need redrawing.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOACTIVATE">
+            <summary>
+            Does not activate the window. If this flag is not set,
+            the window is activated and moved to the top of either the topmost or non-topmost group
+            (depending on the setting of the hwndInsertAfter member).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.FRAMECHANGED">
+            <summary>
+            Sends a WM_NCCALCSIZE message to the window, even if the window's size is not being changed.
+            If this flag is not specified, WM_NCCALCSIZE is sent only when the window's size is being changed.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.SHOWWINDOW">
+            <summary>
+            Displays the window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.HIDEWINDOW">
+            <summary>
+            Hides the window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOCOPYBITS">
+            <summary>
+            Discards the entire contents of the client area. If this flag is not specified,
+            the valid contents of the client area are saved and copied back into the client area 
+            after the window is sized or repositioned.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOOWNERZORDER">
+            <summary>
+            Does not change the owner window's position in the Z order.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOSENDCHANGING">
+            <summary>
+            Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.DRAWFRAME">
+            <summary>
+            Draws a frame (defined in the window's public class description) around the window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.SetWindowPosFlags.NOREPOSITION">
+            <summary>
+            Same as the NOOWNERZORDER flag.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputDevice">
+            \public
+            <summary>
+            Defines information for the raw input devices.
+            </summary>
+            <remarks>
+            If RIDEV_NOLEGACY is set for a mouse or a keyboard, the system does not generate any legacy message for that device for the application. For example, if the mouse TLC is set with RIDEV_NOLEGACY, WM_LBUTTONDOWN and related legacy mouse messages are not generated. Likewise, if the keyboard TLC is set with RIDEV_NOLEGACY, WM_KEYDOWN and related legacy keyboard messages are not generated.
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDevice.UsagePage">
+            <summary>
+            Top level collection Usage page for the raw input device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDevice.Usage">
+            <summary>
+            Top level collection Usage for the raw input device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDevice.Flags">
+            <summary>
+            Mode flag that specifies how to interpret the information provided by UsagePage and Usage.
+            It can be zero (the default) or one of the following values.
+            By default, the operating system sends raw input from devices with the specified top level collection (TLC)
+            to the registered application as long as it has the window focus. 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDevice.Target">
+            <summary>
+            Handle to the target window. If NULL it follows the keyboard focus.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputDeviceList">
+            \public
+            <summary>
+            Contains information about a raw input device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceList.Device">
+            <summary>
+            Handle to the raw input device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceList.Type">
+            <summary>
+            Type of device.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInput">
+            \public
+            <summary>
+            Contains the raw input from a device.
+            </summary>
+            <remarks>
+            <para>The handle to this structure is passed in the lParam parameter of WM_INPUT.</para>
+            <para>To get detailed information -- such as the header and the content of the raw input -- call GetRawInputData.</para>
+            <para>To get device specific information, call GetRawInputDeviceInfo with the hDevice from RAWINPUTHEADER.</para>
+            <para>Raw input is available only when the application calls RegisterRawInputDevices with valid device specifications.</para>
+            </remarks>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputHeader">
+            \public
+            <summary>
+            Contains the header information that is part of the raw input data.
+            </summary>
+            <remarks>
+            To get more information on the device, use hDevice in a call to GetRawInputDeviceInfo.
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHeader.Type">
+            <summary>
+            Type of raw input.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHeader.Size">
+            <summary>
+            Size, in bytes, of the entire input packet of data. This includes the RawInput public struct plus possible extra input reports in the RAWHID variable length array.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHeader.Device">
+            <summary>
+            Handle to the device generating the raw input data.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHeader.Param">
+            <summary>
+            Value passed in the wParam parameter of the WM_INPUT message.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawKeyboard">
+            \public
+            <summary>
+            Contains information about the state of the keyboard.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawKeyboard.MakeCode">
+            <summary>
+            Scan code from the key depression. The scan code for keyboard overrun is KEYBOARD_OVERRUN_MAKE_CODE.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawKeyboard.Flags">
+            <summary>
+            Flags for scan code information. It can be one or more of the following.
+            RI_KEY_MAKE
+            RI_KEY_BREAK
+            RI_KEY_E0
+            RI_KEY_E1
+            RI_KEY_TERMSRV_SET_LED
+            RI_KEY_TERMSRV_SHADOW
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawKeyboard.Reserved">
+            <summary>
+            Reserved; must be zero.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawKeyboard.VKey">
+            <summary>
+            Microsoft Windows message compatible virtual-key code. For more information, see Virtual-Key Codes.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawKeyboard.Message">
+            <summary>
+            Corresponding window message, for example WM_KEYDOWN, WM_SYSKEYDOWN, and so forth.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawKeyboard.ExtraInformation">
+            <summary>
+            Device-specific additional information for the event.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawMouse">
+            \public
+            <summary>
+            Contains information about the state of the mouse.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouse.Flags">
+            <summary>
+            Mouse state. This member can be any reasonable combination of the following. 
+            MOUSE_ATTRIBUTES_CHANGED
+            Mouse attributes changed; application needs to query the mouse attributes.
+            MOUSE_MOVE_RELATIVE
+            Mouse movement data is relative to the last mouse position.
+            MOUSE_MOVE_ABSOLUTE
+            Mouse movement data is based on absolute position.
+            MOUSE_VIRTUAL_DESKTOP
+            Mouse coordinates are mapped to the virtual desktop (for a multiple monitor system).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouse.ButtonData">
+            <summary>
+            If usButtonFlags is RI_MOUSE_WHEEL, this member is a signed value that specifies the wheel delta.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouse.RawButtons">
+            <summary>
+            Raw state of the mouse buttons.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouse.LastX">
+            <summary>
+            Motion in the X direction. This is signed relative motion or absolute motion, depending on the value of usFlags.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouse.LastY">
+            <summary>
+            Motion in the Y direction. This is signed relative motion or absolute motion, depending on the value of usFlags.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouse.ExtraInformation">
+            <summary>
+            Device-specific additional information for the event.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawHID">
+            \public
+            <summary>
+            The RawHID structure describes the format of the raw input
+            from a Human Interface Device (HID).
+            </summary>
+            <remarks>
+            Each WM_INPUT can indicate several inputs, but all of the inputs
+            come from the same HID. The size of the bRawData array is
+            dwSizeHid * dwCount.
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.RawHID.SizeHid">
+            <summary>
+            Size, in bytes, of each HID input in bRawData.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawHID.Count">
+            <summary>
+            Number of HID inputs in bRawData.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputDeviceInfo">
+            \public
+            <summary>
+            Defines the raw input data coming from any device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceInfo.Size">
+            <summary>
+            Size, in bytes, of the RawInputDeviceInfo structure.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceInfo.Type">
+            <summary>
+            Type of raw input data.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputHIDDeviceInfo">
+            \public
+            <summary>
+            Defines the raw input data coming from the specified Human Interface Device (HID).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHIDDeviceInfo.VendorId">
+            <summary>
+            Vendor ID for the HID.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHIDDeviceInfo.ProductId">
+            <summary>
+            Product ID for the HID.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHIDDeviceInfo.VersionNumber">
+            <summary>
+            Version number for the HID.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHIDDeviceInfo.UsagePage">
+            <summary>
+            Top-level collection Usage Page for the device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputHIDDeviceInfo.Usage">
+            <summary>
+            Top-level collection Usage for the device.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputKeyboardDeviceInfo">
+            \public
+            <summary>
+            Defines the raw input data coming from the specified keyboard.
+            </summary>
+            <remarks>
+            For the keyboard, the Usage Page is 1 and the Usage is 6.
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputKeyboardDeviceInfo.Type">
+            <summary>
+            Type of the keyboard.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputKeyboardDeviceInfo.SubType">
+            <summary>
+            Subtype of the keyboard.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputKeyboardDeviceInfo.KeyboardMode">
+            <summary>
+            Scan code mode.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputKeyboardDeviceInfo.NumberOfFunctionKeys">
+            <summary>
+            Number of function keys on the keyboard.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputKeyboardDeviceInfo.NumberOfIndicators">
+            <summary>
+            Number of LED indicators on the keyboard.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputKeyboardDeviceInfo.NumberOfKeysTotal">
+            <summary>
+            Total number of keys on the keyboard.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawInputMouseDeviceInfo">
+            \public
+            <summary>
+            Defines the raw input data coming from the specified mouse.
+            </summary>
+            <remarks>
+            For the keyboard, the Usage Page is 1 and the Usage is 2.
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputMouseDeviceInfo.Id">
+            <summary>
+            ID for the mouse device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputMouseDeviceInfo.NumberOfButtons">
+            <summary>
+            Number of buttons for the mouse.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputMouseDeviceInfo.SampleRate">
+            <summary>
+            Number of data points per second. This information may not be applicable for every mouse device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputMouseDeviceInfo.HasHorizontalWheel">
+            <summary>
+            TRUE if the mouse has a wheel for horizontal scrolling; otherwise, FALSE.
+            </summary>
+            <remarks>
+            This member is only supported under Microsoft Windows Vista and later versions.
+            </remarks>
+        </member>
+        <member name="T:System.Platforms.Windows.Win32Rectangle">
+            \public
+            <summary>
+            Defines the coordinates of the upper-left and lower-right corners of a rectangle.
+            </summary>
+            <remarks>
+            By convention, the right and bottom edges of the rectangle are normally considered exclusive. In other words, the pixel whose coordinates are (right, bottom) lies immediately outside of the the rectangle. For example, when RECT is passed to the FillRect function, the rectangle is filled up to, but not including, the right column and bottom row of pixels. This structure is identical to the RECTL structure.
+            </remarks>
+        </member>
+        <member name="F:System.Platforms.Windows.Win32Rectangle.left">
+            <summary>
+            Specifies the x-coordinate of the upper-left corner of the rectangle.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.Win32Rectangle.top">
+            <summary>
+            Specifies the y-coordinate of the upper-left corner of the rectangle.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.Win32Rectangle.right">
+            <summary>
+            Specifies the x-coordinate of the lower-right corner of the rectangle.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.Win32Rectangle.bottom">
+            <summary>
+            Specifies the y-coordinate of the lower-right corner of the rectangle.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.WindowInfo">
+            \public
+            <summary>
+            Contains window information.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.Size">
+            <summary>
+            The size of the structure, in bytes.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.Window">
+            <summary>
+            Pointer to a RECT structure that specifies the coordinates of the window. 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.Client">
+            <summary>
+            Pointer to a RECT structure that specifies the coordinates of the client area. 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.Style">
+            <summary>
+            The window styles. For a table of window styles, see CreateWindowEx. 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.ExStyle">
+            <summary>
+            The extended window styles. For a table of extended window styles, see CreateWindowEx.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.WindowStatus">
+            <summary>
+            The window status. If this member is WS_ACTIVECAPTION, the window is active. Otherwise, this member is zero.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.WindowBordersX">
+            <summary>
+            The width of the window border, in pixels. 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.WindowBordersY">
+            <summary>
+            The height of the window border, in pixels.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.WindowType">
+            <summary>
+            The window public class atom (see RegisterClass). 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowInfo.CreatorVersion">
+            <summary>
+            The Microsoft Windows version of the application that created the window. 
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.GWL">
+            <summary>
+            Window field offsets for GetWindowLong() and GetWindowLongPtr().
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.REMOVE">
+            <summary>
+            If set, this removes the top level collection from the inclusion list.
+            This tells the operating system to stop reading from a device which matches the top level collection.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.EXCLUDE">
+            <summary>
+            If set, this specifies the top level collections to exclude when reading a complete usage page.
+            This flag only affects a TLC whose usage page is already specified with RawInputDeviceEnum.PAGEONLY. 
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.PAGEONLY">
+            <summary>
+            If set, this specifies all devices whose top level collection is from the specified UsagePage.
+            Note that usUsage must be zero. To exclude a particular top level collection, use EXCLUDE.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.NOLEGACY">
+            <summary>
+            If set, this prevents any devices specified by UsagePage or Usage from generating legacy messages.
+            This is only for the mouse and keyboard. See RawInputDevice Remarks.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.INPUTSINK">
+            <summary>
+            If set, this enables the caller to receive the input even when the caller is not in the foreground.
+            Note that Target must be specified in RawInputDevice.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.CAPTUREMOUSE">
+            <summary>
+            If set, the mouse button click does not activate the other window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.NOHOTKEYS">
+            <summary>
+            If set, the application-defined keyboard device hotkeys are not handled.
+            However, the system hotkeys; for example, ALT+TAB and CTRL+ALT+DEL, are still handled.
+            By default, all keyboard hotkeys are handled.
+            NOHOTKEYS can be specified even if NOLEGACY is not specified and Target is NULL in RawInputDevice.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.APPKEYS">
+            <summary>
+            Microsoft Windows XP Service Pack 1 (SP1): If set, the application command keys are handled. APPKEYS can be specified only if NOLEGACY is specified for a keyboard device.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawInputDeviceFlags.EXINPUTSINK">
+            <summary>
+            If set, this enables the caller to receive input in the background only if the foreground application
+            does not process it. In other words, if the foreground application is not registered for raw input,
+            then the background application that is registered will receive the input.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.RawMouseFlags">
+            <summary>
+            Mouse indicator type (found in winuser.h).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouseFlags.MOUSE_MOVE_RELATIVE">
+            <summary>
+            LastX/Y indicate relative motion.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouseFlags.MOUSE_MOVE_ABSOLUTE">
+            <summary>
+            LastX/Y indicate absolute motion.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouseFlags.MOUSE_VIRTUAL_DESKTOP">
+            <summary>
+            The coordinates are mapped to the virtual desktop.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.RawMouseFlags.MOUSE_ATTRIBUTES_CHANGED">
+            <summary>
+            Requery for mouse attributes.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.QueueStatusFlags">
+            \public
+            <summary>
+            Queue status type for GetQueueStatus() and MsgWaitForMultipleObjects()
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.KEY">
+            <summary>
+            A WM_KEYUP, WM_KEYDOWN, WM_SYSKEYUP, or WM_SYSKEYDOWN message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.MOUSEMOVE">
+            <summary>
+            A WM_MOUSEMOVE message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.MOUSEBUTTON">
+            <summary>
+            A mouse-button message (WM_LBUTTONUP, WM_RBUTTONDOWN, and so on).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.POSTMESSAGE">
+            <summary>
+            A posted message (other than those listed here) is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.TIMER">
+            <summary>
+            A WM_TIMER message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.PAINT">
+            <summary>
+            A WM_PAINT message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.SENDMESSAGE">
+            <summary>
+            A message sent by another thread or application is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.HOTKEY">
+            <summary>
+            A WM_HOTKEY message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.ALLPOSTMESSAGE">
+            <summary>
+            A posted message (other than those listed here) is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.RAWINPUT">
+            <summary>
+            A raw input message is in the queue. For more information, see Raw Input.
+            Windows XP and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.MOUSE">
+            <summary>
+            A WM_MOUSEMOVE message or mouse-button message (WM_LBUTTONUP, WM_RBUTTONDOWN, and so on).
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.INPUT">
+            <summary>
+            An input message is in the queue. This is composed of KEY, MOUSE and RAWINPUT.
+            Windows XP and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.INPUT_LEGACY">
+            <summary>
+            An input message is in the queue. This is composed of QS_KEY and QS_MOUSE.
+            Windows 2000 and earlier.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.ALLEVENTS">
+            <summary>
+            An input, WM_TIMER, WM_PAINT, WM_HOTKEY, or posted message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.QueueStatusFlags.ALLINPUT">
+            <summary>
+            Any message is in the queue.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowMessage.NCXBUTTONDOWN">
+            <summary>
+            Windows 2000 and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowMessage.NCXBUTTONUP">
+            <summary>
+            Windows 2000 and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowMessage.NCXBUTTONDBLCLK">
+            <summary>
+            Windows 2000 and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowMessage.XBUTTONDOWN">
+            <summary>
+            Windows 2000 and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowMessage.XBUTTONUP">
+            <summary>
+            Windows 2000 and higher only.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.WindowMessage.XBUTTONDBLCLK">
+            <summary>
+            Windows 2000 and higher only.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.ShowWindowCommand">
+            <summary>
+            ShowWindow() Commands
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.HIDE">
+            <summary>
+            Hides the window and activates another window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWNORMAL">
+            <summary>
+            Activates and displays a window. If the window is minimized or maximized, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWMINIMIZED">
+            <summary>
+            Activates the window and displays it as a minimized window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWMAXIMIZED">
+            <summary>
+            Activates the window and displays it as a maximized window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWNOACTIVATE">
+            <summary>
+            Displays the window as a minimized window. This value is similar to SW_SHOWMINIMIZED, except the window is not activated.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOW">
+            <summary>
+            Activates the window and displays it in its current size and position.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.MINIMIZE">
+            <summary>
+            Minimizes the specified window and activates the next top-level window in the Z order.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWMINNOACTIVE">
+            <summary>
+            Displays the window as a minimized window. This value is similar to SW_SHOWMINIMIZED, except the window is not activated.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWNA">
+            <summary>
+            Displays the window in its current size and position. This value is similar to SW_SHOW, except the window is not activated.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.RESTORE">
+            <summary>
+            Activates and displays the window. If the window is minimized or maximized, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.SHOWDEFAULT">
+            <summary>
+            Sets the show state based on the SW_ value specified in the STARTUPINFO structure passed to the CreateProcess function by the program that started the application.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShowWindowCommand.FORCEMINIMIZE">
+            <summary>
+            Windows 2000/XP: Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.ShowWindowMessageIdentifiers">
+            <summary>
+            Identifiers for the WM_SHOWWINDOW message
+            </summary>
+        </member>
+        <member name="T:System.Platforms.Windows.GdiCharset">
+            <summary>
+            Enumerates the available character sets.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.Windows.MapVirtualKeyType.VirtualKeyToScanCode">
+            <summary>uCode is a virtual-key code and is translated into a scan code. If it is a virtual-key code that does not distinguish between left- and right-hand keys, the left-hand scan code is returned. If there is no translation, the function returns 0.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.MapVirtualKeyType.ScanCodeToVirtualKey">
+            <summary>uCode is a scan code and is translated into a virtual-key code that does not distinguish between left- and right-hand keys. If there is no translation, the function returns 0.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.MapVirtualKeyType.VirtualKeyToCharacter">
+            <summary>uCode is a virtual-key code and is translated into an unshifted character value in the low-order word of the return value. Dead keys (diacritics) are indicated by setting the top bit of the return value. If there is no translation, the function returns 0.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.MapVirtualKeyType.ScanCodeToVirtualKeyExtended">
+            <summary>Windows NT/2000/XP: uCode is a scan code and is translated into a virtual-key code that distinguishes between left- and right-hand keys. If there is no translation, the function returns 0.</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.Icon">
+            <summary>get icon</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.DisplayName">
+            <summary>get display name</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.TypeName">
+            <summary>get type name</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.Attributes">
+            <summary>get attributes</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.IconLocation">
+            <summary>get icon location</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.ExeType">
+            <summary>return exe type</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.SysIconIndex">
+            <summary>get system icon index</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.LinkOverlay">
+            <summary>put a link overlay on icon</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.Selected">
+            <summary>show icon in selected state</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.Attr_Specified">
+            <summary>get only specified attributes</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.LargeIcon">
+            <summary>get large icon</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.SmallIcon">
+            <summary>get small icon</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.OpenIcon">
+            <summary>get open icon</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.ShellIconSize">
+            <summary>get shell size icon</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.PIDL">
+            <summary>pszPath is a pidl</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.UseFileAttributes">
+            <summary>use passed dwFileAttribute</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.AddOverlays">
+            <summary>apply the appropriate overlays</summary>
+        </member>
+        <member name="F:System.Platforms.Windows.ShGetFileIconFlags.OverlayIndex">
+            <summary>Get the index of the overlay in the upper 8 bits of the iIcon</summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.background_pixmap">
+            <summary>
+            background, None, or ParentRelative
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.background_pixel">
+            <summary>
+            background pixel
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.border_pixmap">
+            <summary>
+            border of the window or CopyFromParent
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.border_pixel">
+            <summary>
+            border pixel value
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.bit_gravity">
+            <summary>
+            one of bit gravity values
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.win_gravity">
+            <summary>
+            one of the window gravity values
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.backing_store">
+            <summary>
+            NotUseful, WhenMapped, Always
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.backing_planes">
+            <summary>
+            planes to be preserved if possible
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.backing_pixel">
+            <summary>
+            value to use in restoring planes
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.save_under">
+            <summary>
+            should bits under be saved? (popups)
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.event_mask">
+            <summary>
+            set of events that should be saved
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.do_not_propagate_mask">
+            <summary>
+            set of events that should not propagate
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.override_redirect">
+            <summary>
+            boolean value for override_redirect
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.colormap">
+            <summary>
+            color map to be associated with window
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.SetWindowAttributes.cursor">
+            <summary>
+            cursor to be displayed (or None)
+            </summary>
+        </member>
+        <member name="T:System.Platforms.X11.XKey">
+            <summary>
+            Defines LATIN-1 and miscellaneous keys.
+            </summary>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.Free(System.IntPtr)">
+            <summary>
+            Frees the memory used by an X structure. Only use on unmanaged structures!
+            </summary>
+            <param name="buffer">A pointer to the structure that will be freed.</param>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.SelectInput(System.IntPtr,System.IntPtr,System.Platforms.X11.EventMask)">
+            <summary>
+            The XSelectInput() function requests that the X server report the events associated
+            with the specified event mask.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="w">Specifies the window whose events you are interested in.</param>
+            <param name="event_mask">Specifies the event mask.</param>
+            <remarks>
+            Initially, X will not report any of these events.
+            Events are reported relative to a window.
+            If a window is not interested in a device event,
+            it usually propagates to the closest ancestor that is interested,
+            unless the do_not_propagate mask prohibits it.
+            Setting the event-mask attribute of a window overrides any previous call for the same window but not for other clients. Multiple clients can select for the same events on the same window with the following restrictions: 
+            <para>Multiple clients can select events on the same window because their event masks are disjoint. When the X server generates an event, it reports it to all interested clients. </para>
+            <para>Only one client at a time can select CirculateRequest, ConfigureRequest, or MapRequest events, which are associated with the event mask SubstructureRedirectMask. </para>
+            <para>Only one client at a time can select a ResizeRequest event, which is associated with the event mask ResizeRedirectMask. </para>
+            <para>Only one client at a time can select a ButtonPress event, which is associated with the event mask ButtonPressMask. </para>
+            <para>The server reports the event to all interested clients. </para>
+            <para>XSelectInput() can generate a BadWindow error.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.CheckIfEvent(System.IntPtr,System.Platforms.X11.XEvent@,System.Platforms.X11.NativeApi.CheckEventPredicate,System.IntPtr)">
+            <summary>
+            When the predicate procedure finds a match, XCheckIfEvent() copies the matched event into the client-supplied XEvent structure and returns True. (This event is removed from the queue.) If the predicate procedure finds no match, XCheckIfEvent() returns False, and the output buffer will have been flushed. All earlier events stored in the queue are not discarded.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="event_return">Returns a copy of the matched event's associated structure.</param>
+            <param name="predicate">Specifies the procedure that is to be called to determine if the next event in the queue matches what you want</param>
+            <param name="arg">Specifies the user-supplied argument that will be passed to the predicate procedure.</param>
+            <returns>true if the predicate returns true for some event, false otherwise</returns>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.GetKeyboardMapping(System.IntPtr,System.Byte,System.Int32,System.Int32@)">
+            <summary>
+            The XGetKeyboardMapping() function returns the symbols for the specified number of KeyCodes starting with first_keycode.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="first_keycode">Specifies the first KeyCode that is to be returned.</param>
+            <param name="keycode_count">Specifies the number of KeyCodes that are to be returned</param>
+            <param name="keysyms_per_keycode_return">Returns the number of KeySyms per KeyCode.</param>
+            <returns></returns>
+            <remarks>
+            <para>The value specified in first_keycode must be greater than or equal to min_keycode as returned by XDisplayKeycodes(), or a BadValue error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes(): </para>
+            <para>first_keycode + keycode_count - 1 </para>
+            <para>If this is not the case, a BadValue error results. The number of elements in the KeySyms list is: </para>
+            <para>keycode_count * keysyms_per_keycode_return </para>
+            <para>KeySym number N, counting from zero, for KeyCode K has the following index in the list, counting from zero: </para>
+            <para> (K - first_code) * keysyms_per_code_return + N </para>
+            <para>The X server arbitrarily chooses the keysyms_per_keycode_return value to be large enough to report all requested symbols. A special KeySym value of NoSymbol is used to fill in unused elements for individual KeyCodes. To free the storage returned by XGetKeyboardMapping(), use XFree(). </para>
+            <para>XGetKeyboardMapping() can generate a BadValue error.</para>
+            <para>Diagnostics:</para>
+            <para>BadValue:    Some numeric value falls outside the range of values accepted by the request. Unless a specific range is specified for an argument, the full range defined by the argument's type is accepted. Any argument defined as a set of alternatives can generate this error.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.DisplayKeycodes(System.IntPtr,System.Int32@,System.Int32@)">
+            <summary>
+            The XDisplayKeycodes() function returns the min-keycodes and max-keycodes supported by the specified display.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="min_keycodes_return">Returns the minimum number of KeyCodes</param>
+            <param name="max_keycodes_return">Returns the maximum number of KeyCodes.</param>
+            <remarks> The minimum number of KeyCodes returned is never less than 8, and the maximum number of KeyCodes returned is never greater than 255. Not all KeyCodes in this range are required to have corresponding keys.</remarks>
+        </member>
+        <member name="T:System.Platforms.X11.NativeApi.XF86VidModeModeInfo">
+            <summary>
+            Specifies an XF86 display mode.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.dotclock">
+            <summary>
+            Pixel clock.
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.hdisplay">
+            <summary>
+            Number of display pixels horizontally
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.hsyncstart">
+            <summary>
+            Horizontal sync start
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.hsyncend">
+            <summary>
+            Horizontal sync end
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.htotal">
+            <summary>
+            Total horizontal pixel
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.hskew">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.vdisplay">
+            <summary>
+            Number of display pixels vertically
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.vsyncstart">
+            <summary>
+            Vertical sync start
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.vsyncend">
+            <summary>
+            Vertical sync end
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.vtotal">
+            <summary>
+            Total vertical pixels
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.vskew">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:System.Platforms.X11.NativeApi.XF86VidModeModeInfo.flags">
+            <summary>
+            Mode type
+            </summary>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.XCreateWindow(System.IntPtr,System.IntPtr,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.IntPtr,System.UIntPtr,System.Platforms.X11.XSetWindowAttributes@)">
+            <summary>
+            The XCreateWindow function creates an unmapped subwindow for a specified parent window, returns the window ID of the created window, and causes the X server to generate a CreateNotify event. The created window is placed on top in the stacking order with respect to siblings.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="parent">Specifies the parent window.</param>
+            <param name="x">Specify the x coordinates, which are the top-left outside corner of the window's borders and are relative to the inside of the parent window's borders.</param>
+            <param name="y">Specify the y coordinates, which are the top-left outside corner of the window's borders and are relative to the inside of the parent window's borders.</param>
+            <param name="width">Specify the width, which is the created window's inside dimensions and do not include the created window's borders.</param>
+            <param name="height">Specify the height, which is the created window's inside dimensions and do not include the created window's borders.</param>
+            <param name="border_width">Specifies the width of the created window's border in pixels.</param>
+            <param name="depth">Specifies the window's depth. A depth of CopyFromParent means the depth is taken from the parent.</param>
+            <param name="class">Specifies the created window's class. You can pass InputOutput, InputOnly, or CopyFromParent. A class of CopyFromParent means the class is taken from the parent.</param>
+            <param name="visual">Specifies the visual type. A visual of CopyFromParent means the visual type is taken from the parent.</param>
+            <param name="valuemask">Specifies which window attributes are defined in the attributes argument. This mask is the bitwise inclusive OR of the valid attribute mask bits. If valuemask is zero, the attributes are ignored and are not referenced.</param>
+            <param name="attributes">Specifies the structure from which the values (as specified by the value mask) are to be taken. The value mask should have the appropriate bits set to indicate which attributes have been set in the structure.</param>
+            <returns>The window ID of the created window.</returns>
+            <remarks>
+            The coordinate system has the X axis horizontal and the Y axis vertical with the origin [0, 0] at the upper-left corner. Coordinates are integral, in terms of pixels, and coincide with pixel centers. Each window and pixmap has its own coordinate system. For a window, the origin is inside the border at the inside, upper-left corner. 
+            <para>The border_width for an InputOnly window must be zero, or a BadMatch error results. For class InputOutput, the visual type and depth must be a combination supported for the screen, or a BadMatch error results. The depth need not be the same as the parent, but the parent must not be a window of class InputOnly, or a BadMatch error results. For an InputOnly window, the depth must be zero, and the visual must be one supported by the screen. If either condition is not met, a BadMatch error results. The parent window, however, may have any depth and class. If you specify any invalid window attribute for a window, a BadMatch error results. </para>
+            <para>The created window is not yet displayed (mapped) on the user's display. To display the window, call XMapWindow(). The new window initially uses the same cursor as its parent. A new cursor can be defined for the new window by calling XDefineCursor(). The window will not be visible on the screen unless it and all of its ancestors are mapped and it is not obscured by any of its ancestors. </para>
+            <para>XCreateWindow can generate BadAlloc BadColor, BadCursor, BadMatch, BadPixmap, BadValue, and BadWindow errors. </para>
+            <para>The XCreateSimpleWindow function creates an unmapped InputOutput subwindow for a specified parent window, returns the window ID of the created window, and causes the X server to generate a CreateNotify event. The created window is placed on top in the stacking order with respect to siblings. Any part of the window that extends outside its parent window is clipped. The border_width for an InputOnly window must be zero, or a BadMatch error results. XCreateSimpleWindow inherits its depth, class, and visual from its parent. All other window attributes, except background and border, have their default values. </para>
+            <para>XCreateSimpleWindow can generate BadAlloc, BadMatch, BadValue, and BadWindow errors.</para>
+            </remarks>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.XQueryKeymap(System.IntPtr,System.Byte[])">
+            <summary>
+            The XQueryKeymap() function returns a bit vector for the logical state of the keyboard, where each bit set to 1 indicates that the corresponding key is currently pressed down. The vector is represented as 32 bytes. Byte N (from 0) contains the bits for keys 8N to 8N + 7 with the least-significant bit in the byte representing key 8N.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="keys">Returns an array of bytes that identifies which keys are pressed down. Each bit represents one key of the keyboard.</param>
+            <remarks>Note that the logical state of a device (as seen by client applications) may lag the physical state if device event processing is frozen.</remarks>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.XMaskEvent(System.IntPtr,System.Platforms.X11.EventMask,System.Platforms.X11.XEvent@)">
+            <summary>
+            The XMaskEvent() function searches the event queue for the events associated with the specified mask. When it finds a match, XMaskEvent() removes that event and copies it into the specified XEvent structure. The other events stored in the queue are not discarded. If the event you requested is not in the queue, XMaskEvent() flushes the output buffer and blocks until one is received.
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="event_mask">Specifies the event mask.</param>
+            <param name="e">Returns the matched event's associated structure.</param>
+        </member>
+        <member name="M:System.Platforms.X11.NativeApi.XPutBackEvent(System.IntPtr,System.Platforms.X11.XEvent@)">
+            <summary>
+            The XPutBackEvent() function pushes an event back onto the head of the display's event queue by copying the event into the queue. This can be useful if you read an event and then decide that you would rather deal with it later. There is no limit to the number of times in succession that you can call XPutBackEvent().
+            </summary>
+            <param name="display">Specifies the connection to the X server.</param>
+            <param name="event">Specifies the event.</param>
+        </member>
+    </members>
+</doc>

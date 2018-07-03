@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A37A7E14-0000-0000-0000-000000000000}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Ablaze.Graphics</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>
+    </AppDesignerFolder>
+    <RootNamespace>System</RootNamespace>
+    <StartArguments>
+    </StartArguments>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG;NET45</DefineConstants>
+    <DocumentationFile>bin\Release\Ablaze.Graphics.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>512</FileAlignment>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <RemoveIntegerChecks>False</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugType>full</DebugType>
+    <GenerateDocumentation>true</GenerateDocumentation>
+    <NoWarn>
+    </NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>NET45</DefineConstants>
+    <DocumentationFile>bin\Release\Ablaze.Graphics.xml</DocumentationFile>
+    <FileAlignment>512</FileAlignment>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <RemoveIntegerChecks>False</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugType>full</DebugType>
+    <NoWarn>IDE0017, IDE1006, CC0001, CC0003, CC0004, CC0008, CC0013, CC0014, CC0015, CC0017, CC0026, CC0031, CC0037, CC0048, CC0052, CC0060, CC0065, CC0072, CC0074, CC0090, CC0097, CC0105, CC0120</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Ablaze.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="System">
+      <Name>System</Name>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>..\Ablaze.Suite\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="System\Display.cs" />
+    <Compile Include="System\Graphics\AGL\Enums.cs" />
+    <Compile Include="System\Graphics\EGL\Enums.cs" />
+    <Compile Include="System\Graphics\Models\GlobalShader.cs" />
+    <Compile Include="System\Graphics\Models\Light.cs" />
+    <Compile Include="System\Graphics\Models\VertexArrayBuffer.cs" />
+    <Compile Include="System\Graphics\Models\DataBuffer.cs" />
+    <Compile Include="System\Graphics\Models\FrameBuffer.cs" />
+    <Compile Include="System\Graphics\Models\HeightMapGenerator.cs" />
+    <Compile Include="System\Graphics\Models\IndexBuffer.cs" />
+    <Compile Include="System\Graphics\Models\ITexture.cs" />
+    <Compile Include="System\Graphics\Models\MeshExtensions.cs" />
+    <Compile Include="System\Graphics\Models\MeshMode.cs" />
+    <Compile Include="System\Graphics\Models\Model.cs" />
+    <Compile Include="System\Graphics\Models\Mesh2D.cs" />
+    <Compile Include="System\Graphics\Models\MeshComponent.cs" />
+    <Compile Include="System\Graphics\Models\IModel.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\ModelParserAttribute.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\TextureParserAttribute.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\TextureParsers\DdsParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\M3dParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\MeshParsers\MshParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\ModelParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\ObjParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\TextureParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\TextureParsers\ImgParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\TextureParsers\MtlParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\TextureParsers\TgaParser.cs" />
+    <Compile Include="System\Graphics\Models\RenderBuffer.cs" />
+    <Compile Include="System\Graphics\Models\RenderToTexture.cs" />
+    <Compile Include="System\Graphics\Models\Shader.cs" />
+    <Compile Include="System\Graphics\Models\Texture2D.cs" />
+    <Compile Include="System\Graphics\Models\Vertices.cs" />
+    <Compile Include="System\Graphics\OGL\Core.cs" />
+    <Compile Include="System\Graphics\OGL\Delegates.cs" />
+    <Compile Include="System\Graphics\OGL\Enums.cs" />
+    <Compile Include="System\Graphics\OGL\GL.cs" />
+    <Compile Include="System\Graphics\Models\Scene.cs" />
+    <Compile Include="System\Graphics\Text\Builder.cs" />
+    <Compile Include="System\Graphics\Text\Configuration\QFontBuilderConfiguration.cs" />
+    <Compile Include="System\Graphics\Text\Configuration\QFontConfiguration.cs" />
+    <Compile Include="System\Graphics\Text\Configuration\QFontKerningConfiguration.cs" />
+    <Compile Include="System\Graphics\Text\Configuration\QFontShadowConfiguration.cs" />
+    <Compile Include="System\Graphics\Text\Helper.cs" />
+    <Compile Include="System\Graphics\Text\KerningCalculator.cs" />
+    <Compile Include="System\Graphics\Text\QBitmap.cs" />
+    <Compile Include="System\Graphics\Text\QFont.cs" />
+    <Compile Include="System\Graphics\Text\QFontData.cs" />
+    <Compile Include="System\Graphics\Text\QFontDrawing.cs" />
+    <Compile Include="System\Graphics\Text\QFontDrawingPrimitive.cs" />
+    <Compile Include="System\Graphics\Text\QFontGlyph.cs" />
+    <Compile Include="System\Graphics\Text\QFontRenderOptions.cs" />
+    <Compile Include="System\Graphics\Text\QVertexArrayObject.cs" />
+    <Compile Include="System\Graphics\Text\TextNodeList.cs" />
+    <Compile Include="System\Graphics\Text\TexturePage.cs" />
+    <Compile Include="System\Graphics\Text\ViewportHelper.cs" />
+    <Compile Include="System\Graphics\WGL\Core.cs" />
+    <Compile Include="System\Graphics\WGL\Delegates.cs" />
+    <Compile Include="System\Platforms\Window.cs" />
+    <Compile Include="System\Graphics\GraphicsComponent.cs" />
+    <Compile Include="System\Platforms\EGL\EglMacOSFactory.cs" />
+    <Compile Include="System\Graphics\GLX\Enums.cs" />
+    <Compile Include="System\GraphicsPlatform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\NativeFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\EGL\EglX11Factory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\EGL\EglWinFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\EGL\EglWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\EGL\Egl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\EGL\EglContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\MacOS\MacOSFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\MacOS\MacOSGraphicsContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\MacOS\MacWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\AGL\Agl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\Windows\WinFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\Windows\WinWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\Windows\WinGraphicsContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\WGL\Wgl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\WGL\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\X11\X11Window.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\X11\X11GraphicsContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Platforms\X11\X11Factory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\GLX\Glx.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\GraphicsMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\GraphicsContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ColorFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES10\ES.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES10\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES10\Delegates.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES10\Core.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES11\ES.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES11\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES11\Delegates.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES11\Core.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES20\ES.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES20\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES20\Delegates.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Graphics\ES20\Core.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Numerics\Vector2H.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Numerics\Vector3H.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Numerics\Vector4H.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\GdiRenderMode.cs" />
+    <Compile Include="System\Windows.Forms\DrawableForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\GraphicsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\HeightMapDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <None Include="Ablaze.snk" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ablaze.Suite\Ablaze.Suite.csproj">
+      <Project>{5bd51c83-9ec8-41a2-8552-cd68798eeb21}</Project>
+      <Name>Ablaze.Suite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ablaze.UI\Ablaze.UI.csproj">
+      <Project>{ccc2e3dc-60fb-4118-b905-3ed396294d80}</Project>
+      <Name>Ablaze.UI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="System\Windows.Forms\HeightMapDialog.resx">
+      <DependentUpon>HeightMapDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

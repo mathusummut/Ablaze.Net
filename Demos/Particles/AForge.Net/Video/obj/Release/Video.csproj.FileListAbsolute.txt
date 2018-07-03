@@ -1,0 +1,24 @@
+C:\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.dll
+C:\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.pdb
+C:\Program Files (x86)\AForge.NET\Framework\Release\AForge.Video.xml
+C:\Program Files (x86)\AForge.NET\Framework\Sources\Video\obj\Release\Video.csprojResolveAssemblyReference.cache
+C:\Program Files (x86)\AForge.NET\Framework\Sources\Video\obj\Release\AForge.Video.dll
+C:\Program Files (x86)\AForge.NET\Framework\Sources\Video\obj\Release\AForge.Video.pdb
+C:\Users\mathu\Documents\Visual Studio 2015\Projects\Particles\AForge.NET\Video\obj\Release\Video.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Documents\Visual Studio 2015\Projects\Particles\AForge.NET\Video\obj\Release\AForge.Video.dll
+C:\Users\mathu\Documents\Visual Studio 2015\Projects\Particles\AForge.NET\Video\obj\Release\AForge.Video.pdb
+C:\Users\mathu\Documents\Visual Studio 2015\Projects\Particles\AForge.NET\Video\bin\Release\AForge.Video.dll
+C:\Users\mathu\Documents\Visual Studio 2015\Projects\Particles\AForge.NET\Video\bin\Release\AForge.Video.pdb
+C:\Users\mathu\Documents\Visual Studio 2015\Projects\Particles\AForge.NET\Video\bin\Release\AForge.Video.xml
+C:\Users\mathu\Desktop\Particles\AForge.NET\Video\bin\Release\AForge.Video.xml
+C:\Users\mathu\Desktop\Particles\AForge.NET\Video\obj\Release\Video.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Desktop\Particles\AForge.NET\Video\obj\Release\AForge.Video.dll
+C:\Users\mathu\Desktop\Particles\AForge.NET\Video\obj\Release\AForge.Video.pdb
+C:\Users\mathu\Desktop\Particles\AForge.NET\Video\bin\Release\AForge.Video.dll
+C:\Users\mathu\Desktop\Particles\AForge.NET\Video\bin\Release\AForge.Video.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\Particles\AForge.Net\Video\bin\Release\AForge.Video.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\Particles\AForge.Net\Video\bin\Release\AForge.Video.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\Particles\AForge.Net\Video\bin\Release\AForge.Video.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\Particles\AForge.Net\Video\obj\Release\Video.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\Particles\AForge.Net\Video\obj\Release\AForge.Video.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\Particles\AForge.Net\Video\obj\Release\AForge.Video.pdb

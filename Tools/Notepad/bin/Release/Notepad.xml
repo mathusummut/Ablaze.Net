@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Notepad</name>
+    </assembly>
+    <members>
+        <member name="T:Notepad.NotepadWindow">
+            <summary>
+            A notepad application for C#.
+            </summary>
+        </member>
+        <member name="M:Notepad.NotepadWindow.Main(System.String[])">
+            <summary>
+            The entry point of the application.
+            </summary>
+            <param name="args">The console arguments passed to the application.</param>
+        </member>
+    </members>
+</doc>

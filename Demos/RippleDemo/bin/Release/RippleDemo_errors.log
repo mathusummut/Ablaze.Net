@@ -1,0 +1,31 @@
+
+=>An error occurred on 12/10/2017 at 22:33:42. 
+
+Exception details:
+
+   An unhandled error has occurred.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.IndexOutOfRangeException:
+
+Message:
+
+   Index was outside the bounds of the array.
+
+Source: mscorlib
+
+Stack Trace:
+
+   at System.String.get_Chars(Int32 index)
+   at System.Windows.Forms.FilePrompt.set_Filter(String value) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.UI\System\Windows.Forms\FilePrompt.cs:line 222
+   at RippleDemo.RippleDemoForm.Main(String[] args) in C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Demos\RippleDemo\RippleDemo.cs:line 44
+   at System.AppDomain._nExecuteAssembly(RuntimeAssembly assembly, String[] args)
+   at System.AppDomain.ExecuteAssembly(String assemblyFile, Evidence assemblySecurity, String[] args)
+   at Microsoft.VisualStudio.HostingProcess.HostProc.RunUsersAssembly()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.ThreadHelper.ThreadStart()

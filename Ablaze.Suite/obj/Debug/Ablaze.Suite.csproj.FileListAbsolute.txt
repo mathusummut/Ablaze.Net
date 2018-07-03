@@ -1,0 +1,12 @@
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\obj\Debug\Ablaze.Suite.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\obj\Debug\System.Properties.Resources.resources
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\obj\Debug\Ablaze.Suite.csproj.GenerateResource.Cache
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\Ablaze.Suite.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\Ablaze.Suite.dll.config
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\Ablaze.Suite.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\Ablaze.Suite.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\System.Numerics.Vectors.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\obj\Debug\Ablaze.Suite.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Ablaze.Suite\obj\Debug\Ablaze.Suite.pdb

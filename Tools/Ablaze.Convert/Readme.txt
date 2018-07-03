@@ -1,0 +1,1 @@
+Converts the project to compile for the specified platform.

@@ -1,0 +1,17 @@
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\obj\Debug\FormUnitTest.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\obj\Debug\FormUnitTest.Properties.Resources.resources
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\obj\Debug\FormUnitTest.TestForm.resources
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\obj\Debug\FormUnitTest.csproj.GenerateResource.Cache
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\FormUnitTest.exe.config
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\FormUnitTest.exe
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\FormUnitTest.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\Ablaze.Suite.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\Ablaze.UI.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\Ablaze.Suite.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\Ablaze.Suite.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\Ablaze.UI.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\System.Numerics.Vectors.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\obj\Debug\FormUnitTest.exe
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Development\FormUnitTest\obj\Debug\FormUnitTest.pdb

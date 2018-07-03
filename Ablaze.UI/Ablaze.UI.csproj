@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CCC2E3DC-60FB-4118-B905-3ED396294D80}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System</RootNamespace>
+    <AssemblyName>Ablaze.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET45</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>NET45</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>IDE0017, IDE1006, CC0001, CC0003, CC0004, CC0008, CC0013, CC0014, CC0015, CC0017, CC0026, CC0031, CC0037, CC0048, CC0052, CC0060, CC0065, CC0072, CC0074, CC0090, CC0097, CC0105, CC0120</NoWarn>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\Ablaze.UI.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Ablaze.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>..\Ablaze.Suite\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Windows.Forms\AnimationInfo.cs" />
+    <Compile Include="System\Windows.Forms\AnimationState.cs" />
+    <Compile Include="System\Windows.Forms\DataGridViewPrinter.cs" />
+    <Compile Include="System\Windows.Forms\EventListener.cs" />
+    <Compile Include="System\Windows.Forms\BufferedSplitContainer.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\BufferedTreeView.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\ClipboardListener.cs" />
+    <Compile Include="System\Windows.Forms\ConsoleControl.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\DropShadowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\DummyLayoutEngine.cs" />
+    <Compile Include="System\Windows.Forms\Enums.cs" />
+    <Compile Include="System\Windows.Forms\FilePrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\FindAndReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\TouchEventArgs.cs" />
+    <Compile Include="System\Windows.Forms\GoToDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\HotkeyListener.cs" />
+    <Compile Include="System\Windows.Forms\IItemRenderer.cs" />
+    <Compile Include="System\Windows.Forms\ImageMessageBox.cs" />
+    <Compile Include="System\Windows.Forms\KeyListener.cs" />
+    <Compile Include="System\Windows.Forms\LinkLabelCustomCursor.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\MessageLoop.cs" />
+    <Compile Include="System\Windows.Forms\MouseListener.cs" />
+    <Compile Include="System\Windows.Forms\NewRichTextBox.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\Notepad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\ProcessEventArgs.cs" />
+    <Compile Include="System\Windows.Forms\ProcessInterface.cs" />
+    <Compile Include="System\Windows.Forms\SliderDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\SplashForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledArrowButton.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledButton.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledCheckBox.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledComboBox.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledContextMenu.cs">
+      <SubType>Components</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledItem.cs">
+      <SubType>Components</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledLabel.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledMenuStrip.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyledMessageBox.cs" />
+    <Compile Include="System\Windows.Forms\StyledSlider.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\StyleRenderer.cs" />
+    <Compile Include="System\Windows.Forms\TextDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\TransitionHandlerAttribute.cs" />
+    <Compile Include="System\Windows.Forms\TransitionHandlers.cs" />
+    <Compile Include="System\Windows.Forms\TransparentControl.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+    <Compile Include="System\Windows.Forms\UIAnimator.cs" />
+    <Compile Include="System\Windows.Forms\UIScaler.cs" />
+    <Compile Include="System\Windows.Forms\UserListBox.cs">
+      <SubType>CommonControls</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ablaze.snk" />
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ablaze.Suite\Ablaze.Suite.csproj">
+      <Project>{5bd51c83-9ec8-41a2-8552-cd68798eeb21}</Project>
+      <Name>Ablaze.Suite</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="System\Windows.Forms\FindAndReplace.resx">
+      <DependentUpon>FindAndReplace.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System\Windows.Forms\GoToDialog.resx">
+      <DependentUpon>GoToDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System\Windows.Forms\Notepad.resx">
+      <DependentUpon>Notepad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System\Windows.Forms\SliderDialog.resx">
+      <DependentUpon>SliderDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System\Windows.Forms\StyledForm.resx">
+      <DependentUpon>StyledForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System\Windows.Forms\TextDialog.resx">
+      <DependentUpon>TextDialog.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,8 @@
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\bin\Debug\System.Core.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\bin\Debug\System.Core.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\obj\Debug\System.Core.csprojResolveAssemblyReference.cache
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\obj\Debug\System.Core.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\obj\Debug\System.Core.pdb
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\bin\Debug\System.Core.xml
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\bin\Debug\System.Core.dll
+C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Core\bin\Debug\System.Core.pdb

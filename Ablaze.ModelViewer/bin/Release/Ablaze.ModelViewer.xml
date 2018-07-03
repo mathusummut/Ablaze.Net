@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ablaze.ModelViewer</name>
+    </assembly>
+    <members>
+        <member name="T:Ablaze.ModelViewer.ModelViewer">
+            <summary>
+            The main window of the model viewer.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.#ctor">
+            <summary>
+            Initializes a ModelViewer instance.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnGLInitialized">
+            <summary>
+            Called when the OpenGL context is initialized.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnFadeInCompleted">
+            <summary>
+            Called when the window fade-in animation has completed.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnUpdate(System.Double)">
+            <summary>
+            Called when the update timer has ticked.
+            </summary>
+            <param name="elapsedMilliseconds">The milliseconds elapsed since the last frame.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnShown(System.EventArgs)">
+            <summary>
+            Called when the window is shown.
+            </summary>
+            <param name="e">Ignored.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.ProcessCmdKey(System.Windows.Forms.Message@,System.Windows.Forms.Keys)">
+            <summary>
+            Called when a key or key combination has been pressed.
+            </summary>
+            <param name="msg">The corresponding window message.</param>
+            <param name="keyData">The keys that were pressed.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+             Called when a key is pressed.
+            </summary>
+            <param name="e">The key that was pressed.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnKeyUp(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+             Called when a key is released.
+            </summary>
+            <param name="e">The key that was released.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnPaintGL">
+            <summary>
+            Called whenever a GL render takes place.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnUnload">
+            <summary>
+            Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.Dispose3DModel(System.Object)">
+            <summary>
+            Disposes of the 3D model that is loaded.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnQueryClose(System.Windows.Forms.CloseReason)">
+            <summary>
+            Whether to close.
+            </summary>
+            <param name="reason">The reason to close.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.OnDisposing(System.Windows.Forms.DisposeFormEventArgs)">
+            <summary>
+            Called when the window is being disposed.
+            </summary>
+            <param name="e">Whether managed resources are about to be disposed.</param>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.Main(System.String[])">
+            <summary>
+            The entry point of the application.
+            </summary>
+        </member>
+        <member name="M:Ablaze.ModelViewer.ModelViewer.InitializeComponent">
+            <summary>
+            Initializes the window and its controls.
+            </summary>
+        </member>
+        <member name="T:Ablaze.ModelViewer.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Ablaze.ModelViewer.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Ablaze.ModelViewer.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>

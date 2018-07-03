@@ -1,0 +1,1 @@
+c:\users\mathu\documents\visual studio 2015\Projects\GdiTest\bin\Debug\GdiTest.exe.config
