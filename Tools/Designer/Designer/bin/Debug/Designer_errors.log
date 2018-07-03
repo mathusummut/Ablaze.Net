@@ -1,0 +1,441 @@
+
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 16), handle: 16 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 15), handle: 15 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 8), handle: 8 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 7), handle: 7 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 5932 }, handle: 5932 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 6), handle: 6 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 5), handle: 5 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 9797 }, handle: 9797 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 4), handle: 4 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 3), handle: 3 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 108 }, handle: 108 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 9), handle: 9 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 108 }, handle: 108 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 12), handle: 12 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 9797 }, handle: 9797 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 5932 }, handle: 5932 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 5932 }, handle: 5932 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 9797 }, handle: 9797 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 108 }, handle: 108 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 129 }, handle: 129 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 5932 }, handle: 5932 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 2), handle: 2 }
+=>An error occurred on 20/10/2017 at 11:17:01.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 1), handle: 1 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 129 }, handle: 129 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 108 }, handle: 108 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 9797 }, handle: 9797 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 129 }, handle: 129 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 14), handle: 14 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 13), handle: 13 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: DataBuffer, identifier: Data buffer (handle 11), handle: 11 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: IndexBuffer, identifier: Index buffer (handle 10), handle: 10 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 5932 }, handle: 5932 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 9797 }, handle: 9797 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 108 }, handle: 108 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 129 }, handle: 129 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 5932 }, handle: 5932 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 9797 }, handle: 9797 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 108 }, handle: 108 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 129 }, handle: 129 }
+=>An error occurred on 20/10/2017 at 11:17:02.
+
+Exception number 0:
+
+Exception stack level 0
+
+Type: System.ResourceLeakException:
+
+Message:
+
+   Resource leaked while finalizing: { Type: MeshComponent, identifier: { Vertices: 129 }, handle: 129 }
