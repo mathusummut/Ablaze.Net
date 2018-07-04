@@ -1,6 +1,0 @@
-C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\bin\Debug\System.Numerics.Vectors.dll
-C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\bin\Debug\System.Numerics.Vectors.pdb
-C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\obj\Debug\System.Numerics.Vectors.csprojResolveAssemblyReference.cache
-C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\obj\Debug\System.Numerics.Vectors.dll
-C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\obj\Debug\System.Numerics.Vectors.pdb
-C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\System.Numerics.Vectors\bin\Debug\System.Numerics.Vectors.xml
