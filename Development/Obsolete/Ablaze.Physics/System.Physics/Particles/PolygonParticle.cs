@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Graphics.GL;
 using System.Graphics.Models;
+using System.Numerics.Vectors;
 
 namespace System.Physics2D {
 	public class PolygonParticle : Particle {
