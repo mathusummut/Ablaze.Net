@@ -578,7 +578,8 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The graphics canvas to draw on.</param>
 		/// <param name="location">The location at which to draw the shadow image.</param>
-		public void DrawGdi(Graphics g, Point location) {
+		/// <param name="drawChildren">Whether to draw the child controls.</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
 			if (opacity == 0)
 				return;
 			else if (opacity == 255) {
@@ -592,14 +593,17 @@ namespace System.Windows.Forms {
 						ImageLib.DrawFaded(g, shadowBitmap, new RectangleF(location, shadowBitmap.Size), opacity * 0.00392156863f);
 				}
 			}
+			if (drawChildren)
+				g.DrawControls(Controls, location, true);
 		}
 
 		/// <summary>
 		/// Not implemented yet.
-		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
+		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates)
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw child controls as well</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
 			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
 		}
 
@@ -655,28 +659,56 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Renders the form onto the specified image.
+		/// Renders the form and its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
+		/// <param name="bitmap">The bitmap to draw onto</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, ClientRectangle, true);
+		}
+
+		/// <summary>
+		/// Renders the form and its children onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
 		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, ClientRectangle);
+			DrawToBitmap(image, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Renders the form onto the specified image.
-		/// </summary>
-		/// <param name="bitmap">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
-		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
-			DrawToBitmap(bitmap as Image, targetBounds);
-		}
-
-		/// <summary>
-		/// Renders the form onto the specified image.
+		/// Renders the form and its children onto the specified image
 		/// </summary>
 		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the form and its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
+			DrawToBitmap(bitmap as Image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the form onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the form onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -686,7 +718,7 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}

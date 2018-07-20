@@ -483,10 +483,11 @@ namespace System.Windows.Forms {
 
 		/// <summary>
 		/// Not implemented yet.
-		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
+		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates)
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw child controls as well</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
 			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
 		}
 
@@ -495,15 +496,16 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The graphics object.</param>
 		public void DrawGdi(Graphics g) {
-			DrawGdi(g, Location);
+			DrawGdi(g, Location, true);
 		}
 
 		/// <summary>
-		/// Draws the slider on the specified Graphics object.
+		/// Draws the slider on the specified Graphics object
 		/// </summary>
-		/// <param name="g">The graphics object.</param>
-		/// <param name="location">The coordinates to draw at.</param>
-		public void DrawGdi(Graphics g, Point location) {
+		/// <param name="g">The graphics object</param>
+		/// <param name="location">The coordinates to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
 			g.CompositingQuality = CompositingQuality.HighQuality;
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 			g.SmoothingMode = SmoothingMode.HighQuality;
@@ -519,6 +521,7 @@ namespace System.Windows.Forms {
 				sliderBounds.Width -= padding.Horizontal;
 				sliderBounds.Height -= label.Height + labelTotalPadding.Height + padding.Bottom;
 			}
+			Region oldClipRegion = g.Clip;
 			RectangleF barRect;
 			g.SetClip(new Rectangle(location, clientSize));
 			if (BackColor.A != 0) {
@@ -538,32 +541,62 @@ namespace System.Windows.Forms {
 			RectangleF knobBounds = KnobBounds;
 			knobBounds.Offset(location);
 			KnobRenderer.RenderBackground(g, Rectangle.Truncate(knobBounds));
-			g.ResetClip();
+			if (drawChildren)
+				g.DrawControls(Controls, location, true);
+			g.Clip = oldClipRegion;
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, ClientRectangle, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
 		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, ClientRectangle);
+			DrawToBitmap(image, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="bitmap">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
-			DrawToBitmap(bitmap as Image, targetBounds);
+			DrawToBitmap(bitmap as Image, targetBounds, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the control onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -573,7 +606,7 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}
@@ -590,10 +623,10 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Called when the control is to be redrawn.
+		/// Called when the control is to be redrawn
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e) {
-			DrawGdi(e.Graphics, Point.Empty);
+			DrawGdi(e.Graphics, Point.Empty, false);
 			RaisePaintEvent(null, e);
 		}
 

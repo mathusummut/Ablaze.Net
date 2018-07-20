@@ -783,28 +783,56 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, ClientRectangle, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
 		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, ClientRectangle);
+			DrawToBitmap(image, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="bitmap">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
-			DrawToBitmap(bitmap as Image, targetBounds);
+			DrawToBitmap(bitmap as Image, targetBounds, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the control onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -814,26 +842,27 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}
 
 		/// <summary>
-		/// Draws the context menu onto the specified graphics canvas.
+		/// Draws the context menu onto the specified graphics canvas
 		/// </summary>
-		/// <param name="g">The canvas to draw the context menu on.</param>
+		/// <param name="g">The canvas to draw the context menu on</param>
 		public void DrawGdi(Graphics g) {
-			DrawGdi(g, Location, ClientRectangle);
+			DrawGdi(g, Location, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Draws the context menu onto the specified graphics canvas at the specified location.
+		/// Draws the context menu onto the specified graphics canvas at the specified location
 		/// </summary>
-		/// <param name="g">The canvas to draw the context menu on.</param>
-		/// <param name="location">The location to draw the context menu at.</param>
-		public void DrawGdi(Graphics g, Point location) {
-			DrawGdi(g, Location, ClientRectangle);
+		/// <param name="g">The canvas to draw the context menu on</param>
+		/// <param name="location">The location to draw the context menu at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
+			DrawGdi(g, location, ClientRectangle, drawChildren);
 		}
 
 		/// <summary>
@@ -842,12 +871,14 @@ namespace System.Windows.Forms {
 		/// <param name="g">The canvas to draw the context menu on.</param>
 		/// <param name="location">The location to draw the context menu at.</param>
 		/// <param name="invalidated">The client rectangle that was invalidated.</param>
-		protected virtual void DrawGdi(Graphics g, Point location, Rectangle invalidated) {
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		protected virtual void DrawGdi(Graphics g, Point location, Rectangle invalidated, bool drawChildren) {
 			int startItem = invalidated.Y / maxItemHeight;
 			int lastItem = Math.Min(Items.Count - 1, invalidated.Bottom / maxItemHeight);
 			location.Y += startItem * maxItemHeight;
 			if (!location.IsEmpty)
 				g.TranslateTransform(location.X, location.Y);
+			Region oldClipRegion = g.Clip;
 			Image backgroundImage = BackgroundImage;
 			if (backgroundImage != null) {
 				try {
@@ -874,32 +905,35 @@ namespace System.Windows.Forms {
 				g.TranslateTransform(0f, -cumulative);
 			g.SetClip(invalidated);
 			RaisePaintEvent(StyleRenderer.PaintEventKey, args);
+			if (drawChildren)
+				g.DrawControls(Controls, Point.Empty, true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
-			g.ResetClip();
+			g.Clip = oldClipRegion;
 		}
 
 		/// <summary>
 		/// Not implemented yet.
 		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
 			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
 		}
 
 		/// <summary>
-		/// Draws the context menu and its items.
+		/// Draws the context menu and its items
 		/// </summary>
-		/// <param name="e">The graphics canvas to draw on.</param>
+		/// <param name="e">The graphics canvas to draw on</param>
 		protected override void OnPaint(PaintEventArgs e) {
-			DrawGdi(e.Graphics, Point.Empty, e.ClipRectangle);
+			DrawGdi(e.Graphics, Point.Empty, e.ClipRectangle, false);
 		}
 
 		/// <summary>
-		/// Called when the context menu is closing.
+		/// Called when the context menu is closing
 		/// </summary>
-		/// <param name="e">The close reason.</param>
+		/// <param name="e">The close reason</param>
 		protected override void OnClosing(ToolStripDropDownClosingEventArgs e) {
 			base.OnClosing(e);
 			FadingIn = false;

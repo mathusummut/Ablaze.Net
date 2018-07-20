@@ -672,6 +672,46 @@ namespace System {
 		}
 
 		/// <summary>
+		/// Draws the controls on the given canvas at the specified location relative to the origin (0, 0) of the graphics canvas
+		/// </summary>
+		/// <param name="g">The graphics canvas to draw onto</param>
+		/// <param name="controls">The controls to draw</param>
+		/// <param name="location">The location of origin (0, 0) relative to which the controls will be drawn</param>
+		/// <param name="drawChildren">Whether to draw the child controls of the specified children as well</param>
+		public static void DrawControls(this Graphics g, IEnumerable controls, Point location, bool drawChildren = true) {
+			Rectangle clippingRect = Rectangle.Ceiling(g.ClipBounds);
+			foreach (Control control in controls) {
+				Rectangle ctrlRect = new Rectangle(location + (Size) control.Location, control.Size);
+				if ((control.Visible || control is Form) && ctrlRect.IntersectsWith(clippingRect)) {
+					IDrawable drawable = control as IDrawable;
+					if (drawable == null) {
+						using (Bitmap bitmap = new Bitmap(control.Width, control.Height, Drawing.Imaging.PixelFormat.Format32bppPArgb)) {
+							using (Graphics graphics = Graphics.FromImage(bitmap)) {
+								IntPtr hdc = graphics.GetHdc();
+								Platforms.Windows.PrintFunctionParameters parameters = Platforms.Windows.PrintFunctionParameters.NONCLIENT | Platforms.Windows.PrintFunctionParameters.CLIENT /*| Platforms.Windows.PrintFunctionParameters.ERASEBKGND*/;
+								if (drawChildren)
+									parameters |= Platforms.Windows.PrintFunctionParameters.CHILDREN;
+								Message message = new Message() {
+									Msg = (int) Platforms.Windows.WindowMessage.PRINT,
+									WParam = hdc,
+									LParam = new IntPtr((int) parameters),
+									HWnd = control.Handle
+								};
+								control.CallWndProc(ref message);
+								IntPtr hdc2 = g.GetHdc();
+								Platforms.Windows.NativeApi.BitBlt(hdc2, ctrlRect.X, ctrlRect.Y, ctrlRect.Width, ctrlRect.Height, hdc, 0, 0, Platforms.Windows.TernaryRasterOperations.SRCCOPY);
+								g.ReleaseHdcInternal(hdc2);
+								graphics.ReleaseHdcInternal(hdc);
+							}
+						}
+					} else
+						drawable.DrawGdi(g, ctrlRect.Location, drawChildren);
+					DrawControls(g, control.Controls, ctrlRect.Location);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Translates the specified client coordinates to the corresponding screen location.
 		/// </summary>
 		/// <param name="ctrl">The control that the given point is respect with.</param>

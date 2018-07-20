@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -556,10 +555,10 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Called when the label is redrawn.
+		/// Called when the label is redrawn
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs e) {
-			DrawGdi(e.Graphics, PointF.Empty, Size, true);
+			DrawGdi(e.Graphics, PointF.Empty, Size, true, false);
 			RaisePaintEvent(null, e);
 		}
 
@@ -619,7 +618,7 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The canvas to draw the label on.</param>
 		public void DrawGdi(Graphics g) {
-			DrawGdi(g, Location, Size, true);
+			DrawGdi(g, Location, Size, true, true);
 		}
 
 		/// <summary>
@@ -627,17 +626,18 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The canvas to draw the label on.</param>
 		/// <param name="location">The location to draw the label at.</param>
-		public void DrawGdi(Graphics g, Point location) {
-			DrawGdi(g, location, Size, true);
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
+			DrawGdi(g, location, Size, true, drawChildren);
 		}
 
 		/// <summary>
-		/// Renders the label to an image.
+		/// Renders the label to an image. Child controls are not rendered.
 		/// </summary>
 		public Bitmap ToBitmap() {
 			Bitmap bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb);
 			using (Graphics g = Graphics.FromImage(bitmap))
-				DrawGdi(g, Point.Empty, Size, true);
+				DrawGdi(g, Point.Empty, Size, true, false);
 			return bitmap;
 		}
 
@@ -785,12 +785,13 @@ namespace System.Windows.Forms {
 		/// Not implemented yet.
 		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
 			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
 		}
 
-		internal void DrawGdi(Graphics g, PointF location, Size size, bool drawBackColor) {
+		internal void DrawGdi(Graphics g, PointF location, Size size, bool drawBackColor, bool drawChildren) {
 			if (size.Width <= 0 || size.Height <= 0)
 				return;
 			Padding padding = Padding;
@@ -815,11 +816,11 @@ namespace System.Windows.Forms {
 				g.TranslateTransform(-centerOffset.Width, -centerOffset.Height);
 			}
 			g.PixelOffsetMode = pixelAlignment;
-			if (isLocked)
-				return;
-			isLocked = true;
 			lock (ShadowSync) {
 				if (renderShadow && !(shadowColor.A == 0 || shadowOpacity == 0f)) {
+					if (isLocked) //ugly workaround
+						return;
+					isLocked = true;
 					if (shadowGraphics == null || shadow == null || shadow.Width < size.Width || shadow.Height < size.Height)
 						ReinitGraphics();
 					if (invalidateShadow) {
@@ -839,6 +840,7 @@ namespace System.Windows.Forms {
 						}
 					}
 					g.DrawImage(shadow, new RectangleF(0f, 0f, size.Width * shadowScale.Width, size.Height * shadowScale.Height), new RectangleF(0f, 0f, size.Width, size.Height), GraphicsUnit.Pixel);
+					isLocked = false;
 				}
 			}
 			Brush textBrush = TextBrush;
@@ -861,12 +863,13 @@ namespace System.Windows.Forms {
 						g.DrawPath(outlinePen, stringPath);
 				}
 			}
-			isLocked = false;
 			if (rotation != 0f) {
 				g.TranslateTransform(centerOffset.Width, centerOffset.Height);
 				g.RotateTransform(-rotation);
 				g.TranslateTransform(-centerOffset.Width, -centerOffset.Height);
 			}
+			if (drawChildren)
+				g.DrawControls(Controls, Point.Empty, true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
 		}
@@ -1053,28 +1056,56 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, ClientRectangle, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
 		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, ClientRectangle);
+			DrawToBitmap(image, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="bitmap">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
-			DrawToBitmap(bitmap as Image, targetBounds);
+			DrawToBitmap(bitmap as Image, targetBounds, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the control onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -1084,7 +1115,7 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}

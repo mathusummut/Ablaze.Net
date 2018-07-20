@@ -617,7 +617,6 @@ namespace System.Windows.Forms {
 			get {
 				return base.BackgroundImage;
 			}
-
 			set {
 				base.BackgroundImage = value;
 				if (!(AnimatingBounds || IsGLEnabled || GetStyle(ControlStyles.Opaque)))
@@ -634,7 +633,6 @@ namespace System.Windows.Forms {
 			get {
 				return backgroundLayout;
 			}
-
 			set {
 				if (backgroundLayout == value)
 					return;
@@ -1786,12 +1784,12 @@ namespace System.Windows.Forms {
 		/// <param name="rect">The region to invalidate in viewport coordinates.</param>
 		/// <param name="invalidateChildren">If true, child controls are invalidated as well.</param>
 		public virtual new void Invalidate(Rectangle rect, bool invalidateChildren) {
-			Size size = ViewSize;
+			rect.Offset(ViewPortLocation);
+			Size size = ClientSize;
 			if (rect.Right > size.Width)
 				rect.Width = size.Width - rect.X;
 			if (rect.Bottom > size.Height)
 				rect.Height = size.Height - rect.Y;
-			rect.Location += (Size) ViewPortLocation;
 			if (invalidateChildren && IsGLEnabled) {
 				Control ctrl;
 				Rectangle client = new Rectangle();
@@ -1916,10 +1914,10 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Redraws the border.
+		/// Redraws the border
 		/// </summary>
-		/// <param name="sync">Whether to wait for the painting to be complete.</param>
-		/// <param name="rect">The invalidated bounds.</param>
+		/// <param name="sync">Whether to wait for the painting to be complete</param>
+		/// <param name="rect">The invalidated bounds</param>
 		protected virtual void RedrawBorder(bool sync, Rectangle rect) {
 			if (!AnimatingBounds && IsBorderVisible) {
 				using (Region region = new Region(rect)) {
@@ -2963,11 +2961,11 @@ namespace System.Windows.Forms {
 		public void AnimateBoundsTo(Rectangle bounds) {
 			if (fullscreenGdiGLWorkaround && bounds == screen.Bounds)
 				bounds.Width++;
-			if (Bounds == bounds)
-				OnBoundsUpdate(null);
-			else if (FormBorderStyle == FormBorderStyle.None && EnableResizeAnimation && !DesignMode) {
-				animatingBounds = true;
-				UIAnimator.SharedAnimator.Animate(BoundsProperty, bounds, 0.7, 2.0, true, onBoundsUpdate, false);
+			if (FormBorderStyle == FormBorderStyle.None && EnableResizeAnimation && !DesignMode) {
+				lock (onBoundsUpdate) {
+					animatingBounds = true;
+					UIAnimator.SharedAnimator.Animate(BoundsProperty, bounds, 0.7, 2.0, true, onBoundsUpdate, false);
+				}
 			} else {
 				Bounds = bounds;
 				OnBoundsUpdate(null);
@@ -3168,28 +3166,56 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Renders the form onto the specified image.
+		/// Renders the form and its child controls onto the specified image.
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, ClientRectangle);
+		/// <param name="bitmap">The image to draw onto.</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Renders the form onto the specified image.
+		/// Renders the form and its child controls onto the specified image.
+		/// </summary>
+		/// <param name="image">The image to draw onto.</param>
+		public void DrawToBitmap(Image image) {
+			DrawToBitmap(image, ClientRectangle, true);
+		}
+
+		/// <summary>
+		/// Renders the form and its child controls onto the specified image.
 		/// </summary>
 		/// <param name="bitmap">The image to draw onto.</param>
 		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
 		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
-			DrawToBitmap(bitmap as Image, targetBounds);
+			DrawToBitmap(bitmap as Image, targetBounds, true);
 		}
 
 		/// <summary>
-		/// Renders the form onto the specified image.
+		/// Renders the form and its child controls onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the form onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the form onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -3199,7 +3225,7 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}
@@ -3247,7 +3273,8 @@ namespace System.Windows.Forms {
 
 		private bool OnBoundsUpdate(AnimationInfo state) {
 			if (state == null || state.IsFinished) {
-				animatingBounds = false;
+				lock (onBoundsUpdate)
+					animatingBounds = false;
 				TitleBarChanged(0, 0);
 				if (Thread.CurrentThread == residentThread)
 					OnResizeEnd(EventArgs.Empty);
@@ -3370,10 +3397,7 @@ namespace System.Windows.Forms {
 			OnBorderLayoutChanged();
 		}
 
-		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		protected virtual void OnBorderSizeChangedInner(int widthDiff, int titleBarDiff) {
+		private void OnBorderSizeChangedInner(int widthDiff, int titleBarDiff) {
 			if (!(widthDiff == 0 && titleBarDiff == 0)) {
 				borderChanged++;
 				Size += new Size((int) (widthDiff * 2 * DpiScale.Height), (int) ((widthDiff + titleBarDiff) * DpiScale.Height));
@@ -3791,33 +3815,36 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Not implemented yet.
-		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
+		/// Use GraphicsForm instead StyledForm to use DrawGL 
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
-			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
+			throw new NotImplementedException("Use GraphicsForm instead StyledForm to use " + nameof(DrawGL) + ".");
 		}
 
 		/// <summary>
-		/// Draws the form onto the specified canvas.
+		/// Draws the form onto the specified canvas
 		/// </summary>
-		/// <param name="g">The graphics canvas to draw on.</param>
+		/// <param name="g">The graphics canvas to draw on</param>
 		public void DrawGdi(Graphics g) {
-			DrawGdi(g, Location);
+			DrawGdi(g, Location, true);
 		}
 
 		/// <summary>
-		/// Draws the form onto the specified canvas.
+		/// Draws the form onto the specified canvas
 		/// </summary>
-		/// <param name="g">The graphics canvas to draw on.</param>
-		/// <param name="location">The location to draw the form at.</param>
-		public void DrawGdi(Graphics g, Point location) {
+		/// <param name="g">The graphics canvas to draw on</param>
+		/// <param name="location">The location to draw the form at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
 			if (!location.IsEmpty)
 				g.TranslateTransform(location.X, location.Y);
 			Rectangle rect = ClientRectangle;
 			OnPaintBackgroundInner(g, rect);
 			OnPaintInner(g, rect);
+			if (drawChildren)
+				g.DrawControls(Controls, Point.Empty, true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
 		}
@@ -3864,17 +3891,19 @@ namespace System.Windows.Forms {
 		private void OnPaintInner(Graphics g, Rectangle clippingRect) {
 			Point offset = ViewPortLocation;
 			bool applyOffset = !offset.IsEmpty;
-			if (applyOffset)
-				g.TranslateTransform(offset.X, offset.Y);
-			Rectangle clipRect = clippingRect;
 			if (applyOffset) {
-				clipRect.X -= offset.X;
-				clipRect.Y -= offset.Y;
+				g.TranslateTransform(offset.X, offset.Y);
+				clippingRect.X -= offset.X;
+				clippingRect.Y -= offset.Y;
 			}
-			OnPaint(g, clipRect);
-			if (applyOffset)
+			OnPaint(g, clippingRect);
+			if (applyOffset) {
 				g.TranslateTransform(-offset.X, -offset.Y);
-			DrawBorderGdi(g, clippingRect);
+				clippingRect.X += offset.X;
+				clippingRect.Y += offset.Y;
+			}
+			if (!AnimatingBounds)
+				DrawBorderGdi(g, clippingRect);
 		}
 
 		/// <summary>
@@ -3892,9 +3921,9 @@ namespace System.Windows.Forms {
 		/// <param name="g">The canvas to draw onto.</param>
 		/// <param name="rect">The section of the border to draw.</param>
 		public virtual void DrawBorderGdi(Graphics g, Rectangle rect) {
-			Rectangle viewport = ViewPort;
 			if (!IsBorderVisible)
 				return;
+			Rectangle viewport = ViewPort;
 			Size clientSize = ClientSize;
 			if (clientSize.Width <= 0 || clientSize.Height <= 0)
 				return;
@@ -3911,7 +3940,10 @@ namespace System.Windows.Forms {
 				if (!region.IsVisible(rect))
 					return;
 				lock (BorderSyncLock) {
-					using (TextureBrush brush = usingAeroBlur ? new TextureBrush(border, new Rectangle(Point.Empty, border.Size), ImageLib.GetOpacityAttributes(currentBorderOpacity, WrapMode.Tile)) : new TextureBrush(border)) {
+					Bitmap currentBorder = border;
+					if (currentBorder == null)
+						return;
+					using (TextureBrush brush = usingAeroBlur ? new TextureBrush(currentBorder, new Rectangle(Point.Empty, currentBorder.Size), ImageLib.GetOpacityAttributes(currentBorderOpacity, WrapMode.Tile)) : new TextureBrush(border)) {
 						if (!rect.Location.IsEmpty)
 							brush.TranslateTransform(-rect.X, -rect.Y);
 						g.FillRegion(brush, region);
@@ -4246,8 +4278,10 @@ namespace System.Windows.Forms {
 					}
 					MinimizeFill.DisposeSafe();
 					MinimizeFill = null;
-					border.DisposeSafe();
-					border = null;
+					lock (BorderSyncLock) {
+						border.DisposeSafe();
+						border = null;
+					}
 					XColor.DisposeSafe();
 					outlineColor.DisposeSafe();
 					inlineColor.DisposeSafe();

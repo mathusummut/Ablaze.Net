@@ -304,7 +304,9 @@ namespace Ablaze.ModelViewer {
 				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, new List<IModel>(Scene)));
 			loading = true;
 			statusLabel.Text = "Loading...";
-			InvalidateGdi(GdiRenderMode.GdiAsync, statusLabel.Bounds);
+			Rectangle rect = statusLabel.Bounds;
+			rect.Offset(ViewPortLocation);
+			InvalidateGdi(GdiRenderMode.GdiAsync, rect);
 			Exception e = null;
 			string[] meshes = (string[]) param;
 			float zCount = 0f;
@@ -752,7 +754,7 @@ namespace Ablaze.ModelViewer {
 			this.ClientSize = new System.Drawing.Size(649, 516);
 			this.Controls.Add(this.menuStrip);
 			this.Font = new System.Drawing.Font("Calibri Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.GLMargin = new System.Windows.Forms.Padding(0, 24, 0, 0);
+			this.GdiLocation = new System.Drawing.Point(0, 24);
 			this.Location = new System.Drawing.Point(200, 200);
 			this.MainMenuStrip = this.menuStrip;
 			this.Margin = new System.Windows.Forms.Padding(0);

@@ -27,7 +27,7 @@ namespace System.Windows.Forms {
 		private InvalidateEventHandler GdiControlInvalidate;
 		private ThreadLocal<bool> reentrant = new ThreadLocal<bool>();
 		private object GdiSyncRoot = new object(), GLTransferSync = new object();
-		private Func<object, object> invalidateGdiInner, makeCurrent, viewSizeChanged, unload;
+		private Func<object, object> invalidateGdiInner, callDrawBorder, makeCurrent, viewSizeChanged, unload;
 		private MeshComponent rectMesh;
 		private GlobalShader globalShader;
 		private Padding glMargin;
@@ -54,6 +54,17 @@ namespace System.Windows.Forms {
 		/// Locked when OpenGL is about to be rendered.
 		/// </summary>
 		public readonly object RenderLock = new object();
+
+		/// <summary>
+		/// Gets the current Gdi thread dispatcher
+		/// </summary>
+		protected DispatcherSlim CurrentGdiDispatcher {
+			get {
+				if (GdiDispatcher == null)
+					GdiDispatcher = new DispatcherSlim(nameof(GdiDispatcher), true, ExceptionMode.Log);
+				return GdiDispatcher;
+			}
+		}
 
 		/// <summary>
 		/// OpenGL is supported don't worry, but this should return false.
@@ -269,7 +280,7 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets or sets the XYZ rotation of the GDI layer. Kinda weird feature.
+		/// Gets or sets the XYZ rotation of the GDI layer. Kinda weird feature, might not work properly
 		/// </summary>
 		[Browsable(false)]
 		public Vector3 GdiRotation {
@@ -387,7 +398,8 @@ namespace System.Windows.Forms {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				Rectangle port = new Rectangle(new Point(CurrentBorderWidth, CurrentBorderWidth), ViewSize);
+				Rectangle port = /*new Rectangle(new Point(CurrentBorderWidth, CurrentBorderWidth), ViewSize)*/
+					new Rectangle(Point.Empty, ClientSize);
 				port.X += glMargin.Left;
 				port.Y += glMargin.Bottom;
 				port.Width -= glMargin.Left + glMargin.Right;
@@ -424,6 +436,16 @@ namespace System.Windows.Forms {
 				GraphicsContext context = GLContext;
 				return !(context == null || DesignMode) && context.IsCurrent;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the border should be rendered on the GDI layer of the form. Preferably disabled.
+		/// </summary>
+		[Description("Gets or sets whether the border should be rendered on the GDI layer of the form")]
+		[DefaultValue(true)]
+		public bool RenderBorderOnGdiLayer {
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -478,8 +500,10 @@ namespace System.Windows.Forms {
 		/// </summary>
 		protected override void OnConstructorStarted() {
 			base.OnConstructorStarted();
+			RenderBorderOnGdiLayer = true;
 			ReduceFlickerOnResize = true;
 			EnableAeroBlur = false;
+			callDrawBorder = CallDrawBorder;
 			paintControl = Control_Paint;
 			GdiControlInvalidate = Ctrl_Invalidated;
 			gdiControlAdded = GdiControlAdded;
@@ -539,9 +563,10 @@ namespace System.Windows.Forms {
 					globalShader.Bind();
 					Rectangle glViewport = GLViewport;
 					Mesh2D.Setup2D(glViewport.Size);
-					Point gdiLoc = CurrentGdiLocation;
-					Mesh2D.DrawTexture2D(GdiTexture, new Vector3(gdiLoc.X, gdiLoc.Y - glMargin.Top, 0f), new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, rectMesh);
+					Mesh2D.DrawTexture2D(GdiTexture, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, rectMesh);
 				}
+				if (!RenderBorderOnGdiLayer)
+					DrawBorderGL();
 				GraphicsContext context = GLContext;
 				if (context != null)
 					context.SwapBuffers();
@@ -953,14 +978,6 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		protected sealed override void OnBorderSizeChangedInner(int widthDiff, int titleBarDiff) {
-			base.OnBorderSizeChangedInner(widthDiff, titleBarDiff);
-			SetGdiSize(ViewSize, false);
-		}
-
-		/// <summary>
 		/// Disposes of the OpenGL context.
 		/// </summary>
 		/// <param name="callOnUnload">Whether to unload the OpenGL resources along with the context.</param>
@@ -1069,120 +1086,56 @@ namespace System.Windows.Forms {
 		/// and that the current graphics context of the border is the same as the one it was created).
 		/// </summary>
 		public virtual void DrawBorderGL() {
-			/*if (AnimatingBounds || !IsBorderVisible)
-				return;
-			Size clientSize = ClientSize;
-			if (clientSize.Width <= 0 || clientSize.Height <= 0)
-				return;
-			int borderWidth = (int) (this.borderWidth * DpiScale.Height);
-			if (clientSize.Width < borderWidth * 2)
-				clientSize.Width = borderWidth * 2;
-			bool usingAeroBlur = enableAeroBlur && SupportsAeroBlur;
-			g.CompositingMode = usingAeroBlur ? CompositingMode.SourceCopy : CompositingMode.SourceOver;
-			g.SmoothingMode = SmoothingMode.None;
-			g.PixelOffsetMode = PixelOffsetMode.None;
-			int titleBarHeight = (int) (this.titleBarHeight * DpiScale.Height);
-			using (Region region = new Region(rect)) {
-				region.Exclude(ViewPort);
-				lock (BorderSyncLock) {
-					using (TextureBrush brush = usingAeroBlur ? new TextureBrush(border, new Rectangle(Point.Empty, border.Size), ImageLib.GetOpacityAttributes(currentBorderOpacity, WrapMode.Tile)) : new TextureBrush(border)) {
-						if (!rect.Location.IsEmpty)
-							brush.TranslateTransform(-rect.X, -rect.Y);
-						g.FillRegion(brush, region);
-					}
-				}
-				g.CompositingMode = CompositingMode.SourceOver;
-				Rectangle iconBounds = IconBounds;
-				titleLabel.Bounds = new Rectangle(iconBounds.Right, 1, GetControlsLeft() - iconBounds.Right, titleBarHeight);
-				if (rect.IntersectsWith(titleLabel.Bounds))
-					titleLabel.DrawGdi(g);
-				Icon icon = Icon;
-				if (iconBounds.Width > 0 && icon != null && ShowIcon && rect.IntersectsWith(iconBounds))
-					g.DrawIcon(icon, iconBounds);
-				if (closeEnabled) {
-					Rectangle closeBounds = CloseBounds;
-					if (rect.IntersectsWith(closeBounds)) {
-						int size = (int) (closeBounds.Height * 0.45F);
-						Rectangle bounds = new Rectangle(closeBounds.X + (closeBounds.Width - size) / 2 + 1, closeBounds.Y + (closeBounds.Height - size) / 2 + 1, size, size);
-						closeButtonRenderer.Enabled = Enabled;
-						closeButtonRenderer.RenderBackground(g, closeBounds);
-						g.DrawLine(XColor, bounds.Location, new PointF(bounds.Right, bounds.Bottom));
-						g.DrawLine(XColor, bounds.X, bounds.Bottom, bounds.Right, bounds.Y);
-					}
-				}
-				if (maximizeEnabled) {
-					Rectangle maximizeBounds = MaximizeBounds;
-					if (rect.IntersectsWith(maximizeBounds)) {
-						int bounds = (int) (maximizeBounds.Height * 0.45F);
-						Point location = new Point(maximizeBounds.X + (maximizeBounds.Width - bounds) / 2, maximizeBounds.Y + (maximizeBounds.Height + 1 - bounds) / 2);
-						maximizeButtonRenderer.Enabled = Enabled;
-						maximizeButtonRenderer.RenderBackground(g, maximizeBounds);
-						g.SmoothingMode = SmoothingMode.None;
-						g.PixelOffsetMode = PixelOffsetMode.None;
-						if ((isMaximized && (animatingTopInner || IsFullyMaximized))) {
-							int difference = (int) (maximizeBounds.Height * 0.14F);
-							int size = bounds - difference;
-							int differentX = location.X + difference;
-							int differentY = location.Y + difference;
-							int boundingX = location.X + bounds;
-							int boundingY = location.Y + bounds;
-							int boundingYWODiff = boundingY - difference;
-							g.DrawRectangle(MaxSymbolColor, location.X, differentY, size, size);
-							g.DrawLine(MaxSymbolColor, differentX, location.Y, differentX, differentY);
-							g.DrawLine(MaxSymbolColor, differentX, location.Y, boundingX, location.Y);
-							g.DrawLine(MaxSymbolColor, boundingX, location.Y, boundingX, boundingYWODiff);
-							g.DrawLine(MaxSymbolColor, boundingX, boundingYWODiff, boundingX - difference, boundingYWODiff);
-						} else
-							g.DrawRectangle(MaxSymbolColor, location.X, location.Y, bounds, bounds);
-					}
-				}
-				if (MinimizeEnabled) {
-					Rectangle minimizeBounds = MinimizeBounds;
-					if (rect.IntersectsWith(minimizeBounds)) {
-						const int sizeY = 1;
-						int sizeX = minimizeBounds.Height / 2;
-						minimizeButtonRenderer.Enabled = Enabled;
-						minimizeButtonRenderer.RenderBackground(g, minimizeBounds);
-						g.SmoothingMode = SmoothingMode.None;
-						g.PixelOffsetMode = PixelOffsetMode.None;
-						g.FillRectangle(MinimizeFill, minimizeBounds.X + (minimizeBounds.Width - sizeX) / 2 + 1, minimizeBounds.Y + (int) ((minimizeBounds.Height + 1) * 0.7F) - sizeY, sizeX, sizeY);
-					}
-				}
-				if (currentBorderOverlay.A != 0) {
-					using (SolidBrush borderOverlay = new SolidBrush(currentBorderOverlay))
-						g.FillRectangle(borderOverlay, ControlBoxBounds);
-				}
-				g.SmoothingMode = SmoothingMode.None;
-				g.PixelOffsetMode = PixelOffsetMode.None;
-				if (outlineColor.Color.A != 0) {
-					g.DrawLine(outlineColor, 0, 0, clientSize.Width, 0);
-					g.DrawLine(outlineColor, 0, 0, 0, clientSize.Height);
-					g.DrawLine(outlineColor, clientSize.Width - 1, 0, clientSize.Width - 1, clientSize.Height);
-					g.DrawLine(outlineColor, 0, clientSize.Height - 1, clientSize.Width - 1, clientSize.Height - 1);
-				}
-				if (inlineColor.Color.A != 0) {
-					if ((isMaximized && (animatingTopInner || IsFullyMaximized)))
-						g.DrawLine(inlineColor, 0, titleBarHeight - 1, clientSize.Width - 1, titleBarHeight - 1);
-					else {
-						g.DrawLine(inlineColor, borderWidth - 1, titleBarHeight - 1, clientSize.Width - borderWidth, titleBarHeight - 1);
-						g.DrawLine(inlineColor, borderWidth - 1, clientSize.Height - borderWidth, clientSize.Width - borderWidth, clientSize.Height - borderWidth);
-						g.DrawLine(inlineColor, borderWidth - 1, titleBarHeight, borderWidth - 1, clientSize.Height - borderWidth);
-						g.DrawLine(inlineColor, clientSize.Width - borderWidth, titleBarHeight, clientSize.Width - borderWidth, clientSize.Height - borderWidth);
-					}
-				}
-			}*/
 		}
 
 		/// <summary>
-		/// Redraws the border.
+		/// Redraws the border
 		/// </summary>
-		/// <param name="sync">Whether to wait for the painting to be complete.</param>
-		/// <param name="rect">The invalidated bounds.</param>
+		/// <param name="sync">Whether to wait for the painting to be complete</param>
+		/// <param name="rect">The invalidated bounds</param>
 		protected override void RedrawBorder(bool sync, Rectangle rect) {
-			if (IsGLEnabled)
-				InvalidateGL(sync);
-			else
+			if (IsGLEnabled) {
+				if (RenderBorderOnGdiLayer) {
+					if (sync) {
+						bool invalidate = gdiCanvas == null;
+						if (!invalidate) {
+							lock (GdiSyncRoot) {
+								if (gdiCanvas == null)
+									invalidate = true;
+								else {
+									DrawBorderGdi(gdiCanvas, rect);
+									invalidatedRect = Rectangle.Union(rect, invalidatedRect);
+									InvalidateGL(false);
+								}
+							}
+						}
+						if (invalidate)
+							InvalidateGdi(GdiRenderMode.CurrentSync, rect);
+					} else
+						CurrentGdiDispatcher.BeginInvoke(new InvocationData(callDrawBorder, rect));
+				} else
+					InvalidateGL(sync);
+			} else
 				base.RedrawBorder(sync, rect);
+		}
+
+		private object CallDrawBorder(object param) {
+			Rectangle rect = (Rectangle) param;
+			bool invalidate = gdiCanvas == null;
+			if (!invalidate) {
+				lock (GdiSyncRoot) {
+					if (gdiCanvas == null)
+						invalidate = true;
+					else {
+						DrawBorderGdi(gdiCanvas, rect);
+						invalidatedRect = Rectangle.Union(rect, invalidatedRect);
+						InvalidateGL(false);
+					}
+				}
+			}
+			if (invalidate)
+				InvalidateGdi(GdiRenderMode.CurrentSync, rect);
+			return null;
 		}
 
 		/// <summary>
@@ -1194,26 +1147,27 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Causes the GDI layer to be redrawn.
+		/// Causes the GDI layer to be redrawn. The rectangle is in client coordinates.
 		/// </summary>
-		/// <param name="renderThread">The thread on which to render the GDI layer.</param>
-		/// <param name="rect">The sub-rectangle to invalidate relative to the gdi layer (the smaller the area to update, the better).</param>
+		/// <param name="renderThread">The thread on which to render the GDI layer</param>
+		/// <param name="rect">The sub-rectangle to invalidate relative to the GDI layer (the smaller the area to update, the better)</param>
 		public void InvalidateGdi(GdiRenderMode renderThread, Rectangle rect) {
-			InvalidateGdi(renderThread, rect, false);
+			InvalidateGdi(renderThread, rect, true);
 		}
 
 		private void InvalidateGdi(GdiRenderMode renderThread, Rectangle rect, bool forceInvalidate) {
 			if (IsDisposed || !gdiEnabled || (AnimatingBounds && !forceInvalidate))
 				return;
-			else if (!IsGLEnabled)
+			else if (!IsGLEnabled) {
+				Point offset = ViewPortLocation + (Size) CurrentGdiLocation;
+				rect.X -= offset.X;
+				rect.Y -= offset.Y;
 				Invalidate(rect, false);
-			else if (Volatile.Read(ref gdiQueueCount) < 2) {
+			} else if (Volatile.Read(ref gdiQueueCount) < 2) {
 				Interlocked.Increment(ref gdiQueueCount);
 				switch (renderThread) {
 					case GdiRenderMode.GdiAsync:
-						if (GdiDispatcher == null)
-							GdiDispatcher = new DispatcherSlim(nameof(GdiDispatcher), true, ExceptionMode.Log);
-						GdiDispatcher.BeginInvoke(new InvocationData(invalidateGdiInner, new Tuple<Rectangle, bool>(rect, true)));
+						CurrentGdiDispatcher.BeginInvoke(new InvocationData(invalidateGdiInner, new Tuple<Rectangle, bool>(rect, true)));
 						break;
 					case GdiRenderMode.MainAsync:
 						if (Thread.CurrentThread == ResidentThread)
@@ -1228,9 +1182,7 @@ namespace System.Windows.Forms {
 							Invoke(new InvocationData(invalidateGdiInner, rect));
 						break;
 					case GdiRenderMode.GdiSync:
-						if (GdiDispatcher == null)
-							GdiDispatcher = new DispatcherSlim(nameof(GdiDispatcher), true, ExceptionMode.Log);
-						GdiDispatcher.Invoke(new InvocationData(invalidateGdiInner, rect));
+						CurrentGdiDispatcher.Invoke(new InvocationData(invalidateGdiInner, rect));
 						break;
 					default:
 						InvalidateGdiInner(rect);
@@ -1296,12 +1248,27 @@ namespace System.Windows.Forms {
 					Interlocked.Decrement(ref gdiQueueCount);
 					return null;
 				}
+				Region oldClipRegion = gdiCanvas.Clip;
 				gdiCanvas.SetClip(rectToRedraw);
+				Point offset = ViewPortLocation + (Size) CurrentGdiLocation;
+				bool applyOffset = !offset.IsEmpty;
+				if (applyOffset) {
+					gdiCanvas.TranslateTransform(offset.X, offset.Y);
+					rectToRedraw.X -= offset.X;
+					rectToRedraw.Y -= offset.Y;
+				}
 				OnPaintGdi(gdiCanvas, rectToRedraw, true);
+				if (applyOffset) {
+					gdiCanvas.TranslateTransform(-offset.X, -offset.Y);
+					rectToRedraw.X += offset.X;
+					rectToRedraw.Y += offset.Y;
+				}
+				if (IsGLEnabled && RenderBorderOnGdiLayer && !AnimatingBounds)
+					DrawBorderGdi(gdiCanvas, rectToRedraw);
 				PaintEventHandler handler = GdiInvalidated;
 				if (handler != null)
 					handler(this, new PaintEventArgs(gdiCanvas, rectToRedraw));
-				gdiCanvas.ResetClip();
+				gdiCanvas.Clip = oldClipRegion;
 				invalidatedRect = Rectangle.Union(rectToRedraw, invalidatedRect);
 			}
 			reentrant.Value = false;
@@ -1357,13 +1324,15 @@ namespace System.Windows.Forms {
 
 		private void Ctrl_Invalidated(object sender, InvalidateEventArgs e) {
 			Control control = sender as Control;
-			if (control != null && !AnimatingBounds)
-				InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(control, e.InvalidRect));
+			if (control != null && !AnimatingBounds) {
+				Rectangle rect = e.InvalidRect;
+				rect.Offset(ViewPortLocation);
+				InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(control, rect));
+			}
 		}
 
-		private static Rectangle GetInvalidateRect(Control control, Rectangle clientRect) {
-			clientRect = new Rectangle(Extensions.PointToScreen(control, clientRect.Location), clientRect.Size);
-			return clientRect;
+		private Rectangle GetInvalidateRect(Control control, Rectangle clientRect) {
+			return new Rectangle(ViewPortLocation + (Size) Extensions.PointToScreen(control, clientRect.Location), clientRect.Size);
 		}
 
 		/// <summary>
@@ -1400,53 +1369,7 @@ namespace System.Windows.Forms {
 		protected virtual void OnPaintGdi(Drawing.Graphics g, Rectangle clippingRect, bool clearBeforeRedraw) {
 			if (clearBeforeRedraw)
 				g.Clear(Color.Transparent);
-			IDrawable drawable;
-			IntPtr hdc, hdc2;
-			Point point;
-			Size size;
-			Control control, child;
-			Stack<KeyValuePair<Control, Point>> controls = new Stack<KeyValuePair<Control, Point>>();
-			KeyValuePair<Control, Point> temp;
-			int i;
-			Message message;
-			foreach (Control ctrl in GdiControls) {
-				control = ctrl;
-				point = Extensions.PointToScreen(control, Point.Empty);
-				controls.Push(new KeyValuePair<Control, Point>(control, point));
-				do {
-					temp = controls.Pop();
-					control = temp.Key;
-					point = temp.Value;
-					drawable = control as IDrawable;
-					size = control.Size;
-					if ((control.Visible || control is Form) && new Rectangle(point, size).IntersectsWith(clippingRect)) {
-						if (drawable == null) {
-							size = new Size(Math.Min(size.Width, gdiBounds.Width), Math.Min(size.Height, gdiBounds.Height));
-							using (Bitmap bitmap = new Bitmap(size.Width, size.Height, Drawing.Imaging.PixelFormat.Format32bppPArgb)) {
-								using (Drawing.Graphics graphics = Drawing.Graphics.FromImage(bitmap)) {
-									hdc = graphics.GetHdc();
-									message = new Message() {
-										Msg = (int) Platforms.Windows.WindowMessage.PRINT,
-										WParam = hdc,
-										LParam = new IntPtr(30),
-										HWnd = control.Handle
-									};
-									control.CallWndProc(ref message);
-									hdc2 = g.GetHdc();
-									Platforms.Windows.NativeApi.BitBlt(hdc2, point.X, point.Y, size.Width, size.Height, hdc, 0, 0, (Platforms.Windows.TernaryRasterOperations) 13369376);
-									g.ReleaseHdcInternal(hdc2);
-									graphics.ReleaseHdcInternal(hdc);
-								}
-							}
-						} else
-							drawable.DrawGdi(g, point);
-						for (i = 0; i < control.Controls.Count; i++) {
-							child = control.Controls[i];
-							controls.Push(new KeyValuePair<Control, Point>(child, point + (Size) child.Location));
-						}
-					}
-				} while (controls.Count != 0);
-			}
+			g.DrawControls(GdiControls, Point.Empty, true);
 		}
 
 		/// <summary>
@@ -1476,6 +1399,14 @@ namespace System.Windows.Forms {
 					InvalidateGdi(GdiRenderMode.GdiAsync);
 			} else if (!AnimatingBounds)
 				Invalidate(false);
+		}
+
+		/// <summary>
+		/// Called when the window is resized
+		/// </summary>
+		protected override void OnResize(EventArgs e) {
+			base.OnResize(e);
+			SetGdiSize(Size, false);
 		}
 
 		/// <summary>
@@ -1515,18 +1446,18 @@ namespace System.Windows.Forms {
 		protected override void OnPaint(Drawing.Graphics g, Rectangle clippingRect) {
 			base.OnPaint(g, clippingRect);
 			if (gdiEnabled) {
-				Point offset = new Point();
-				offset = CurrentGdiLocation;
-				if (!offset.IsEmpty)
+				Point offset = CurrentGdiLocation;
+				if (!offset.IsEmpty) {
 					g.TranslateTransform(offset.X, offset.Y);
-				g.SetClip(clippingRect);
+					clippingRect.X -= offset.X;
+					clippingRect.Y -= offset.Y;
+				}
 				if (GdiRotation.X != 0f)
 					g.RotateTransform(GdiRotation.X);
 				lock (GdiSyncRoot)
 					OnPaintGdi(g, clippingRect, false);
 				if (GdiRotation.X != 0f)
 					g.RotateTransform(-GdiRotation.X);
-				g.ResetClip();
 				if (!offset.IsEmpty)
 					g.TranslateTransform(-offset.X, -offset.Y);
 			}

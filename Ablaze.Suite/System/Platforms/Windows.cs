@@ -302,6 +302,15 @@ namespace System.Platforms.Windows {
 		ULW_OPAQUE = 0x04
 	}
 
+	public enum PrintFunctionParameters : int {
+		CHECKVISIBLE = 1,
+		NONCLIENT = 2,
+		CLIENT = 4,
+		ERASEBKGND = 8,
+		CHILDREN = 16,
+		OWNED = 32
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
 	public struct UPDATELAYEREDWINDOWINFO {
 		public static readonly int Size = Marshal.SizeOf(typeof(UPDATELAYEREDWINDOWINFO));

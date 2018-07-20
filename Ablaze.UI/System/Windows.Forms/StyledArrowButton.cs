@@ -339,28 +339,56 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, ClientRectangle, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
 		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, ClientRectangle);
+			DrawToBitmap(image, ClientRectangle, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="bitmap">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public new void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
-			DrawToBitmap(bitmap as Image, targetBounds);
+			DrawToBitmap(bitmap as Image, targetBounds, true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the control onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -370,18 +398,18 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}
 
 		/// <summary>
-		/// Does nothing.
+		/// Does nothing
 		/// </summary>
 		protected override void InitLayout() {
 		}
 		/// <summary>
-		/// Does nothing.
+		/// Does nothing
 		/// </summary>
 		protected override void OnLayout(LayoutEventArgs e) {
 		}
@@ -501,14 +529,16 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Draws the arrow button on the specified Graphics object.
+		/// Draws the arrow button on the specified Graphics object
 		/// </summary>
-		/// <param name="g">The graphics object.</param>
-		/// <param name="location">The coordinates to draw at.</param>
-		public virtual void DrawGdi(Graphics g, Point location) {
+		/// <param name="g">The graphics object</param>
+		/// <param name="location">The coordinates to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public virtual void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
 			if (!location.IsEmpty)
 				g.TranslateTransform(location.X, location.Y);
 			Rectangle rect = ClientRectangle;
+			Region oldClipRegion = g.Clip;
 			g.Clip = Region;
 			if (BackColor.A != 0)
 				g.FillRectangle(brush, rect);
@@ -526,25 +556,28 @@ namespace System.Windows.Forms {
 			if (Text.Length != 0)
 				Label.DrawGdi(g);
 			RaisePaintEvent(StyleRenderer.PaintEventKey, new PaintEventArgs(g, rect));
+			if (drawChildren)
+				g.DrawControls(Controls, Point.Empty, true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
-			g.ResetClip();
+			g.Clip = oldClipRegion;
 		}
 
 		/// <summary>
 		/// Not implemented yet.
-		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
+		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates)
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
 			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
 		}
 
 		/// <summary>
-		/// Draws the arrow button.
+		/// Draws the arrow button
 		/// </summary>
 		protected override void OnPaint(PaintEventArgs pevent) {
-			DrawGdi(pevent.Graphics, Point.Empty);
+			DrawGdi(pevent.Graphics, Point.Empty, false);
 		}
 
 		/// <summary>

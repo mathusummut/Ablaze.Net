@@ -604,19 +604,56 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		public void DrawToBitmap(Image image) {
-			DrawToBitmap(image as Image, new Rectangle(Point.Empty, Size));
+		/// <param name="bitmap">The image to draw onto</param>
+		public void DrawToBitmap(Bitmap bitmap) {
+			DrawToBitmap(bitmap as Image, new Rectangle(Point.Empty, Size), true);
 		}
 
 		/// <summary>
-		/// Renders the control onto the specified image.
+		/// Renders the control with its children onto the specified image
 		/// </summary>
-		/// <param name="image">The image to draw onto.</param>
-		/// <param name="targetBounds">The bounds within which the form is rendered.</param>
+		/// <param name="image">The image to draw onto</param>
+		public void DrawToBitmap(Image image) {
+			DrawToBitmap(image, new Rectangle(Point.Empty, Size), true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds) {
+			DrawToBitmap(bitmap as Image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
 		public void DrawToBitmap(Image image, Rectangle targetBounds) {
+			DrawToBitmap(image, targetBounds, true);
+		}
+
+		/// <summary>
+		/// Renders the control with its children onto the specified image
+		/// </summary>
+		/// <param name="bitmap">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Bitmap bitmap, Rectangle targetBounds, bool drawChildren) {
+			DrawToBitmap(bitmap as Image, targetBounds, drawChildren);
+		}
+
+		/// <summary>
+		/// Renders the control onto the specified image
+		/// </summary>
+		/// <param name="image">The image to draw onto</param>
+		/// <param name="targetBounds">The bounds within which the form is rendered</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public void DrawToBitmap(Image image, Rectangle targetBounds, bool drawChildren) {
 			if (image == null)
 				return;
 			Size size = Size;
@@ -626,7 +663,7 @@ namespace System.Windows.Forms {
 				targetBounds.Height = size.Height;
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.SetClip(targetBounds);
-				DrawGdi(g, targetBounds.Location);
+				DrawGdi(g, targetBounds.Location, drawChildren);
 				g.DrawImageUnscaledAndClipped(image, targetBounds);
 			}
 		}
@@ -662,8 +699,9 @@ namespace System.Windows.Forms {
 		/// Not implemented yet.
 		/// Draws the control with its children in the current OpenGL context (assumes the GL matrix is set to orthographic and maps to pixel coordinates).
 		/// </summary>
-		/// <param name="location">The location to draw at.</param>
-		public virtual void DrawGL(Point location) {
+		/// <param name="location">The location to draw at</param>
+		/// <param name="drawChildren">Whether to draw the child controls</param>
+		public virtual void DrawGL(Point location, bool drawChildren) {
 			throw new NotImplementedException(nameof(DrawGL) + " is not implemented.");
 		}
 
@@ -743,16 +781,17 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The canvas to use.</param>
 		public void DrawGdi(Graphics g) {
-			DrawGdi(g, Bounds, false);
+			DrawGdi(g, Bounds, true, false);
 		}
 
 		/// <summary>
-		/// Draws the item on the specified canvas.
+		/// Draws the item on the specified canvas
 		/// </summary>
-		/// <param name="g">The canvas to use.</param>
-		/// <param name="location">The location to draw the item at.</param>
-		public void DrawGdi(Graphics g, Point location) {
-			DrawGdi(g, new Rectangle(location, Size), false);
+		/// <param name="g">The canvas to use</param>
+		/// <param name="location">The location to draw the item at</param>
+		/// <param name="drawChildren">Does not do anything</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
+			DrawGdi(g, new Rectangle(location, Size), false, false);
 		}
 
 		/// <summary>
@@ -761,17 +800,7 @@ namespace System.Windows.Forms {
 		/// <param name="g">The canvas to use.</param>
 		/// <param name="alignGradientWorkaround">Whether to align the gradient with the menu strip gradient if they are misaligned on a StyledMenuStrip.</param>
 		public void DrawGdi(Graphics g, bool alignGradientWorkaround) {
-			DrawGdi(g, Bounds, alignGradientWorkaround);
-		}
-
-		/// <summary>
-		/// Draws the item on the specified canvas.
-		/// </summary>
-		/// <param name="g">The canvas to use.</param>
-		/// <param name="location">The location to draw the item at.</param>
-		/// <param name="alignGradientWorkaround">Whether to align the gradient with the menu strip gradient if they are misaligned on a StyledMenuStrip.</param>
-		public void DrawGdi(Graphics g, Point location, bool alignGradientWorkaround) {
-			DrawGdi(g, new Rectangle(location, Size), alignGradientWorkaround);
+			DrawGdi(g, Bounds, false, alignGradientWorkaround);
 		}
 
 		/// <summary>
@@ -781,7 +810,18 @@ namespace System.Windows.Forms {
 		/// <param name="size">The size to draw the item at.</param>
 		/// <param name="alignGradientWorkaround">Whether to align the gradient with the menu strip gradient if they are misaligned on a StyledMenuStrip.</param>
 		public void DrawGdi(Graphics g, Size size, bool alignGradientWorkaround = false) {
-			DrawGdi(g, new Rectangle(Point.Empty, size), alignGradientWorkaround);
+			DrawGdi(g, new Rectangle(Point.Empty, size), true, alignGradientWorkaround);
+		}
+
+		/// <summary>
+		/// Draws the item on the specified canvas
+		/// </summary>
+		/// <param name="g">The canvas to use</param>
+		/// <param name="location">The location to draw the item at</param>
+		/// <param name="drawChildren">Does not do anything</param>
+		/// <param name="alignGradientWorkaround">Whether to align the gradient with the menu strip gradient if they are misaligned on a StyledMenuStrip.</param>
+		public void DrawGdi(Graphics g, Point location, bool drawChildren, bool alignGradientWorkaround = false) {
+			DrawGdi(g, new Rectangle(location, Size), true, alignGradientWorkaround);
 		}
 
 		/// <summary>
@@ -789,8 +829,9 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The canvas to use.</param>
 		/// <param name="bounds">The bounds to draw the item within.</param>
+		/// <param name="drawChildren">Does not do anything</param>
 		/// <param name="alignGradientWorkaround">Whether to align the gradient with the menu strip gradient if they are misaligned on a StyledMenuStrip.</param>
-		public virtual void DrawGdi(Graphics g, Rectangle bounds, bool alignGradientWorkaround = false) {
+		public virtual void DrawGdi(Graphics g, Rectangle bounds, bool drawChildren, bool alignGradientWorkaround) {
 			CheckBox.Bounds = bounds;
 			Renderer.RenderBackground(g, bounds, false, alignGradientWorkaround, BackgroundImage, BackgroundImageLayout);
 			CheckBox.DrawGdi(g);

@@ -143,3 +143,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0033:Dispose Fields Properly", Justification = "<Pending>", Scope = "member", Target = "~F:System.Windows.Forms.StyledItem.checkBox")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0033:Dispose Fields Properly", Justification = "<Pending>", Scope = "member", Target = "~F:System.Windows.Forms.StyledSlider.label")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0033:Dispose Fields Properly", Justification = "<Pending>", Scope = "member", Target = "~F:System.Windows.Forms.StyledComboBox.label")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0022:Should dispose object", Justification = "<Pending>", Scope = "member", Target = "~M:System.Windows.Forms.StyledArrowButton.DrawGdi(System.Drawing.Graphics,System.Drawing.Point,System.Boolean)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CC0057:Unused parameters", Justification = "<Pending>", Scope = "member", Target = "~M:System.Windows.Forms.StyledItem.DrawGdi(System.Drawing.Graphics,System.Drawing.Point,System.Boolean,System.Boolean)")]
