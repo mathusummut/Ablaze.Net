@@ -10,3 +10,4 @@ Thumbs.db
 *.vshost.exe
 bin/
 obj/
+.vs/
