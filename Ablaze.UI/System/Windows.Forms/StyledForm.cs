@@ -3943,7 +3943,7 @@ namespace System.Windows.Forms {
 					Bitmap currentBorder = border;
 					if (currentBorder == null)
 						return;
-					using (TextureBrush brush = usingAeroBlur ? new TextureBrush(currentBorder, new Rectangle(Point.Empty, currentBorder.Size), ImageLib.GetOpacityAttributes(currentBorderOpacity, WrapMode.Tile)) : new TextureBrush(border)) {
+					using (TextureBrush brush = (usingAeroBlur || IsGLEnabled) ? new TextureBrush(currentBorder, new Rectangle(Point.Empty, currentBorder.Size), ImageLib.GetOpacityAttributes(currentBorderOpacity, WrapMode.Tile)) : new TextureBrush(border)) {
 						if (!rect.Location.IsEmpty)
 							brush.TranslateTransform(-rect.X, -rect.Y);
 						g.FillRegion(brush, region);

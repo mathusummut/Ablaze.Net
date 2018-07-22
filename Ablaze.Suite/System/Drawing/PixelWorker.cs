@@ -4394,9 +4394,9 @@ namespace System.Drawing {
 		/// <param name="flipX">Whether to flip horizontally.</param>
 		/// <param name="flipY">Whether to flip vertically.</param>
 		public void Flip(bool flipX, bool flipY) {
+			int halfWidth = width / 2, halfHeight = height / 2;
 			if (flipX && flipY) {
-				int halfWidth = width / 2;
-				//bool isOdd = (width & 1) == 1;
+				bool isOdd = (width & 1) == 1;
 				if (Buffer == null) {
 					ParallelLoop.For(0, height, y => {
 						int rowPos = y * width;
@@ -4416,9 +4416,18 @@ namespace System.Drawing {
 									*ptr2 = current;
 								}
 							}
-							/*if (isOdd) {
-								loc1 = scan0 + ((height - y - 1) * width + halfWidth) * cc;
-								loc2 = scan0 + (rowPos + halfWidth) * cc;
+						}
+					}, ImageLib.ParallelCutoff);
+					if (isOdd) {
+						ParallelLoop.For(0, halfHeight, y => {
+							int c;
+							int cc = componentCount;
+							byte current;
+							unsafe
+							{
+								byte* loc1, loc2, ptr1, ptr2;
+								loc1 = scan0 + ((height - (y + 1)) * width + halfWidth) * cc;
+								loc2 = scan0 + (y * width + halfWidth) * cc;
 								for (c = 0; c < cc; c++) {
 									ptr1 = loc1 + c;
 									current = *ptr1;
@@ -4426,9 +4435,9 @@ namespace System.Drawing {
 									*ptr1 = *ptr2;
 									*ptr2 = current;
 								}
-							}*/
-						}
-					}, ImageLib.ParallelCutoff);
+							}
+						}, ImageLib.ParallelCutoff);
+					}
 				} else {
 					ParallelLoop.For(0, height, y => {
 						int c, loc1, loc2, index1, index2;
@@ -4446,9 +4455,14 @@ namespace System.Drawing {
 								Buffer[index2] = current;
 							}
 						}
-						/*if (isOdd) {
-							loc1 = ((height - y - 1) * width + halfWidth) * cc;
-							loc2 = (rowPos + halfWidth) * cc;
+					}, ImageLib.ParallelCutoff);
+					if (isOdd) {
+						ParallelLoop.For(0, halfHeight, y => {
+							byte current;
+							int c, loc1, loc2, index1, index2;
+							int cc = componentCount;
+							loc1 = ((height - (y + 1)) * width + halfWidth) * cc;
+							loc2 = (y * width + halfWidth) * cc;
 							for (c = 0; c < cc; c++) {
 								index1 = loc1 + c;
 								current = Buffer[index1];
@@ -4456,11 +4470,10 @@ namespace System.Drawing {
 								Buffer[index1] = Buffer[index2];
 								Buffer[index2] = current;
 							}
-						}*/
-					}, ImageLib.ParallelCutoff);
+						}, ImageLib.ParallelCutoff);
+					}
 				}
 			} else if (flipX) {
-				int halfWidth = width / 2;
 				if (Buffer == null) {
 					ParallelLoop.For(0, height, y => {
 						int c;
@@ -4503,7 +4516,6 @@ namespace System.Drawing {
 					}, ImageLib.ParallelCutoff);
 				}
 			} else if (flipY) {
-				int halfHeight = height / 2;
 				if (Buffer == null) {
 					ParallelLoop.For(0, width, x => {
 						int c;

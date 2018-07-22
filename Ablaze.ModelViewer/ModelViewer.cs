@@ -42,15 +42,6 @@ namespace Ablaze.ModelViewer {
 		/// Initializes a ModelViewer instance.
 		/// </summary>
 		public ModelViewer() {
-			/*PixelWorker worker = PixelWorker.FromImage(new Bitmap(@"C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Tools\ImageClarifier\Demos\Super Mario - Copy (3).png"), true, false);
-			for (int i = 1; i <= 7; i++) {
-				Bitmap origBitmap = new Bitmap(@"C:\Users\mathu\Desktop\Personal Programs\C# Programs\Ablaze.Net\Tools\ImageClarifier\Demos\Super Mario - Copy (3).png");
-				origBitmap.RotateFlip((RotateFlipType) i);
-				PixelWorker copy = new PixelWorker(worker);
-				copy.RotateFlip((RotateFlipType) i);
-				copy.WriteChanges();
-				ImageMessageBox.Show(origBitmap, copy.ToBitmap(), "", i.ToString(), ImageLayout.Zoom, InterpolationMode.NearestNeighbor);
-			}*/
 			UIAnimator.SharedAnimator.UpdateOnThreadPool = false;
 			InitializeComponent();
 			try {
@@ -579,7 +570,7 @@ namespace Ablaze.ModelViewer {
 			//Fade light with distance
 			InvalidateGL(false);
 			if (!loading || IsClosing || IsDisposed) {
-				statusLabel.Text = string.Format("Distance from origin: {0}\v\nAngle: {{{1}, {2}, {3}}}\v\nBounds: {{{4}, {5}, {6}}}\v\nVertices: {7}\v\nTriangles: {8}",
+				string text = string.Format("Distance from origin: {0}\v\nAngle: {{{1}, {2}, {3}}}\v\nBounds: {{{4}, {5}, {6}}}\v\nVertices: {7}\v\nTriangles: {8}",
 					Math.Round(currentDistance, 3),
 					Math.Round(currentAngleX, 3),
 					Math.Round(currentAngleY, 3),
@@ -589,6 +580,8 @@ namespace Ablaze.ModelViewer {
 					Math.Round(bounds.Z, 3),
 					count,
 					triangleCount);
+				if (statusLabel.Text != text)
+					statusLabel.Text = text;
 			}
 		}
 
