@@ -1096,6 +1096,14 @@ namespace System.Platforms.Windows {
 		public static extern IntPtr GetForegroundWindow();
 
 		[SuppressUnmanagedCodeSecurity]
+		[DllImport("gdi32.dll")]
+		public static extern bool SetWindowOrgEx(IntPtr hdc, int x, int y, IntPtr lppt);
+
+		[SuppressUnmanagedCodeSecurity]
+		[DllImport("gdi32.dll")]
+		public static extern bool SetViewportOrgEx(IntPtr hdc, int x, int y, IntPtr lppt);
+
+		[SuppressUnmanagedCodeSecurity]
 		[DllImport("user32.dll")]
 		[Security.SuppressUnmanagedCodeSecurity]
 		[return: MarshalAs(UnmanagedType.Bool)]

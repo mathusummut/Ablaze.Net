@@ -3931,9 +3931,6 @@ namespace System.Windows.Forms {
 			if (clientSize.Width < borderWidth * 2)
 				clientSize.Width = borderWidth * 2;
 			bool usingAeroBlur = enableAeroBlur && Extensions.IsAeroEnabled;
-			g.CompositingMode = CompositingMode.SourceCopy;
-			g.SmoothingMode = SmoothingMode.None;
-			g.PixelOffsetMode = PixelOffsetMode.None;
 			int titleBarHeight = (int) (this.titleBarHeight * DpiScale.Height);
 			using (Region region = new Region(rect)) {
 				region.Exclude(viewport);
@@ -3943,6 +3940,9 @@ namespace System.Windows.Forms {
 					Bitmap currentBorder = border;
 					if (currentBorder == null)
 						return;
+					g.CompositingMode = CompositingMode.SourceCopy;
+					g.SmoothingMode = SmoothingMode.None;
+					g.PixelOffsetMode = PixelOffsetMode.None;
 					using (TextureBrush brush = (usingAeroBlur || IsGLEnabled) ? new TextureBrush(currentBorder, new Rectangle(Point.Empty, currentBorder.Size), ImageLib.GetOpacityAttributes(currentBorderOpacity, WrapMode.Tile)) : new TextureBrush(border)) {
 						if (!rect.Location.IsEmpty)
 							brush.TranslateTransform(-rect.X, -rect.Y);

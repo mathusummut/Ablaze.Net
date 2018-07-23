@@ -48,7 +48,7 @@ namespace Ablaze.ModelViewer {
 				Icon = System.Properties.Resources.Ablaze;
 			} catch {
 			}
-            childDialog = new HeightMapDialog();
+			childDialog = new HeightMapDialog();
 			childDialog.ComponentLoaded += ChildDialog_ComponentLoaded;
 			EnableFullscreenOnAltEnter = true;
 			ReduceGdiCpuUsage = true;

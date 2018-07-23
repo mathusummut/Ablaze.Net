@@ -976,6 +976,7 @@ namespace System.Windows.Forms {
 		private static GraphicsPath DrawString(Graphics g, string text, Font font, Brush textBrush, Pen outline, RectangleF area, StringFormat format, float lineSpacingMultiplier, GraphicsPath path, bool cache) {
 			if (textBrush == null && outline == null)
 				return null;
+			g.CompositingMode = CompositingMode.SourceOver;
 			if (outline == null && !cache)
 				path = null;
 			if (path == null) {
