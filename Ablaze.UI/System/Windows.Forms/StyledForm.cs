@@ -2516,20 +2516,6 @@ namespace System.Windows.Forms {
 				base.OnLayout(levent);
 		}
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="msg"></param>
-		/// <returns></returns>
-		public override bool PreProcessMessage(ref Message msg) {
-			if ((msg.Msg == (int) WindowMessage.SYSKEYDOWN || msg.Msg == (int) WindowMessage.SYSKEYUP) && (Keys) msg.WParam == Keys.Menu) {
-				if (((long) msg.LParam & 0x40000000) != 0)
-					return true;
-				Console.WriteLine(msg.ToString());
-			}
-			return base.PreProcessMessage(ref msg);
-		}*/
-
 		/// <summary>
 		/// Use the MouseDown event instead.
 		/// </summary>
@@ -2539,8 +2525,12 @@ namespace System.Windows.Forms {
 				return;
 			}
 			Point relativeLoc = PointFromClientToViewPort(e.Location);
+			Control gdiCtrl = CaptureControl;
 			Point clientLoc = relativeLoc;
-			Control gdiCtrl = GetGdiChildAtPoint(relativeLoc, EligibleForMouse, ref clientLoc);
+			if (gdiCtrl == null)
+				gdiCtrl = GetGdiChildAtPoint(relativeLoc, EligibleForMouse, ref clientLoc);
+			else
+				clientLoc = PointFromViewPortToGdiLayer(clientLoc - (Size) Extensions.PointToScreen(gdiCtrl, Point.Empty));
 			wasSystemMenuShown = false;
 			if (gdiCtrl == null || gdiCtrl == this) {
 				CaptureControl = this;
@@ -2605,6 +2595,8 @@ namespace System.Windows.Forms {
 			Point clientLoc = relativeLoc;
 			if (gdiCtrl == null)
 				gdiCtrl = GetGdiChildAtPoint(relativeLoc, EligibleForMouse, ref clientLoc);
+			else
+				clientLoc = PointFromViewPortToGdiLayer(clientLoc - (Size) Extensions.PointToScreen(gdiCtrl, Point.Empty));
 			Message message;
 			if (gdiCtrl == null || gdiCtrl == this) {
 				if (!(MouseInsideControl == null || MouseInsideControl == this)) {
@@ -2681,6 +2673,8 @@ namespace System.Windows.Forms {
 			Control gdiCtrl = CaptureControl;
 			if (gdiCtrl == null)
 				gdiCtrl = GetGdiChildAtPoint(relativeLoc, EligibleForMouse, ref clientLoc);
+			else
+				clientLoc = PointFromViewPortToGdiLayer(clientLoc - (Size) Extensions.PointToScreen(gdiCtrl, Point.Empty));
 			lastDoubleClickControl = gdiCtrl;
 			if (gdiCtrl == null || gdiCtrl == this)
 				base.OnMouseUp(new MouseEventArgs(e.Button, e.Clicks, relativeLoc.X, relativeLoc.Y, e.Delta));
@@ -2710,8 +2704,9 @@ namespace System.Windows.Forms {
 						break;
 				}
 				if (msg != WindowMessage.NULL) {
+					MouseEventArgs args = new MouseEventArgs(e.Button, e.Clicks, clientLoc.X, clientLoc.Y, e.Delta);
 					if (msg == WindowMessage.RBUTTONUP) {
-						MouseUpInvoke(gdiCtrl, new MouseEventArgs(e.Button, e.Clicks, clientLoc.X, clientLoc.Y, e.Delta));
+						MouseUpInvoke(gdiCtrl, args);
 						gdiCtrl.SetState(67108864, false);
 						gdiCtrl.SetState(134217728, false);
 						gdiCtrl.SetState(268435456, false);
@@ -2723,6 +2718,8 @@ namespace System.Windows.Forms {
 							LParam = new IntPtr((clientLoc.Y << 16) | (clientLoc.X & 0xFFFF)),
 						};
 						gdiCtrl.CallWndProc(ref message);
+						if (msg == WindowMessage.LBUTTONUP && clientLoc.X >= 0 && clientLoc.Y >= 0 && clientLoc.X < gdiCtrl.Width && clientLoc.Y < gdiCtrl.Height)
+							InvokeOnClick(gdiCtrl, args);
 					}
 				}
 			}
@@ -2742,6 +2739,8 @@ namespace System.Windows.Forms {
 			Point clientLoc = relativeLoc;
 			if (gdiCtrl == null)
 				gdiCtrl = GetGdiChildAtPoint(relativeLoc, EligibleForMouse, ref clientLoc);
+			else
+				clientLoc = PointFromViewPortToGdiLayer(clientLoc - (Size) Extensions.PointToScreen(gdiCtrl, Point.Empty));
 			if (gdiCtrl == null || gdiCtrl == this) {
 				if (lastDoubleClickControl == null || lastDoubleClickControl == this)
 					base.OnMouseDoubleClick(new MouseEventArgs(e.Button, e.Clicks, relativeLoc.X, relativeLoc.Y, e.Delta));
@@ -2804,6 +2803,8 @@ namespace System.Windows.Forms {
 			Point clientLoc = relativeLoc;
 			if (gdiCtrl == null)
 				gdiCtrl = GetGdiChildAtPoint(relativeLoc, EligibleForMouse, ref clientLoc);
+			else
+				clientLoc = PointFromViewPortToGdiLayer(clientLoc - (Size) Extensions.PointToScreen(gdiCtrl, Point.Empty));
 			if (gdiCtrl == null || gdiCtrl == this)
 				base.OnMouseWheel(new MouseEventArgs(e.Button, e.Clicks, relativeLoc.X, relativeLoc.Y, e.Delta));
 			else
@@ -2906,6 +2907,14 @@ namespace System.Windows.Forms {
 						return ctrl;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Converts a point from view port space to a point with coordinates relative to the GDI canvas.
+		/// </summary>
+		/// <param name="viewPortPoint">The point relative to the view port.</param>
+		protected virtual Point PointFromViewPortToGdiLayer(Point viewPortPoint) {
+			return viewPortPoint;
 		}
 
 		/// <summary>

@@ -807,6 +807,14 @@ namespace System.Windows.Forms {
 				return false;
 		}
 
+		/// <summary>
+		/// Converts a point from view port space to a point with coordinates relative to the GDI canvas.
+		/// </summary>
+		/// <param name="viewPortPoint">The point relative to the view port.</param>
+		protected override Point PointFromViewPortToGdiLayer(Point viewPortPoint) {
+			return new Point(viewPortPoint.X - CurrentGdiLocation.X, viewPortPoint.Y - CurrentGdiLocation.Y);
+		}
+
 		private static IntPtr InvokeWndProc(Control ctrl, Message msg) {
 			return ctrl.CallWndProc(ref msg);
 		}

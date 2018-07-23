@@ -18,7 +18,7 @@ namespace MsgToString {
 				if (uint.TryParse(output, out val))
 					Console.WriteLine("Not found.");
 				else
-					Console.WriteLine(output + " = " + value.ToString());
+					Console.WriteLine(output + " = " + value);
 				Console.WriteLine();
 			} while (true);
 		}
@@ -316,7 +316,7 @@ namespace MsgToString {
 			REFLECT = USER + 0x1c00,
 			CLOSE_INTERNAL = USER + 0x1c01,
 
-			// NotifyIcon (Systray) Balloon messages 
+			// NotifyIcon (Systray) Balloon messages
 			BALLOONSHOW = USER + 0x0002,
 			BALLOONHIDE = USER + 0x0003,
 			BALLOONTIMEOUT = USER + 0x0004,

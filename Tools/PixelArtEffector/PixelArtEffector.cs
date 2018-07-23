@@ -666,7 +666,7 @@ namespace PixelArtEffector {
 		}
 
 		private void undoMenuItem_Click(object sender, EventArgs e) {
-			if (background == null)
+			if (background == null || background2 == null)
 				return;
 			background = background2;
 			background2 = background3;
