@@ -68,7 +68,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="bin\Debug\Ablaze.Physics.exe.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="obj\Debug\Ablaze.Physics.csprojResolveAssemblyReference.cache" />
     <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
   </ItemGroup>
