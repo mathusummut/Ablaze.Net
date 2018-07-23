@@ -685,25 +685,6 @@ namespace System {
 				if ((control.Visible || control is Form) && ctrlRect.IntersectsWith(clippingRect)) {
 					IDrawable drawable = control as IDrawable;
 					if (drawable == null) {
-						/*using (Bitmap bitmap = new Bitmap(control.Width, control.Height, Drawing.Imaging.PixelFormat.Format32bppPArgb)) {
-							using (Graphics graphics = Graphics.FromImage(bitmap)) {
-								IntPtr hdc = graphics.GetHdc();
-								Platforms.Windows.PrintFunctionParameters parameters = Platforms.Windows.PrintFunctionParameters.NONCLIENT | Platforms.Windows.PrintFunctionParameters.CLIENT; //| Platforms.Windows.PrintFunctionParameters.ERASEBKGND;
-								if (drawChildren)
-									parameters |= Platforms.Windows.PrintFunctionParameters.CHILDREN;
-								Message message = new Message() {
-									Msg = (int) Platforms.Windows.WindowMessage.PRINT,
-									WParam = hdc,
-									LParam = new IntPtr((int) parameters),
-									HWnd = control.Handle
-								};
-								control.CallWndProc(ref message);
-								IntPtr hdc2 = g.GetHdc();
-								Platforms.Windows.NativeApi.BitBlt(hdc2, ctrlRect.X, ctrlRect.Y, ctrlRect.Width, ctrlRect.Height, hdc, 0, 0, Platforms.Windows.TernaryRasterOperations.SRCCOPY);
-								g.ReleaseHdcInternal(hdc2);
-								graphics.ReleaseHdcInternal(hdc);
-							}
-						}*/
 						float[] matrix = g.Transform.Elements;
 						IntPtr hdc = g.GetHdc();
 						Platforms.Windows.NativeApi.SetViewportOrgEx(hdc, ctrlRect.X + (int) Math.Round(matrix[4]), ctrlRect.Y + (int) Math.Round(matrix[5]), IntPtr.Zero);
