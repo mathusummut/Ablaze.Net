@@ -11,6 +11,7 @@ namespace ConsoleUnitTest {
 		[STAThread]
 		public static void Main() {
 			System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+			form.Controls.Add(new Button());
 			System.Windows.Forms.MessageLoop.ShowDialog(form, false);
 			System.Windows.Forms.MessageLoop.ShowDialog(form);
 			AsyncTimer timer = new AsyncTimer(6);

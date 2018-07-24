@@ -20,13 +20,14 @@ namespace System.Windows.Forms {
 		private static Func<object> GetCurrentThreadContext;
 		private static EventHandler visibleChanged = Form_VisibleChanged;
 		private static ThreadLocal<bool> messageLoop = new ThreadLocal<bool>();
+		private static ThreadLocal<bool> closed = new ThreadLocal<bool>();
 		private static volatile bool exitApplication;
 		private static int messageLoopCount;
 		private static ThreadLocal<KeyValuePair<Form, bool>> ForeForms = new ThreadLocal<KeyValuePair<Form, bool>>();
 		private static PreTranslateFilterHandler Filter;
 
 		/// <summary>
-		/// Gets the total number of message loops currently running in the application.
+		/// Gets the total number of message loops currently running in the application
 		/// </summary>
 		public static int MessageLoopCount {
 			get {
@@ -35,7 +36,7 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets whether a message loop was started on this thread.
+		/// Gets whether a message loop was started on this thread
 		/// </summary>
 		public static bool MessageLoopStarted {
 			get {
@@ -44,6 +45,7 @@ namespace System.Windows.Forms {
 		}
 
 		static MessageLoop() {
+			Control.CheckForIllegalCrossThreadCalls = false;
 			NativeApi.RegisterWindowMessage("commdlg_help");
 			Type invoker = typeof(FilterInvoker<,>).MakeGenericType(new Type[] {
 				typeof(Application).GetNestedType("ThreadContext", BindingFlags.NonPublic),
@@ -79,8 +81,10 @@ namespace System.Windows.Forms {
 			} catch (Exception ex) {
 				Application.OnThreadException(ex);
 			}
-			if (toQuit)
+			if (toQuit || closed.Value) {
+				closed.Value = false;
 				message.Message = WindowMessage.QUIT;
+			}
 		}
 
 		private static void RemoveForm(KeyValuePair<Form, bool> form) {
@@ -173,6 +177,7 @@ namespace System.Windows.Forms {
 						if (del != null)
 							del.DynamicInvoke(null, EventArgs.Empty);
 					}
+					form.FormClosed += Form_FormClosed;
 					form.Visible = true;
 					Run(!modal);
 					return form.DialogResult;
@@ -186,6 +191,15 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+		}
+
+		private static void Form_FormClosed(object sender, FormClosedEventArgs e) {
+			Form currentForm = sender as Form;
+			if (currentForm == null)
+				return;
+			currentForm.SetState(4096, true);
+			currentForm.Visible = false;
+			closed.Value = true;
 		}
 
 		private static void Form_VisibleChanged(object sender, EventArgs e) {
@@ -251,7 +265,7 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Here be poisonous dragons!!!
+		/// Here be dragon's venom!!!
 		/// </summary>
 		private static class FilterInvoker<ThreadContext, MSGInternal> {
 			private delegate bool PreTranslateMessageHandler(ThreadContext threadContext, ref MSGInternal msg);
