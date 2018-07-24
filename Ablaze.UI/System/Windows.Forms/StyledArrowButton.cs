@@ -557,7 +557,7 @@ namespace System.Windows.Forms {
 				Label.DrawGdi(g);
 			RaisePaintEvent(StyleRenderer.PaintEventKey, new PaintEventArgs(g, rect));
 			if (drawChildren)
-				g.DrawControls(Controls, Point.Empty, true);
+				g.DrawControls(Controls, Point.Empty, Rectangle.Ceiling(g.ClipBounds), true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
 			g.Clip = oldClipRegion;

@@ -869,7 +869,7 @@ namespace System.Windows.Forms {
 				g.TranslateTransform(-centerOffset.Width, -centerOffset.Height);
 			}
 			if (drawChildren)
-				g.DrawControls(Controls, Point.Empty, true);
+				g.DrawControls(Controls, Point.Empty, Rectangle.Ceiling(g.ClipBounds), true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
 		}

@@ -906,7 +906,7 @@ namespace System.Windows.Forms {
 			g.SetClip(invalidated);
 			RaisePaintEvent(StyleRenderer.PaintEventKey, args);
 			if (drawChildren)
-				g.DrawControls(Controls, Point.Empty, true);
+				g.DrawControls(Controls, Point.Empty, invalidated, true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
 			g.Clip = oldClipRegion;

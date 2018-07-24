@@ -396,7 +396,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the relative rotation of the model (angle X, angle Y, angle Z).
+		/// Gets or sets the relative rotation of the model in radians (angle X, angle Y, angle Z).
 		/// </summary>
 		public Vector3 Rotation {
 			get {

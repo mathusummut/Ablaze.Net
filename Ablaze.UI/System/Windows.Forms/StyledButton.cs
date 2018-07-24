@@ -736,7 +736,7 @@ namespace System.Windows.Forms {
 			Renderer.RenderBackground(g, new RectangleF(location, Size), false, false, BackgroundImage, BackgroundImageLayout);
 			CheckBox.DrawGdi(g, location);
 			if (drawChildren)
-				g.DrawControls(Controls, location, drawChildren);
+				g.DrawControls(Controls, location, Rectangle.Ceiling(g.ClipBounds), drawChildren);
 		}
 
 		/// <summary>

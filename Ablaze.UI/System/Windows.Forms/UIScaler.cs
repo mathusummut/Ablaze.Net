@@ -12,7 +12,7 @@ namespace System.Windows.Forms {
 	public static class UIScaler {
 		private static SizeF One = new SizeF(1f, 1f);
 		private static ControlEventHandler ControlAdded = Control_ControlAdded, ControlRemoved = Control_ControlRemoved;
-		private static EventHandler ControlResized = Control_Resize;
+		private static EventHandler ControlResized = Control_Resize, ControlDisposed = Control_Disposed;
 		private static ConcurrentDictionary<Control, ControlInfo> PreviousBounds = new ConcurrentDictionary<Control, ControlInfo>();
 		private static HashSet<Control> Included = new HashSet<Control>();
 		private static HashSet<Control> ExcludeFont = new HashSet<Control>();
@@ -24,7 +24,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Adds the control to the UIScaler. If the control was previously excluded, it will be re-included.
 		/// </summary>
-		/// <param name="control">The control whose children to scale.</param>
+		/// <param name="control">The control whose children to scale</param>
 		public static void AddToScaler(Control control) {
 			if (control == null || StyledForm.DesignMode)
 				return;
@@ -39,16 +39,20 @@ namespace System.Windows.Forms {
 			SetAutoScaleModeToDpi(control);
 			ControlInfo info = new ControlInfo(control.ClientRectangle, control.Font.Size);
 			PreviousBounds.AddOrUpdate(control, info, (ctrl, sz) => info);
+			control.Resize -= ControlResized;
 			control.Resize += ControlResized;
+			control.ControlAdded -= ControlAdded;
 			control.ControlAdded += ControlAdded;
+			control.ControlRemoved -= ControlRemoved;
 			control.ControlRemoved += ControlRemoved;
-			control.Disposed += Control_Disposed;
+			control.Disposed -= ControlDisposed;
+			control.Disposed += ControlDisposed;
 		}
 
 		/// <summary>
-		/// Gets whether the specified control is currently being handled by the scaler..
+		/// Gets whether the specified control is currently being handled by the scaler
 		/// </summary>
-		/// <param name="control">The control to check for scaling.</param>
+		/// <param name="control">The control to check for scaling</param>
 		public static bool IsScaled(Control control) {
 			return !(control == null || IsExcluded(control, true)) && PreviousBounds.ContainsKey(control);
 		}
@@ -56,8 +60,8 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Resets the control to its original attributes before scaling
 		/// </summary>
-		/// <param name="control">The contorl whose attributes to reset.</param>
-		/// <param name="resetChildren">Whether to reset the attributes of its children as well.</param>
+		/// <param name="control">The contorl whose attributes to reset</param>
+		/// <param name="resetChildren">Whether to reset the attributes of its children as well</param>
 		public static void Reset(Control control, bool resetChildren = true) {
 			ControlInfo info;
 			if (control == null || IsExcluded(control, true) || !PreviousBounds.TryGetValue(control, out info))
@@ -71,10 +75,10 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Returns the original font size of the control, and the original bounds since the first time added to the scaler.
+		/// Returns the original font size of the control, and the original bounds since the first time added to the scaler
 		/// </summary>
-		/// <param name="control">The contorl whose attributes to return.</param>
-		/// <param name="originalBounds">The original bounds of the control.</param>
+		/// <param name="control">The contorl whose attributes to return</param>
+		/// <param name="originalBounds">The original bounds of the control</param>
 		public static float GetOriginalAttributes(Control control, out RectangleF originalBounds) {
 			ControlInfo info;
 			if (PreviousBounds.TryGetValue(control, out info)) {
@@ -87,45 +91,45 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Excludes the specified control from font scaling, meaning that it will be scaled but font sizes will be left intact.
+		/// Excludes the specified control from font scaling, meaning that it will be scaled but font sizes will be left intact
 		/// </summary>
-		/// <param name="control">The control to exclude from font scaling.</param>
+		/// <param name="control">The control to exclude from font scaling</param>
 		public static void ExcludeFontScaling(Control control) {
 			lock (SyncRoot)
 				ExcludeFont.Add(control);
 		}
 
 		/// <summary>
-		/// If the control is excluded from font scaling, it wiil be re-included.
+		/// If the control is excluded from font scaling, it wiil be re-included
 		/// </summary>
-		/// <param name="control">The control whose fonts to scale.</param>
+		/// <param name="control">The control whose fonts to scale</param>
 		public static void ReincludeFontScaling(Control control) {
 			lock (SyncRoot)
 				ExcludeFont.Remove(control);
 		}
 
 		/// <summary>
-		/// Excludes the specified control from size scaling, meaning that the location will be moved appropriately, but size will be left intact.
+		/// Excludes the specified control from size scaling, meaning that the location will be moved appropriately, but size will be left intact
 		/// </summary>
-		/// <param name="control">The control to exclude from size scaling.</param>
+		/// <param name="control">The control to exclude from size scaling</param>
 		public static void ExcludeSizeScaling(Control control) {
 			lock (SyncRoot)
 				ExcludeSize.Add(control);
 		}
 
 		/// <summary>
-		/// If the control is excluded from size scaling, it wiil be re-included.
+		/// If the control is excluded from size scaling, it wiil be re-included
 		/// </summary>
-		/// <param name="control">The control whose size to scale.</param>
+		/// <param name="control">The control whose size to scale</param>
 		public static void ReincludeSizeScaling(Control control) {
 			lock (SyncRoot)
 				ExcludeSize.Remove(control);
 		}
 
 		/// <summary>
-		/// Adds the control to the exclusion list. It and its child controls will not be scaled.
+		/// Adds the control to the exclusion list. It and its child controls will not be scaled
 		/// </summary>
-		/// <param name="control">The control to add.</param>
+		/// <param name="control">The control to add</param>
 		public static void Exclude(Control control) {
 			if (control == null)
 				return;
@@ -139,9 +143,9 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Removes the specified control from the UIScaler.
+		/// Removes the specified control from the UIScaler
 		/// </summary>
-		/// <param name="control">The control to remove.</param>
+		/// <param name="control">The control to remove</param>
 		public static void RemoveFromScaler(Control control) {
 			if (control == null)
 				return;

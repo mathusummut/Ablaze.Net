@@ -878,7 +878,7 @@ namespace System.Windows.Forms {
 			using (SolidBrush brush = new SolidBrush(ForeColor))
 				g.DrawTriangle(new RectangleF(size.Width - (charSize.Width + 5f), (size.Height - charSize.Height) * 0.5f, charSize.Width, charSize.Height), brush, Direction.Down);
 			if (drawChildren)
-				g.DrawControls(Controls, location, true);
+				g.DrawControls(Controls, location, Rectangle.Ceiling(g.ClipBounds), true);
 		}
 
 		/// <summary>

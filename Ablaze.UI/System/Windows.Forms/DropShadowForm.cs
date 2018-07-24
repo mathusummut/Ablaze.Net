@@ -594,7 +594,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			if (drawChildren)
-				g.DrawControls(Controls, location, true);
+				g.DrawControls(Controls, location, Rectangle.Ceiling(g.ClipBounds), true);
 		}
 
 		/// <summary>

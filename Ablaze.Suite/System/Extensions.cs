@@ -677,9 +677,11 @@ namespace System {
 		/// <param name="g">The graphics canvas to draw onto</param>
 		/// <param name="controls">The controls to draw</param>
 		/// <param name="location">The location of origin (0, 0) relative to which the controls will be drawn</param>
+		/// <param name="clippingRect">The clip rectangle that is being redrawn in coordinates relative to the graphics origin location</param>
 		/// <param name="drawChildren">Whether to draw the child controls of the specified children as well</param>
-		public static void DrawControls(this Graphics g, IEnumerable controls, Point location, bool drawChildren = true) {
-			Rectangle clippingRect = Rectangle.Ceiling(g.ClipBounds);
+		public static void DrawControls(this Graphics g, IEnumerable controls, Point location, Rectangle clippingRect, bool drawChildren = true) {
+			if (clippingRect.Width < 0 || clippingRect.Height < 0)
+				return;
 			foreach (Control control in controls) {
 				Rectangle ctrlRect = new Rectangle(location + (Size) control.Location, control.Size);
 				if ((control.Visible || control is Form) && ctrlRect.IntersectsWith(clippingRect)) {
@@ -698,10 +700,10 @@ namespace System {
 							HWnd = control.Handle
 						};
 						control.CallWndProc(ref message);
+						Platforms.Windows.NativeApi.SetViewportOrgEx(hdc, 0, 0, IntPtr.Zero);
 						g.ReleaseHdcInternal(hdc);
 					} else
 						drawable.DrawGdi(g, ctrlRect.Location, drawChildren);
-					DrawControls(g, control.Controls, ctrlRect.Location);
 				}
 			}
 		}

@@ -3853,7 +3853,7 @@ namespace System.Windows.Forms {
 			OnPaintBackgroundInner(g, rect);
 			OnPaintInner(g, rect);
 			if (drawChildren)
-				g.DrawControls(Controls, Point.Empty, true);
+				g.DrawControls(Controls, Point.Empty, rect, true);
 			if (!location.IsEmpty)
 				g.TranslateTransform(-location.X, -location.Y);
 		}

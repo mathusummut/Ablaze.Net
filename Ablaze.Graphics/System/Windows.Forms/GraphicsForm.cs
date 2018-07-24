@@ -28,6 +28,7 @@ namespace System.Windows.Forms {
 		private ThreadLocal<bool> reentrant = new ThreadLocal<bool>();
 		private object GdiSyncRoot = new object(), GLTransferSync = new object();
 		private Func<object, object> invalidateGdiInner, callDrawBorder, makeCurrent, viewSizeChanged, unload;
+		private ControlEventHandler controlAdded, controlRemoved;
 		private MeshComponent rectMesh;
 		private GlobalShader globalShader;
 		private Padding glMargin;
@@ -280,7 +281,7 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets or sets the XYZ rotation of the GDI layer. Kinda weird feature, might not work properly
+		/// Gets or sets the XYZ rotation of the GDI layer in radians. Kinda weird feature, might not work properly
 		/// </summary>
 		[Browsable(false)]
 		public Vector3 GdiRotation {
@@ -510,6 +511,8 @@ namespace System.Windows.Forms {
 			gdiControlRemoved = GdiControlRemoved;
 			GdiControls.Filter = gdiControlAdded;
 			GdiControls.ShouldRemove = gdiControlRemoved;
+			controlAdded = Ctrl_ControlAdded;
+			controlRemoved = Ctrl_ControlRemoved;
 			PaintGL = CallPaintGL;
 			ClearInvalidatedGdi = true;
 			unload = CallUnload;
@@ -529,8 +532,9 @@ namespace System.Windows.Forms {
 			}
 			if (IsGLEnabled && !Unloading) {
 				if (gdiEnabled) {
-					if (invalidatedRect != Rectangle.Empty || GdiTexture == null || GdiTexture.BitmapSize != maskSize) {
-						if (GdiTexture == null || GdiTexture.BitmapSize != maskSize) {
+					bool recreateTexture = GdiTexture == null || GdiTexture.BitmapSize != maskSize;
+					if (invalidatedRect != Rectangle.Empty || recreateTexture) {
+						if (recreateTexture) {
 							lock (GdiSyncRoot) {
 								if (GdiTexture != null)
 									GdiTexture.Dispose();
@@ -539,11 +543,6 @@ namespace System.Windows.Forms {
 								invalidatedRect = Rectangle.Empty;
 							}
 						} else {
-							Rectangle rect = invalidatedRect;
-							if (rect.Right > maskSize.Width)
-								rect.Width = maskSize.Width - rect.X;
-							if (rect.Bottom > maskSize.Height)
-								rect.Height = maskSize.Height - rect.Y;
 							if (GdiTexture.HasBeenBoundAtLeastOnce)
 								GdiTexture.Bind();
 							else {
@@ -553,16 +552,20 @@ namespace System.Windows.Forms {
 							if (gdiMask != null && (Volatile.Read(ref gdiQueueCount) == 0 || Volatile.Read(ref forceRedraw) == 1)) {
 								Interlocked.Exchange(ref forceRedraw, 0);
 								lock (GdiSyncRoot) {
-									GdiTexture.UpdateRegion(gdiMask, rect, rect.Location);
+									Rectangle rect = invalidatedRect;
 									invalidatedRect = Rectangle.Empty;
+									if (rect.Right > maskSize.Width)
+										rect.Width = maskSize.Width - rect.X;
+									if (rect.Bottom > maskSize.Height)
+										rect.Height = maskSize.Height - rect.Y;
+									GdiTexture.UpdateRegion(gdiMask, rect, rect.Location);
 								}
 							}
 						}
 					} else
 						GdiTexture.Bind();
 					globalShader.Bind();
-					Rectangle glViewport = GLViewport;
-					Mesh2D.Setup2D(glViewport.Size);
+					Mesh2D.Setup2D(GLViewport.Size);
 					Mesh2D.DrawTexture2D(GdiTexture, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, rectMesh);
 				}
 				if (!RenderBorderOnGdiLayer)
@@ -1167,7 +1170,7 @@ namespace System.Windows.Forms {
 			if (IsDisposed || !gdiEnabled || (AnimatingBounds && !forceInvalidate))
 				return;
 			else if (!IsGLEnabled) {
-				Point offset = ViewPortLocation + (Size) CurrentGdiLocation;
+				Point offset = CurrentGdiLocation;
 				rect.X -= offset.X;
 				rect.Y -= offset.Y;
 				Invalidate(rect, false);
@@ -1200,7 +1203,7 @@ namespace System.Windows.Forms {
 		}
 
 		private object InvalidateGdiInner(object state) {
-			if (IsClosing || !gdiEnabled || reentrant.Value)
+			if (IsClosing || !gdiEnabled || !IsGLEnabled || reentrant.Value)
 				return null;
 			reentrant.Value = true;
 			if (invalidatedRect != Rectangle.Empty) {
@@ -1306,10 +1309,48 @@ namespace System.Windows.Forms {
 				form.SetGdiVisible(true);
 			if (!(DpiScale.Width == 1f && DpiScale.Height == 1f))
 				ctrl.Scale(new SizeF(DpiScale.Width, DpiScale.Height));
-			ctrl.Invalidated += GdiControlInvalidate;
+			AddInvalidateEventHandler(ctrl);
 			IntPtr handle = ctrl.Handle;
 			InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(ctrl, ctrl.ClientRectangle), false);
 			return false;
+		}
+
+		private void Ctrl_ControlAdded(object sender, ControlEventArgs e) {
+			AddInvalidateEventHandler(e.Control);
+			InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(e.Control, e.Control.ClientRectangle), false);
+		}
+
+		private void Ctrl_ControlRemoved(object sender, ControlEventArgs e) {
+			RemoveInvalidateEventHandler(e.Control);
+			Control parent = sender as Control;
+			if (parent != null) {
+				Rectangle rect = GetInvalidateRect(parent, e.Control.ClientRectangle);
+				rect.Offset(e.Control.Location);
+				InvalidateGdi(GdiRenderMode.GdiAsync, rect, false);
+			}
+		}
+
+		private void AddInvalidateEventHandler(Control control) {
+			if (control == null)
+				return;
+			control.ControlAdded -= controlAdded;
+			control.ControlAdded += controlAdded;
+			control.ControlRemoved -= controlRemoved;
+			control.ControlRemoved += controlRemoved;
+			control.Invalidated -= GdiControlInvalidate;
+			control.Invalidated += GdiControlInvalidate;
+			foreach (Control ctrl in control.Controls)
+				AddInvalidateEventHandler(ctrl);
+		}
+
+		private void RemoveInvalidateEventHandler(Control control) {
+			if (control == null)
+				return;
+			control.ControlAdded -= controlAdded;
+			control.ControlRemoved -= controlRemoved;
+			control.Invalidated -= GdiControlInvalidate;
+			foreach (Control ctrl in control.Controls)
+				RemoveInvalidateEventHandler(ctrl);
 		}
 
 		private bool GdiControlRemoved(Control ctrl) {
@@ -1318,29 +1359,25 @@ namespace System.Windows.Forms {
 			int index = GdiControls.Items.IndexOf(ctrl);
 			if (index == -1)
 				return false;
-			ctrl.Invalidated -= GdiControlInvalidate;
-			Rectangle rect = GetInvalidateRect(ctrl, ctrl.ClientRectangle);
+			RemoveInvalidateEventHandler(ctrl);
 			GdiControls.Items.RemoveAt(index);
 			StyledForm form = ctrl as StyledForm;
 			if (form != null)
 				form.SetGdiVisible(false);
 			if (!(DpiScale.Width == 1f && DpiScale.Height == 1f))
 				ctrl.Scale(new SizeF(1f / DpiScale.Width, 1f / DpiScale.Height));
-			InvalidateGdi(GdiRenderMode.GdiAsync, rect);
+			InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(ctrl, ctrl.ClientRectangle));
 			return false;
 		}
 
 		private void Ctrl_Invalidated(object sender, InvalidateEventArgs e) {
 			Control control = sender as Control;
-			if (control != null && !AnimatingBounds) {
-				Rectangle rect = e.InvalidRect;
-				rect.Offset(ViewPortLocation);
-				InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(control, rect));
-			}
+			if (control != null && !AnimatingBounds)
+				InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(control, e.InvalidRect));
 		}
 
 		private Rectangle GetInvalidateRect(Control control, Rectangle clientRect) {
-			return new Rectangle(ViewPortLocation + (Size) Extensions.PointToScreen(control, clientRect.Location), clientRect.Size);
+			return new Rectangle((ViewPortLocation + (Size) CurrentGdiLocation) + (Size) Extensions.PointToScreen(control, clientRect.Location), clientRect.Size);
 		}
 
 		/// <summary>
@@ -1372,12 +1409,12 @@ namespace System.Windows.Forms {
 		/// Called when the GDI layer needs a repaint.
 		/// </summary>
 		/// <param name="g">The Graphics object to use to paint on.</param>
-		/// <param name="clippingRect">The clipping rectangle that was invalidated.</param>
+		/// <param name="clippingRect">The clipping rectangle that was invalidated in GDI-layer coordinates.</param>
 		/// <param name="clearBeforeRedraw">If true, the GDI layer is cleared before redraw.</param>
 		protected virtual void OnPaintGdi(Drawing.Graphics g, Rectangle clippingRect, bool clearBeforeRedraw) {
 			if (clearBeforeRedraw)
 				g.Clear(Color.Transparent);
-			g.DrawControls(GdiControls, Point.Empty, true);
+			g.DrawControls(GdiControls, Point.Empty, clippingRect, true);
 		}
 
 		/// <summary>
@@ -1449,10 +1486,9 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the window needs to be re-drawn. If you are going to override this method, call this base method *AFTER* your drawing is completed.
 		/// </summary>
-		/// <param name="g">The Graphics object to use to paint on.</param>
-		/// <param name="clippingRect">The clipping rectangle that was invalidated.</param>
+		/// <param name="g">The Graphics object to use to paint on</param>
+		/// <param name="clippingRect">The clipping rectangle that was invalidated in viewport coordinates (ie. excludes border)</param>
 		protected override void OnPaint(Drawing.Graphics g, Rectangle clippingRect) {
-			base.OnPaint(g, clippingRect);
 			if (gdiEnabled) {
 				Point offset = CurrentGdiLocation;
 				if (!offset.IsEmpty) {
@@ -1460,15 +1496,18 @@ namespace System.Windows.Forms {
 					clippingRect.X -= offset.X;
 					clippingRect.Y -= offset.Y;
 				}
-				if (GdiRotation.X != 0f)
-					g.RotateTransform(GdiRotation.X);
+				float rotation = GdiRotation.X * Maths.RadToDegF;
+				bool rotate = Math.Abs(rotation) > float.Epsilon;
+				if (rotate)
+					g.RotateTransform(rotation);
 				lock (GdiSyncRoot)
 					OnPaintGdi(g, clippingRect, false);
-				if (GdiRotation.X != 0f)
-					g.RotateTransform(-GdiRotation.X);
+				if (rotate)
+					g.RotateTransform(-rotation);
 				if (!offset.IsEmpty)
 					g.TranslateTransform(-offset.X, -offset.Y);
 			}
+			base.OnPaint(g, clippingRect);
 		}
 
 		/// <summary>

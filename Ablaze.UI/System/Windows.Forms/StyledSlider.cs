@@ -523,7 +523,8 @@ namespace System.Windows.Forms {
 			}
 			Region oldClipRegion = g.Clip;
 			RectangleF barRect;
-			g.SetClip(new Rectangle(location, clientSize));
+			Rectangle clip = new Rectangle(location, clientSize);
+			g.SetClip(clip);
 			if (BackColor.A != 0) {
 				using (SolidBrush brush = new SolidBrush(BackColor))
 					g.FillRectangle(brush, new Rectangle(Point.Empty, clientSize));
@@ -542,7 +543,7 @@ namespace System.Windows.Forms {
 			knobBounds.Offset(location);
 			KnobRenderer.RenderBackground(g, Rectangle.Truncate(knobBounds));
 			if (drawChildren)
-				g.DrawControls(Controls, location, true);
+				g.DrawControls(Controls, location, clip, true);
 			g.Clip = oldClipRegion;
 		}
 
