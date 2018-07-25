@@ -186,13 +186,17 @@ namespace System.Windows.Forms {
 			this.SuspendLayout();
 			// 
 			// label1
-			//
+			// 
+			this.label1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
+			this.label1.ForeColor = System.Drawing.Color.Black;
 			this.label1.Location = new System.Drawing.Point(17, 38);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(30, 17);
+			this.label1.OutlinePen = null;
+			this.label1.Size = new System.Drawing.Size(45, 17);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Find:";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.label1.TextBrush = null;
 			this.label1.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			// 
 			// textBox1
@@ -216,71 +220,81 @@ namespace System.Windows.Forms {
 			// label2
 			// 
 			this.label2.AutoSize = true;
+			this.label2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
+			this.label2.ForeColor = System.Drawing.Color.Black;
 			this.label2.Location = new System.Drawing.Point(17, 146);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(75, 13);
+			this.label2.OutlinePen = null;
+			this.label2.Size = new System.Drawing.Size(96, 17);
 			this.label2.TabIndex = 2;
 			this.label2.Text = "Replace With:";
+			this.label2.TextBrush = null;
 			this.label2.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			// 
 			// findNextDown
 			// 
-			this.findNextDown.ForeColor = System.Drawing.Color.Black;
+			this.findNextDown.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.findNextDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.findNextDown.Image = null;
 			this.findNextDown.Location = new System.Drawing.Point(18, 108);
 			this.findNextDown.Name = "findNextDown";
 			this.findNextDown.Size = new System.Drawing.Size(90, 30);
 			this.findNextDown.TabIndex = 4;
 			this.findNextDown.Text = "Find Next ↓";
-			this.findNextDown.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.findNextDown.UseVisualStyleBackColor = true;
 			// 
 			// findNextUp
 			// 
-			this.findNextUp.ForeColor = System.Drawing.Color.Black;
+			this.findNextUp.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.findNextUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.findNextUp.Image = null;
 			this.findNextUp.Location = new System.Drawing.Point(190, 108);
 			this.findNextUp.Name = "findNextUp";
 			this.findNextUp.Size = new System.Drawing.Size(90, 30);
 			this.findNextUp.TabIndex = 5;
 			this.findNextUp.Text = "Find Next ↑";
-			this.findNextUp.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.findNextUp.UseVisualStyleBackColor = true;
 			// 
 			// replaceNextUp
 			// 
-			this.replaceNextUp.ForeColor = System.Drawing.Color.Black;
+			this.replaceNextUp.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.replaceNextUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.replaceNextUp.Image = null;
 			this.replaceNextUp.Location = new System.Drawing.Point(190, 210);
 			this.replaceNextUp.Name = "replaceNextUp";
 			this.replaceNextUp.Size = new System.Drawing.Size(90, 30);
 			this.replaceNextUp.TabIndex = 7;
 			this.replaceNextUp.Text = "Replace Next ↑";
-			this.replaceNextUp.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.replaceNextUp.UseVisualStyleBackColor = true;
 			// 
 			// replaceNextDown
 			// 
-			this.replaceNextDown.ForeColor = System.Drawing.Color.Black;
+			this.replaceNextDown.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.replaceNextDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.replaceNextDown.Image = null;
 			this.replaceNextDown.Location = new System.Drawing.Point(18, 210);
 			this.replaceNextDown.Name = "replaceNextDown";
 			this.replaceNextDown.Size = new System.Drawing.Size(90, 30);
 			this.replaceNextDown.TabIndex = 6;
 			this.replaceNextDown.Text = "Replace Next ↓";
-			this.replaceNextDown.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.replaceNextDown.UseVisualStyleBackColor = true;
 			// 
 			// replaceAll
 			// 
-			this.replaceAll.ForeColor = System.Drawing.Color.Black;
+			this.replaceAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.replaceAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.replaceAll.Image = null;
 			this.replaceAll.Location = new System.Drawing.Point(114, 210);
 			this.replaceAll.Name = "replaceAll";
 			this.replaceAll.Size = new System.Drawing.Size(75, 30);
 			this.replaceAll.TabIndex = 8;
 			this.replaceAll.Text = "Replace All";
-			this.replaceAll.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.replaceAll.UseVisualStyleBackColor = true;
 			// 
 			// matchCaseCheckBox
 			// 
 			this.matchCaseCheckBox.BackColor = System.Drawing.Color.Transparent;
+			this.matchCaseCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.matchCaseCheckBox.Location = new System.Drawing.Point(101, 38);
 			this.matchCaseCheckBox.Name = "matchCaseCheckBox";
 			this.matchCaseCheckBox.Size = new System.Drawing.Size(83, 17);
@@ -291,6 +305,7 @@ namespace System.Windows.Forms {
 			// matchWordCheckBox
 			// 
 			this.matchWordCheckBox.BackColor = System.Drawing.Color.Transparent;
+			this.matchWordCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.matchWordCheckBox.Location = new System.Drawing.Point(190, 38);
 			this.matchWordCheckBox.Name = "matchWordCheckBox";
 			this.matchWordCheckBox.Size = new System.Drawing.Size(85, 17);
@@ -303,6 +318,7 @@ namespace System.Windows.Forms {
 			this.AcceptButton = this.findNextDown;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(299, 256);
 			this.Controls.Add(this.matchWordCheckBox);
 			this.Controls.Add(this.matchCaseCheckBox);
@@ -320,17 +336,6 @@ namespace System.Windows.Forms {
 			this.Name = "FindAndReplace";
 			this.ShowInTaskbar = false;
 			this.Text = "Find and Replace";
-			this.Controls.SetChildIndex(this.label1, 0);
-			this.Controls.SetChildIndex(this.textBox1, 0);
-			this.Controls.SetChildIndex(this.label2, 0);
-			this.Controls.SetChildIndex(this.textBox2, 0);
-			this.Controls.SetChildIndex(this.findNextDown, 0);
-			this.Controls.SetChildIndex(this.findNextUp, 0);
-			this.Controls.SetChildIndex(this.replaceNextDown, 0);
-			this.Controls.SetChildIndex(this.replaceNextUp, 0);
-			this.Controls.SetChildIndex(this.replaceAll, 0);
-			this.Controls.SetChildIndex(this.matchCaseCheckBox, 0);
-			this.Controls.SetChildIndex(this.matchWordCheckBox, 0);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

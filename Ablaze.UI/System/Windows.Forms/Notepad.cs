@@ -118,9 +118,9 @@ namespace System.Windows.Forms {
 				options |= RichTextBoxFinds.MatchCase;
 			if (obj.MatchWord)
 				options |= RichTextBoxFinds.WholeWord;
-			int index = textBox.Find(obj.FindTextBoxContent, 0, Math.Max(0, textBox.SelectionStart - 1), options);
+			int index = textBox.Find(obj.FindTextBoxContent, 0, Math.Max(0, textBox.SelectionStart), options);
 			if (index == -1) {
-				index = textBox.Find(obj.FindTextBoxContent, -1, -1, options);
+				index = textBox.Find(obj.FindTextBoxContent, 0, -1, options);
 				if (index == -1)
 					return;
 			}
@@ -355,7 +355,6 @@ namespace System.Windows.Forms {
 		/// </summary>
 		protected override bool OnQueryClose(CloseReason reason) {
 			if (textBox.Text != lastSave) {
-				Console.WriteLine(StyledMessageBox.Show("haha lol?", "Confirm", true, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question));
 				switch (StyledMessageBox.Show("Do you want to save the current text?", "Confirm", true, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)) {
 					case DialogResult.Yes:
 						saveToolStripMenuItem_Click(null, null);

@@ -4,13 +4,13 @@ using System.Windows.Forms;
 
 namespace Notepad {
 	/// <summary>
-	/// A notepad application for C#.
+	/// A notepad application for C#
 	/// </summary>
 	public static class NotepadWindow {
 		/// <summary>
-		/// The entry point of the application.
+		/// The entry point of the application
 		/// </summary>
-		/// <param name="args">The console arguments passed to the application.</param>
+		/// <param name="args">The console arguments passed to the application</param>
 		[STAThread]
 		public static void Main(string[] args) {
 #if NET45
