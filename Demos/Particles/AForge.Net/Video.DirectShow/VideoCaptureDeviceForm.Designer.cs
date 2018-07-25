@@ -147,7 +147,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(6, 21);
+			this.label1.Location = new System.Drawing.Point(6, 20);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(72, 13);
 			this.label1.TabIndex = 11;
@@ -168,7 +168,7 @@
 			this.MinimizeBox = false;
 			this.Name = "VideoCaptureDeviceForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Open local  video capture device";
+			this.Text = "Select video capture device";
 			this.Load += new System.EventHandler(this.VideoCaptureDeviceForm_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();

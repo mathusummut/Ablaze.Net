@@ -11,14 +11,14 @@ using AForge.Video.DirectShow;
 
 namespace Particles {
 	public class ParticlesDemo : GraphicsForm {
-		public static Color EdgeColor = Color.Red, IgnoreColor = Color.Black;
+		public static BgraColor EdgeColor = BgraColor.Red, IgnoreColor = BgraColor.Black;
 		public const float threshold = 0.05f;
 		public const int edgeTolerance = 25, borderOffset = 15, noiseRemovalRadius = 12, significantCloseEdgeCount = 6;
 		private object SyncRoot = new object(), bitmapSyncRoot = new object();
 		internal int widthMinusOne, heightMinusOne, widthMinusBorderOffset, heightMinusBorderOffset;
 		private static VideoCaptureDevice webcam;
 		private Texture2D texture;
-		private Color[] resultant;
+		private BgraColor[] resultant;
 		private int startI, endI;
 		internal int webcamWidth, webcamHeight;
 		internal bool[][] isEdge, edgeBuffer, ignore;
@@ -53,7 +53,7 @@ namespace Particles {
 			heightMinusBorderOffset = webcamHeight - borderOffset;
 			startI = borderOffset * (webcamWidth + 1);
 			endI = (webcamHeight - borderOffset) * webcamWidth - borderOffset;
-			resultant = new Color[webcamWidth * webcamHeight];
+			resultant = new BgraColor[webcamWidth * webcamHeight];
 			isEdge = new bool[webcamWidth][];
 			for (int i = 0; i < webcamWidth; i++)
 				isEdge[i] = new bool[webcamHeight];
@@ -94,6 +94,7 @@ namespace Particles {
 		}
 
 		private void Webcam_NewFrame(object sender, NewFrameEventArgs eventArgs) {
+			ImageMessageBox.Show(eventArgs.Frame);
 			BgraColor[] colors = eventArgs.Frame.GetAllPixelsBgra();
 			ParallelLoop.For(startI, endI, 1, new PixelCanvas(colors, edgeBuffer, false), checkPixel);
 			lock (SyncRoot)
@@ -248,7 +249,7 @@ namespace Particles {
 		protected override void OnGLInitialized() {
 			base.OnGLInitialized();
 			MeshComponent.SetupGLEnvironment();
-			GL.ClearColor(IgnoreColor);
+			GL.ClearColor((Color) IgnoreColor);
 			webcamMesh = Mesh2D.CreateShared2DMeshRect();
 		}
 
@@ -270,6 +271,7 @@ namespace Particles {
 		/// </summary>
 		[STAThread]
 		public static void Main() {
+			Application.EnableVisualStyles();
 			System.Diagnostics.ErrorHandler.Behavior = System.Diagnostics.ErrorDialogAction.ThrowRegardless;
 			devices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 			if (devices.Count == 0) {

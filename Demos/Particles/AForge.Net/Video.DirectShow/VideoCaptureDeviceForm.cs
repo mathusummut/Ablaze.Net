@@ -8,16 +8,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-using AForge.Video.DirectShow;
 
 namespace AForge.Video.DirectShow {
 	/// <summary>
-	/// Local video device selection form.
+	/// Local video device selection form
 	/// </summary>
 	/// 
 	/// <remarks><para>The form provides a standard way of selecting local video

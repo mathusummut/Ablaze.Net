@@ -71,7 +71,7 @@ namespace AForge.Video.DirectShow {
 				// Get the system device enumerator
 				Type srvType = Type.GetTypeFromCLSID(Clsid.SystemDeviceEnum);
 				if (srvType == null)
-					throw new ApplicationException("Failed creating device enumerator");
+					return;
 
 				// create device enumerator
 				comObj = Activator.CreateInstance(srvType);
@@ -80,7 +80,7 @@ namespace AForge.Video.DirectShow {
 				// Create an enumerator to find filters of specified category
 				hr = enumDev.CreateClassEnumerator(ref category, out enumMon, 0);
 				if (hr != 0)
-					throw new ApplicationException("No devices of the category");
+					return;
 
 				// Collect all filters
 				IntPtr n = IntPtr.Zero;
