@@ -128,6 +128,7 @@ namespace System.Windows.Forms {
 		/// Gets or sets the pen to use to draw the outline (if not null it will be used instead of 'Outline').
 		/// </summary>
 		[Browsable(false)]
+		[DefaultValue(null)]
 		public Pen OutlinePen {
 			get;
 			set;
@@ -137,6 +138,7 @@ namespace System.Windows.Forms {
 		/// Gets or sets the brush to use to draw text (if not null it will be used instead of ForeColor).
 		/// </summary>
 		[Browsable(false)]
+		[DefaultValue(null)]
 		public Brush TextBrush {
 			get;
 			set;

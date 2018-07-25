@@ -21,6 +21,7 @@ namespace System.Windows.Forms {
 	public class StyledComboBox : ComboBox, ISmartControl {
 		private const string Key = "&&";
 		private FieldOrProperty forecolorProperty;
+		private static object EventKeyPress = typeof(Control).GetField(nameof(EventKeyPress), BindingFlags.Static | BindingFlags.NonPublic);
 		private static object selectedIndexKey = typeof(ComboBox).GetField("EVENT_SELECTEDINDEXCHANGED", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
 		private static object selectedItemKey = typeof(ComboBox).GetField("EVENT_SELECTEDITEMCHANGED", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
 		private static object selectionChangeCommittedKey = typeof(ComboBox).GetField("EVENT_SELECTIONCHANGECOMMITTED", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
@@ -137,12 +138,31 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets a dummy layout engine.
+		/// Gets a dummy layout engine
 		/// </summary>
 		[Browsable(false)]
 		public override LayoutEngine LayoutEngine {
 			get {
 				return DummyLayoutEngine.Instance;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the ComboBox dropdown menu is shown
+		/// </summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public new bool DroppedDown {
+			get {
+				return ContextMenuStrip.Visible;
+			}
+			set {
+				if (value == ContextMenuStrip.Visible)
+					return;
+				else if (value)
+					ContextMenuStrip.Show(this, 0, Height);
+				else
+					ContextMenuStrip.Close(ToolStripDropDownCloseReason.CloseCalled);
 			}
 		}
 
@@ -628,9 +648,23 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the dropdown menu is clicked.
 		/// </summary>
-		/// <param name="e">Ignored.</param>
+		/// <param name="e">Ignored</param>
 		protected override void OnClick(EventArgs e) {
-			ContextMenuStrip.Show(this, 0, Height);
+			DroppedDown = true;
+		}
+
+		/// <summary>
+		/// Called when a key is pressed
+		/// </summary>
+		/// <param name="e">The key character that was pressed</param>
+		protected override void OnKeyPress(KeyPressEventArgs e) {
+			KeyPressEventHandler item = (KeyPressEventHandler) Events[EventKeyPress];
+			if (item != null)
+				item(this, e);
+			if (!e.Handled && (e.KeyChar == '\r' || e.KeyChar == '\n' || e.KeyChar == '\u001B')) {
+				DroppedDown = false;
+				e.Handled = true;
+			}
 		}
 
 		/// <summary>
@@ -790,6 +824,25 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Fired when a key is released on the control.
+		/// </summary>
+		protected override void OnKeyUp(KeyEventArgs e) {
+			base.OnKeyUp(e);
+			switch (e.KeyCode) {
+				case Keys.Space:
+				case Keys.Enter:
+					DroppedDown = !DroppedDown;
+					break;
+				case Keys.Down:
+					SelectedIndex = Math.Min(SelectedIndex + 1, Items.Count - 1);
+					break;
+				case Keys.Up:
+					SelectedIndex = Math.Max(0, SelectedIndex - 1);
+					break;
+			}
+		}
+
+		/// <summary>
 		/// Renders the control with its children onto the specified image
 		/// </summary>
 		/// <param name="bitmap">The image to draw onto</param>
@@ -897,11 +950,14 @@ namespace System.Windows.Forms {
 		/// <param name="m">The message to process.</param>
 		protected override void WndProc(ref Message m) {
 			switch (m.Msg) {
+				case (int) Platforms.Windows.WindowMessage.CONTEXTMENU:
+					DroppedDown = !DroppedDown;
+					return;
 				case 8235:
 				case 8236:
 				case 8465:
-				case 792:
-				case 528:
+				case (int) Platforms.Windows.WindowMessage.PRINTCLIENT:
+				case (int) Platforms.Windows.WindowMessage.PARENTNOTIFY:
 					return;
 				default:
 					base.WndProc(ref m);

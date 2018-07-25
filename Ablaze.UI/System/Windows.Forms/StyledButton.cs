@@ -165,6 +165,7 @@ namespace System.Windows.Forms {
 		/// Gets or sets the button image.
 		/// </summary>
 		[Description("Gets or sets the button image.")]
+		[DefaultValue(null)]
 		public new Image Image {
 			get {
 				return CheckBox.Image;

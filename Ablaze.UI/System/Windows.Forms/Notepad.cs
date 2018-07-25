@@ -136,9 +136,12 @@ namespace System.Windows.Forms {
 				options |= RichTextBoxFinds.MatchCase;
 			if (obj.MatchWord)
 				options |= RichTextBoxFinds.WholeWord;
-			int index = textBox.Find(obj.FindTextBoxContent, textBox.SelectionStart + 1, options);
-			if (index == -1)
-				return;
+			int index = textBox.Find(obj.FindTextBoxContent, Math.Min(textBox.SelectionStart + 1, textBox.TextLength), options);
+			if (index == -1) {
+				index = textBox.Find(obj.FindTextBoxContent, 0, options);
+				if (index == -1)
+					return;
+			}
 			textBox.Text = string.Concat(textBox.Text.Substring(0, index), obj.ReplaceTextBoxContent, textBox.Text.Substring(index + obj.FindTextBoxContent.Length));
 			textBox.SelectionStart = index;
 			textBox.SelectionLength = obj.ReplaceTextBoxContent.Length;
@@ -152,9 +155,12 @@ namespace System.Windows.Forms {
 				options |= RichTextBoxFinds.MatchCase;
 			if (obj.MatchWord)
 				options |= RichTextBoxFinds.WholeWord;
-			int index = textBox.Find(obj.FindTextBoxContent, 0, textBox.SelectionStart - 1, options);
-			if (index == -1)
-				return;
+			int index = textBox.Find(obj.FindTextBoxContent, 0, Math.Max(0, textBox.SelectionStart), options);
+			if (index == -1) {
+				index = textBox.Find(obj.FindTextBoxContent, 0, -1, options);
+				if (index == -1)
+					return;
+			}
 			textBox.Text = string.Concat(textBox.Text.Substring(0, index), obj.ReplaceTextBoxContent, textBox.Text.Substring(index + obj.FindTextBoxContent.Length));
 			textBox.SelectionStart = index;
 			textBox.SelectionLength = obj.ReplaceTextBoxContent.Length;

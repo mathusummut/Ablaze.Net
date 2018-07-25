@@ -304,7 +304,7 @@ namespace System.Windows.Forms {
 					return;
 				activeBorderOpacity = value;
 				if (borderActive)
-					UIAnimator.SharedAnimator.Animate(BorderOpacityProperty, value, 0.25, 0.01, true, onBorderUpdate, false);
+					UIAnimator.SharedAnimator.Animate(BorderOpacityProperty, value, 0.3, 0.01, true, onBorderUpdate, false);
 			}
 		}
 
@@ -320,7 +320,7 @@ namespace System.Windows.Forms {
 					return;
 				inactiveBorderOpacity = value;
 				if (!borderActive)
-					UIAnimator.SharedAnimator.Animate(BorderOpacityProperty, value, 0.25, 0.01, true, onBorderUpdate, false);
+					UIAnimator.SharedAnimator.Animate(BorderOpacityProperty, value, 0.3, 0.01, true, onBorderUpdate, false);
 			}
 		}
 
@@ -3369,7 +3369,7 @@ namespace System.Windows.Forms {
 							FadeState = FadeState.FadingIn;
 							base.SetVisibleCore(true);
 							OnShown(EventArgs.Empty);
-							UIAnimator.SharedAnimator.Animate(OpacityProperty, (byte) 255, 0.47, 0.08, true, onOpacityUpdate, true, ExceptionMode.Log, FadeState.FadingIn);
+							UIAnimator.SharedAnimator.Animate(OpacityProperty, (byte) 255, 0.5, 0.08, true, onOpacityUpdate, true, ExceptionMode.Log, FadeState.FadingIn);
 						} else {
 							FadeState = FadeState.Normal;
 							base.SetVisibleCore(true);
@@ -3388,7 +3388,7 @@ namespace System.Windows.Forms {
 			} else {
 				if (!(DesignMode || FadeState == FadeState.FadingOut || WindowState == FormWindowState.Minimized) && EnableOpacityAnimation && AllowTransparency) {
 					FadeState = FadeState.FadingOut;
-					UIAnimator.SharedAnimator.Animate(OpacityProperty, (byte) 1, 0.6, 0.08, true, onOpacityUpdate, true, ExceptionMode.Log, FadeState.FadingOut);
+					UIAnimator.SharedAnimator.Animate(OpacityProperty, (byte) 1, 0.7, 0.08, true, onOpacityUpdate, true, ExceptionMode.Log, FadeState.FadingOut);
 				} else {
 					FadeState = FadeState.Normal;
 					base.SetVisibleCore(false);
@@ -3712,8 +3712,8 @@ namespace System.Windows.Forms {
 
 		private void AnimateBorder() {
 			if (EnableBorderAnimation) {
-				UIAnimator.SharedAnimator.Animate(BorderOpacityProperty, borderActive ? activeBorderOpacity : inactiveBorderOpacity, 0.25, 0.01, true, onBorderUpdate, false);
-				UIAnimator.SharedAnimator.Animate(BorderOverlayProperty, borderActive ? Color.Empty : borderOverlay, 0.25, 0.01, true, null, false);
+				UIAnimator.SharedAnimator.Animate(BorderOpacityProperty, borderActive ? activeBorderOpacity : inactiveBorderOpacity, 0.3, 0.01, true, onBorderUpdate, false);
+				UIAnimator.SharedAnimator.Animate(BorderOverlayProperty, borderActive ? Color.Empty : borderOverlay, 0.3, 0.01, true, null, false);
 			} else {
 				currentBorderOpacity = borderActive ? activeBorderOpacity : inactiveBorderOpacity;
 				currentBorderOverlay = borderActive ? Color.Transparent : borderOverlay;
