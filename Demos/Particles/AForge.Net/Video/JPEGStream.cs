@@ -61,32 +61,32 @@ namespace AForge.Video {
 		// URL for JPEG files
 		private string source;
 		// login and password for HTTP authentication
-		private string login = null;
-		private string password = null;
+		private string login;
+		private string password;
 		// proxy information
-		private IWebProxy proxy = null;
+		private IWebProxy proxy;
 		// received frames count
 		private int framesReceived;
 		// recieved byte count
 		private long bytesReceived;
 		// use separate HTTP connection group or use default
-		private bool useSeparateConnectionGroup = false;
+		private bool useSeparateConnectionGroup;
 		// prevent cashing or not
 		private bool preventCaching = true;
 		// frame interval in milliseconds
-		private int frameInterval = 0;
+		private int frameInterval;
 		// timeout value for web request
 		private int requestTimeout = 10000;
 		// if we should use basic authentication when connecting to the video source
-		private bool forceBasicAuthentication = false;
+		private bool forceBasicAuthentication;
 
 		// buffer size used to download JPEG image
 		private const int bufferSize = 1024 * 1024;
 		// size of portion to read at once
 		private const int readSize = 1024;
 
-		private Thread thread = null;
-		private ManualResetEvent stopEvent = null;
+		private Thread thread;
+		private ManualResetEvent stopEvent;
 
 		/// <summary>
 		/// New frame event.
@@ -293,7 +293,7 @@ namespace AForge.Video {
 			get {
 				if (thread != null) {
 					// check thread status
-					if (thread.Join(0) == false)
+					if (!thread.Join(0))
 						return true;
 
 					// the thread is not running, free resources
@@ -462,7 +462,7 @@ namespace AForge.Video {
 						request = (HttpWebRequest) WebRequest.Create(source);
 					} else {
 						// request with cache prevention
-						request = (HttpWebRequest) WebRequest.Create(source + ((source.IndexOf('?') == -1) ? '?' : '&') + "fake=" + rand.Next().ToString());
+						request = (HttpWebRequest) WebRequest.Create(source + ((source.IndexOf('?') == -1) ? '?' : '&') + "fake=" + rand.Next());
 					}
 
 					// set proxy

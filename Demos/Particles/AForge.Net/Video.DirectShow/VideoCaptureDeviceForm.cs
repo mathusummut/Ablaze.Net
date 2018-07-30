@@ -36,10 +36,10 @@ namespace AForge.Video.DirectShow {
 		private Dictionary<string, VideoCapabilities> snapshotCapabilitiesDictionary = new Dictionary<string, VideoCapabilities>();
 
 		// available video inputs
-		private VideoInput[] availableVideoInputs = null;
+		private VideoInput[] availableVideoInputs;
 
 		// flag telling if user wants to configure snapshots as well
-		private bool configureSnapshots = false;
+		private bool configureSnapshots;
 
 		/// <summary>
 		/// Specifies if snapshot configuration should be done or not.

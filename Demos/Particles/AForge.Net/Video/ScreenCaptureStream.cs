@@ -62,8 +62,8 @@ namespace AForge.Video {
 		// received frames count
 		private int framesReceived;
 
-		private Thread thread = null;
-		private ManualResetEvent stopEvent = null;
+		private Thread thread;
+		private ManualResetEvent stopEvent;
 
 		/// <summary>
 		/// New frame event.
@@ -185,7 +185,7 @@ namespace AForge.Video {
 			get {
 				if (thread != null) {
 					// check thread status
-					if (thread.Join(0) == false)
+					if (!thread.Join(0))
 						return true;
 
 					// the thread is not running, free resources

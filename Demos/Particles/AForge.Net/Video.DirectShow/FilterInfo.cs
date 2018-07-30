@@ -107,7 +107,7 @@ namespace AForge.Video.DirectShow {
 		//
 		// Get moniker string of the moniker
 		//
-		private string GetMonikerString(IMoniker moniker) {
+		private static string GetMonikerString(IMoniker moniker) {
 			string str;
 			moniker.GetDisplayName(null, null, out str);
 			return str;
@@ -116,7 +116,7 @@ namespace AForge.Video.DirectShow {
 		//
 		// Get filter name represented by the moniker
 		//
-		private string GetName(IMoniker moniker) {
+		private static string GetName(IMoniker moniker) {
 			Object bagObj = null;
 			IPropertyBag bag = null;
 
@@ -153,7 +153,7 @@ namespace AForge.Video.DirectShow {
 		//
 		// Get filter name represented by the moniker string
 		//
-		private string GetName(string monikerString) {
+		private static string GetName(string monikerString) {
 			IBindCtx bindCtx = null;
 			IMoniker moniker = null;
 			String name = "";

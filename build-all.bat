@@ -38,5 +38,7 @@ msbuild.exe /m /p:Configuration=%MSBUILD_CONFIG% /p:Platform=%PLATFORM% Ablaze.T
 cd ..
 cd Demos
 msbuild.exe /m /p:Configuration=%MSBUILD_CONFIG% /p:Platform=%PLATFORM% Ablaze.Demos.sln
-cd ..
+cd Particles\AForge.Net
+msbuild.exe /m /p:Configuration=%MSBUILD_CONFIG% /p:Platform=%PLATFORM% AForge.Net.sln
+cd ..\..\..
 pause

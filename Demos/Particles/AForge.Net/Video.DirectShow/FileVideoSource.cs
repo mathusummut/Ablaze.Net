@@ -54,12 +54,12 @@ namespace AForge.Video.DirectShow {
 		// recieved byte count
 		private long bytesReceived;
 		// prevent freezing
-		private bool preventFreezing = false;
+		private bool preventFreezing;
 		// reference clock for the graph - when disabled, graph processes frames ASAP
 		private bool referenceClockEnabled = true;
 
-		private Thread thread = null;
-		private ManualResetEvent stopEvent = null;
+		private Thread thread;
+		private ManualResetEvent stopEvent;
 
 		/// <summary>
 		/// New frame event.
@@ -149,7 +149,7 @@ namespace AForge.Video.DirectShow {
 			get {
 				if (thread != null) {
 					// check thread status
-					if (thread.Join(0) == false)
+					if (!thread.Join(0))
 						return true;
 
 					// the thread is not running, free resources
@@ -565,7 +565,7 @@ namespace AForge.Video.DirectShow {
 						byte* src = (byte*) buffer.ToPointer();
 
 						for (int y = 0; y < height; y++) {
-							ByteArrayUtils.MemoryCopy(dst, src, (uint) srcStride);
+							ByteArrayUtils.MemoryCopy(src, dst, (uint) srcStride);
 							dst -= dstStride;
 							src += srcStride;
 						}

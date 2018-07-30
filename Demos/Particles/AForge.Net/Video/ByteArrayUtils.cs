@@ -87,71 +87,71 @@ namespace AForge.Video {
 		public static unsafe void MemoryCopy(byte* src, byte* dest, uint bytesToCopy) {
 			if (sizeof(IntPtr) == 8) {
 				switch (bytesToCopy) {
-					case 0:
+					case 0u:
 						return;
-					case 1:
+					case 1u:
 						*dest = *src;
 						return;
-					case 2:
+					case 2u:
 						*(short*) dest = *(short*) src;
 						return;
-					case 3:
+					case 3u:
 						*(short*) dest = *(short*) src;
 						*(dest + 2) = *(src + 2);
 						return;
-					case 4:
+					case 4u:
 						*(int*) dest = *(int*) src;
 						return;
-					case 5:
+					case 5u:
 						*(int*) dest = *(int*) src;
 						*(dest + 4) = *(src + 4);
 						return;
-					case 6:
+					case 6u:
 						*(int*) dest = *(int*) src;
 						*(short*) (dest + 4) = *(short*) (src + 4);
 						return;
-					case 7:
+					case 7u:
 						*(int*) dest = *(int*) src;
 						*(short*) (dest + 4) = *(short*) (src + 4);
 						*(dest + 6) = *(src + 6);
 						return;
-					case 8:
+					case 8u:
 						*(long*) dest = *(long*) src;
 						return;
-					case 9:
+					case 9u:
 						*(long*) dest = *(long*) src;
 						*(dest + 8) = *(src + 8);
 						return;
-					case 10:
+					case 10u:
 						*(long*) dest = *(long*) src;
 						*(short*) (dest + 8) = *(short*) (src + 8);
 						return;
-					case 11:
+					case 11u:
 						*(long*) dest = *(long*) src;
 						*(short*) (dest + 8) = *(short*) (src + 8);
 						*(dest + 10) = *(src + 10);
 						return;
-					case 12:
+					case 12u:
 						*(long*) dest = *(long*) src;
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						return;
-					case 13:
+					case 13u:
 						*(long*) dest = *(long*) src;
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						*(dest + 12) = *(src + 12);
 						return;
-					case 14:
+					case 14u:
 						*(long*) dest = *(long*) src;
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						*(short*) (dest + 12) = *(short*) (src + 12);
 						return;
-					case 15:
+					case 15u:
 						*(long*) dest = *(long*) src;
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						*(short*) (dest + 12) = *(short*) (src + 12);
 						*(dest + 14) = *(src + 14);
 						return;
-					case 16:
+					case 16u:
 						*(long*) dest = *(long*) src;
 						*(long*) (dest + 8) = *(long*) (src + 8);
 						return;
@@ -190,99 +190,99 @@ namespace AForge.Video {
 					count--;
 				}
 
-				if ((bytesToCopy & 8) != 0) {
+				if ((bytesToCopy & 8u) != 0) {
 					((long*) dest)[0] = ((long*) src)[0];
 					dest += 8;
 					src += 8;
 				}
-				if ((bytesToCopy & 4) != 0) {
+				if ((bytesToCopy & 4u) != 0) {
 					((int*) dest)[0] = ((int*) src)[0];
 					dest += 4;
 					src += 4;
 				}
-				if ((bytesToCopy & 2) != 0) {
+				if ((bytesToCopy & 2u) != 0) {
 					((short*) dest)[0] = ((short*) src)[0];
 					dest += 2;
 					src += 2;
 				}
-				if ((bytesToCopy & 1) != 0)
+				if ((bytesToCopy & 1u) != 0)
 					*dest = *src;
 
 			} else {
 				switch (bytesToCopy) {
-					case 0:
+					case 0u:
 						return;
-					case 1:
+					case 1u:
 						*dest = *src;
 						return;
-					case 2:
+					case 2u:
 						*(short*) dest = *(short*) src;
 						return;
-					case 3:
+					case 3u:
 						*(short*) dest = *(short*) src;
 						*(dest + 2) = *(src + 2);
 						return;
-					case 4:
+					case 4u:
 						*(int*) dest = *(int*) src;
 						return;
-					case 5:
+					case 5u:
 						*(int*) dest = *(int*) src;
 						*(dest + 4) = *(src + 4);
 						return;
-					case 6:
+					case 6u:
 						*(int*) dest = *(int*) src;
 						*(short*) (dest + 4) = *(short*) (src + 4);
 						return;
-					case 7:
+					case 7u:
 						*(int*) dest = *(int*) src;
 						*(short*) (dest + 4) = *(short*) (src + 4);
 						*(dest + 6) = *(src + 6);
 						return;
-					case 8:
+					case 8u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						return;
-					case 9:
+					case 9u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(dest + 8) = *(src + 8);
 						return;
-					case 10:
+					case 10u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(short*) (dest + 8) = *(short*) (src + 8);
 						return;
-					case 11:
+					case 11u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(short*) (dest + 8) = *(short*) (src + 8);
 						*(dest + 10) = *(src + 10);
 						return;
-					case 12:
+					case 12u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						return;
-					case 13:
+					case 13u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						*(dest + 12) = *(src + 12);
 						return;
-					case 14:
+					case 14u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						*(short*) (dest + 12) = *(short*) (src + 12);
 						return;
-					case 15:
+					case 15u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(int*) (dest + 8) = *(int*) (src + 8);
 						*(short*) (dest + 12) = *(short*) (src + 12);
 						*(dest + 14) = *(src + 14);
 						return;
-					case 16:
+					case 16u:
 						*(int*) dest = *(int*) src;
 						*(int*) (dest + 4) = *(int*) (src + 4);
 						*(int*) (dest + 8) = *(int*) (src + 8);
@@ -318,23 +318,23 @@ namespace AForge.Video {
 					count--;
 				}
 
-				if ((bytesToCopy & 8) != 0) {
+				if ((bytesToCopy & 8u) != 0) {
 					((int*) dest)[0] = ((int*) src)[0];
 					((int*) dest)[1] = ((int*) src)[1];
 					dest += 8;
 					src += 8;
 				}
-				if ((bytesToCopy & 4) != 0) {
+				if ((bytesToCopy & 4u) != 0) {
 					((int*) dest)[0] = ((int*) src)[0];
 					dest += 4;
 					src += 4;
 				}
-				if ((bytesToCopy & 2) != 0) {
+				if ((bytesToCopy & 2u) != 0) {
 					((short*) dest)[0] = ((short*) src)[0];
 					dest += 2;
 					src += 2;
 				}
-				if ((bytesToCopy & 1) != 0)
+				if ((bytesToCopy & 1u) != 0)
 					*dest = *src;
 			}
 		}

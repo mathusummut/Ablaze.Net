@@ -81,6 +81,11 @@ namespace AForge.Video.DirectShow {
 			for (int i = 0; i < count; i++) {
 				try {
 					VideoCapabilities vc = new VideoCapabilities(videoStreamConfig, i);
+					// ignore 12 bpp formats for now, since it was noticed they cause issues on Windows 8
+					// TODO: proper fix needs to be done so ICaptureGraphBuilder2::RenderStream() does not fail
+					// on such formats
+					if (vc.BitCount <= 12)
+						continue;
 
 					uint key = (((uint) vc.FrameSize.Height) << 32) |
 							   (((uint) vc.FrameSize.Width) << 16);
@@ -129,13 +134,6 @@ namespace AForge.Video.DirectShow {
 					AverageFrameRate = (int) (10000000 / videoInfo.AverageTimePerFrame);
 					MaximumFrameRate = (int) (10000000 / caps.MinFrameInterval);
 				} else {
-					throw new ApplicationException("Unsupported format found.");
-				}
-
-				// ignore 12 bpp formats for now, since it was noticed they cause issues on Windows 8
-				// TODO: proper fix needs to be done so ICaptureGraphBuilder2::RenderStream() does not fail
-				// on such formats
-				if (BitCount <= 12) {
 					throw new ApplicationException("Unsupported format found.");
 				}
 			} finally {

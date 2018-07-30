@@ -60,26 +60,26 @@ namespace AForge.Video.DirectShow {
 		private long bytesReceived;
 
 		// video and snapshot resolutions to set
-		private VideoCapabilities videoResolution = null;
-		private VideoCapabilities snapshotResolution = null;
+		private VideoCapabilities videoResolution;
+		private VideoCapabilities snapshotResolution;
 
 		// provide snapshots or not
-		private bool provideSnapshots = false;
+		private bool provideSnapshots;
 
-		private Thread thread = null;
-		private ManualResetEvent stopEvent = null;
+		private Thread thread;
+		private ManualResetEvent stopEvent;
 
 		private VideoCapabilities[] videoCapabilities;
 		private VideoCapabilities[] snapshotCapabilities;
 
-		private bool needToSetVideoInput = false;
-		private bool needToSimulateTrigger = false;
-		private bool needToDisplayPropertyPage = false;
-		private bool needToDisplayCrossBarPropertyPage = false;
-		private IntPtr parentWindowForPropertyPage = IntPtr.Zero;
+		private bool needToSetVideoInput;
+		private bool needToSimulateTrigger;
+		private bool needToDisplayPropertyPage;
+		private bool needToDisplayCrossBarPropertyPage;
+		private IntPtr parentWindowForPropertyPage;
 
 		// video capture source object
-		private object sourceObject = null;
+		private object sourceObject;
 
 		// time of starting the DirectX graph
 		private DateTime startTime = new DateTime();
@@ -90,7 +90,7 @@ namespace AForge.Video.DirectShow {
 		// flag specifying if IAMCrossbar interface is supported by the running graph/source object
 		private bool? isCrossbarAvailable = null;
 
-		private VideoInput[] crossbarVideoInputs = null;
+		private VideoInput[] crossbarVideoInputs;
 		private VideoInput crossbarVideoInput = VideoInput.Default;
 
 		// cache for video/snapshot capabilities and video inputs
@@ -307,7 +307,7 @@ namespace AForge.Video.DirectShow {
 			get {
 				if (thread != null) {
 					// check thread status
-					if (thread.Join(0) == false)
+					if (!thread.Join(0))
 						return true;
 
 					// the thread is not running, free resources
@@ -1198,7 +1198,7 @@ namespace AForge.Video.DirectShow {
 		}
 
 		// Set resolution for the specified stream configuration
-		private void SetResolution(IAMStreamConfig streamConfig, VideoCapabilities resolution) {
+		private static void SetResolution(IAMStreamConfig streamConfig, VideoCapabilities resolution) {
 			if (resolution == null) {
 				return;
 			}
@@ -1231,7 +1231,7 @@ namespace AForge.Video.DirectShow {
 		}
 
 		// Configure specified pin and collect its capabilities if required
-		private void GetPinCapabilitiesAndConfigureSizeAndRate(ICaptureGraphBuilder2 graphBuilder, IBaseFilter baseFilter,
+		private static void GetPinCapabilitiesAndConfigureSizeAndRate(ICaptureGraphBuilder2 graphBuilder, IBaseFilter baseFilter,
 			Guid pinCategory, VideoCapabilities resolutionToSet, ref VideoCapabilities[] capabilities) {
 			object streamConfigObject;
 			graphBuilder.FindInterface(pinCategory, MediaType.Video, baseFilter, typeof(IAMStreamConfig).GUID, out streamConfigObject);
@@ -1328,7 +1328,7 @@ namespace AForge.Video.DirectShow {
 		}
 
 		// Get type of input connected to video output of the crossbar
-		private VideoInput GetCurrentCrossbarInput(IAMCrossbar crossbar) {
+		private static VideoInput GetCurrentCrossbarInput(IAMCrossbar crossbar) {
 			VideoInput videoInput = VideoInput.Default;
 
 			int inPinsCount, outPinsCount;
@@ -1368,7 +1368,7 @@ namespace AForge.Video.DirectShow {
 		}
 
 		// Set type of input connected to video output of the crossbar
-		private void SetCurrentCrossbarInput(IAMCrossbar crossbar, VideoInput videoInput) {
+		private static void SetCurrentCrossbarInput(IAMCrossbar crossbar, VideoInput videoInput) {
 			if (videoInput.Type != PhysicalConnectorType.Default) {
 				int inPinsCount, outPinsCount;
 
@@ -1501,7 +1501,7 @@ namespace AForge.Video.DirectShow {
 						byte* src = (byte*) buffer.ToPointer();
 
 						for (int y = 0; y < height; y++) {
-							ByteArrayUtils.MemoryCopy(dst, src, (uint) srcStride);
+							ByteArrayUtils.MemoryCopy(src, dst, (uint) srcStride);
 							dst -= dstStride;
 							src += srcStride;
 						}

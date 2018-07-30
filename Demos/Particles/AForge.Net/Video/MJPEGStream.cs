@@ -52,10 +52,10 @@ namespace AForge.Video {
 		// URL for MJPEG stream
 		private string source;
 		// login and password for HTTP authentication
-		private string login = null;
-		private string password = null;
+		private string login;
+		private string password;
 		// proxy information
-		private IWebProxy proxy = null;
+		private IWebProxy proxy;
 		// received frames count
 		private int framesReceived;
 		// recieved byte count
@@ -65,16 +65,16 @@ namespace AForge.Video {
 		// timeout value for web request
 		private int requestTimeout = 10000;
 		// if we should use basic authentication when connecting to the video source
-		private bool forceBasicAuthentication = false;
+		private bool forceBasicAuthentication;
 
 		// buffer size used to download MJPEG stream
 		private const int bufSize = 1024 * 1024;
 		// size of portion to read at once
 		private const int readSize = 1024;
 
-		private Thread thread = null;
-		private ManualResetEvent stopEvent = null;
-		private ManualResetEvent reloadEvent = null;
+		private Thread thread;
+		private ManualResetEvent stopEvent;
+		private ManualResetEvent reloadEvent;
 
 		private string userAgent = "Mozilla/5.0";
 
@@ -274,7 +274,7 @@ namespace AForge.Video {
 			get {
 				if (thread != null) {
 					// check thread status
-					if (thread.Join(0) == false)
+					if (!thread.Join(0))
 						return true;
 
 					// the thread is not running, so free resources
@@ -423,7 +423,7 @@ namespace AForge.Video {
 			byte[] buffer = new byte[bufSize];
 			// JPEG magic number
 			byte[] jpegMagic = new byte[] { 0xFF, 0xD8, 0xFF };
-			int jpegMagicLength = 3;
+			const int jpegMagicLength = 3;
 
 			ASCIIEncoding encoding = new ASCIIEncoding();
 
