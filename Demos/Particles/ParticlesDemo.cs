@@ -94,7 +94,6 @@ namespace Particles {
 		}
 
 		private void Webcam_NewFrame(object sender, NewFrameEventArgs eventArgs) {
-			ImageMessageBox.Show(eventArgs.Frame);
 			BgraColor[] colors = eventArgs.Frame.GetAllPixelsBgra();
 			ParallelLoop.For(startI, endI, 1, new PixelCanvas(colors, edgeBuffer, false), checkPixel);
 			lock (SyncRoot)

@@ -242,7 +242,9 @@ namespace System.Threading.Dispatch {
 						if (threadResetEvent != null)
 							threadResetEvent.Set();
 						WaitCounters.TryAdd(current, 1);
-						if (timeout > 0)
+						if (timeout <= 0)
+							e.ResetEvent.Wait();
+						else
 							e.ResetEvent.Wait(timeout);
 						byte val;
 						WaitCounters.TryRemove(current, out val);
@@ -274,7 +276,10 @@ namespace System.Threading.Dispatch {
 					if (!(e.State == InvokeState.Queued || e.State == InvokeState.Started))
 						return e.AsyncState;
 					WaitCounters.TryAdd(current, 1);
-					e.ResetEvent.Wait(timeout);
+					if (timeout <= 0)
+						e.ResetEvent.Wait();
+					else
+						e.ResetEvent.Wait(timeout);
 					byte val;
 					WaitCounters.TryRemove(current, out val);
 					e.Dispose();
