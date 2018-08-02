@@ -33,9 +33,9 @@ namespace MDITest {
 
 		private void InitializeComponent() {
 			this.SuspendLayout();
-			// 
+			//
 			// Form1
-			// 
+			//
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(639, 441);
 			this.Name = "Form1";

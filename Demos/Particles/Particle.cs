@@ -11,20 +11,11 @@ namespace Particles {
 
 		public void Update(Particle[] particles) {
 			Vector3 dist;
-			bool retry;
-			do {
-				retry = false;
-				float length;
-				for (int i = 0; i < particles.Length; i++) {
-					dist = Location - particles[i].Location;
-					length = dist.LengthSquared();
-					if (length < 0.005f) {
-						Location = new Vector3(((float) UniformRandom.RandomDouble) * 13.333f - 6.667f, ((float) UniformRandom.RandomDouble) * 10f - 5f, 0f);
-						retry = true;
-					}
-					Location = new Vector3(ParticleManager.Approach(Location.ToVector2(), particles[i].Location.ToVector2(), 0.005f, -0.01f, 0.5f), 0f);
-				}
-			} while (retry);
+			for (int i = 0; i < particles.Length; i++) {
+				dist = Location - particles[i].Location;
+				if (dist.LengthSquared() < 0.03f)
+					Location += Vector3.Normalize(new Vector3(UniformRandom.RandomFloat, UniformRandom.RandomFloat, UniformRandom.RandomFloat)) * 2f;
+			}
 			Location = new Vector3(Vector2.Clamp(Location.ToVector2(), new Vector2(-1, -1), new Vector2(1, 1)), 0f);
 		}
 

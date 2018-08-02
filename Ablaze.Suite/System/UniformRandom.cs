@@ -72,6 +72,19 @@ namespace System {
 		/// Generates a random value in the range [0, 1).
 		/// </summary>
 		[CLSCompliant(false)]
+		public static float RandomFloat {
+#if NET45
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+			get {
+				return (float) (Random * 5.421010862427522170331137592055280434137021303416885e-20);
+			}
+		}
+
+		/// <summary>
+		/// Generates a random value in the range [0, 1).
+		/// </summary>
+		[CLSCompliant(false)]
 		public static double RandomDouble {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]

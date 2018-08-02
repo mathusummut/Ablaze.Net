@@ -9,7 +9,7 @@ namespace GDITest {
 		private CheckBox checkBox1;
 		private CheckBox checkBox2;
 		private StyledLabel statusLabel;
-		
+
 		public GdiTest() {
 			InitializeComponent();
 			InitializeGL(true);
@@ -98,9 +98,9 @@ namespace GDITest {
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
-			// 
+			//
 			// checkBox1
-			// 
+			//
 			this.checkBox1.AutoSize = true;
 			this.checkBox1.Checked = true;
 			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -111,9 +111,9 @@ namespace GDITest {
 			this.checkBox1.Text = "Use OpenGL";
 			this.checkBox1.UseVisualStyleBackColor = true;
 			this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-			// 
+			//
 			// checkBox2
-			// 
+			//
 			this.checkBox2.AutoSize = true;
 			this.checkBox2.Location = new System.Drawing.Point(162, 261);
 			this.checkBox2.Name = "checkBox2";
@@ -122,9 +122,9 @@ namespace GDITest {
 			this.checkBox2.Text = "Border on GDI layer";
 			this.checkBox2.UseVisualStyleBackColor = true;
 			this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
-			// 
+			//
 			// GdiTest
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;

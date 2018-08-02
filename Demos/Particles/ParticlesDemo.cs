@@ -164,15 +164,13 @@ namespace Particles {
 					if (IsGdiEnabled)
 						InvalidateGdi();
 					else
-						InvokeOnGLThreadSync(new InvocationData(updateTexture, bitmap));			
+						InvokeOnGLThreadSync(new InvocationData(updateTexture, bitmap));
 				}
 			}
 		}
 
 		private void ParticlesDemo_MouseUp(object sender, MouseEventArgs e) {
-			if (e.Button == MouseButtons.Left)
-				takeSnapshot = true;
-			else if (e.Button == MouseButtons.Right) {
+			if (e.Button == MouseButtons.Right) {
 				showEdges = !showEdges;
 				if (!showEdges) {
 					lock (SyncRoot) {
@@ -280,20 +278,20 @@ namespace Particles {
 		protected override void OnPaintGL() {
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 			Mesh2D.DrawTexture2D(texture, Vector3.Zero, new Vector3(-1f, -1f, 4f), new Vector2(2f, 2f), Vector3.Zero, webcamMesh);
-			//Particles.Render();
+			Particles.Render();
 		}
 
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		public static void Main() {
+		public static void Main(string[] args) {
 			Application.EnableVisualStyles();
 			System.Diagnostics.ErrorHandler.Behavior = System.Diagnostics.ErrorDialogAction.ThrowRegardless;
 			devices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 			if (devices.Count == 0) {
 				if (StyledMessageBox.Show("No webcam device has been found. Retry?", "Error", false, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) == DialogResult.Retry)
-					Main();
+					Main(args);
 				return;
 			}
 			using (VideoCaptureDeviceForm form = new VideoCaptureDeviceForm()) {

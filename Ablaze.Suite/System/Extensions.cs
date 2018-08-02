@@ -802,9 +802,9 @@ namespace System {
 		}
 
 		/// <summary>
-		/// Gets whether the specified key is a modifier key.
+		/// Gets whether the specified key is a modifier key
 		/// </summary>
-		/// <param name="key">The key to check if it is a modifier key.</param>
+		/// <param name="key">The key to check if it is a modifier key</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -832,12 +832,12 @@ namespace System {
 		}
 
 		/// <summary>
-		/// Gets the characters associated with the specified keys (takes keyboard layout into account).
+		/// Gets the characters associated with the specified keys (takes keyboard layout into account)
 		/// </summary>
-		/// <param name="key">The keys that are pressed.</param>
-		/// <param name="shift">Whether the shift modifier key is also pressed.</param>
-		/// <param name="alt">Whether the alt modifier key is also pressed.</param>
-		/// <param name="control">Whether the control modifier key is also pressed.</param>
+		/// <param name="key">The keys that are pressed</param>
+		/// <param name="shift">Whether the shift modifier key is also pressed</param>
+		/// <param name="alt">Whether the alt modifier key is also pressed</param>
+		/// <param name="control">Whether the control modifier key is also pressed</param>
 		public static string ToString(this Keys key, bool shift, bool alt, bool control) {
 			StringBuilder buf = new StringBuilder(256);
 			unsafe
@@ -855,9 +855,9 @@ namespace System {
 		}
 
 		/// <summary>
-		/// Gets the characters associated with the specified keys (takes keyboard layout into account).
+		/// Gets the characters associated with the specified keys (takes keyboard layout into account)
 		/// </summary>
-		/// <param name="keys">The keys that are pressed. Modifier keys are assumed to be assumed to be included.</param>
+		/// <param name="keys">The keys that are pressed. Modifier keys are assumed to be assumed to be included</param>
 		public static string ToString(this Keys keys) {
 			StringBuilder buf = new StringBuilder(256);
 			unsafe
@@ -875,11 +875,11 @@ namespace System {
 		}
 
 		/// <summary>
-		/// Copies the specified number of bytes from the source to the destination memory region.
+		/// Copies the specified number of bytes from the source to the destination memory region
 		/// </summary>
-		/// <param name="src">The source to copy from.</param>
-		/// <param name="dest">The destination to copy to.</param>
-		/// <param name="bytesToCopy">The number of bytes to copy.</param>
+		/// <param name="src">The source to copy from</param>
+		/// <param name="dest">The destination to copy to</param>
+		/// <param name="bytesToCopy">The number of bytes to copy</param>
 		[CLSCompliant(false)]
 		public static unsafe void MemoryCopy(byte* src, byte* dest, uint bytesToCopy) {
 			if (sizeof(IntPtr) == 8) {

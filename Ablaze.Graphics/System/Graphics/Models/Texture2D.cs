@@ -279,6 +279,10 @@ namespace System.Graphics.Models {
 					GL.GenTextures(1, out name);
 					GL.BindTexture(TextureTarget.Texture2D, name);
 					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? TextureMinFilter.Linear : TextureMinFilter.Nearest));
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) (LinearScalingFilter ? TextureMagFilter.Linear : TextureMagFilter.Nearest));
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) mode);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) mode);
 					init = false;
 				} else
 					GL.BindTexture(TextureTarget.Texture2D, name);

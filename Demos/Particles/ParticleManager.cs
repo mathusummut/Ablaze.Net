@@ -54,11 +54,11 @@ namespace Particles {
 			Vector2 pos = particles[i].Location.ToVector2();
 			for (int j = 0; j < particles.Length; j++) {
 				if (i != j)
-					pos = Approach(pos, particles[j].Location.ToVector2(), 0.001f, 0.01f, 1f, 0.01f);
+					pos = Approach(pos, particles[j].Location.ToVector2(), 1.3f, 0.01f, 1f, 0.01f);
 			}
 			Point? webcamCoordinate = GetClosestEdge((int) pos.X, (int) pos.Y);
 			if (webcamCoordinate != null)
-				pos = Approach(pos, webcamCoordinate.Value.ToVector2(), 0.001f, 0.5f, 0.1f, 0.1f);
+				pos = Approach(pos, webcamCoordinate.Value.ToVector2(), 0.1f, 0.5f, 0.1f, 0.1f);
 			particles[i].Location = new Vector3(Vector2.Clamp(pos + ((pos - particles[i].Location.ToVector2()) * 0.2f), new Vector2(-1, -1), new Vector2(1, 1)), 0f);
 		}
 

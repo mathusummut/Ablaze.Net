@@ -424,7 +424,7 @@ namespace System.Windows.Forms {
 			get {
 				if (closeEnabled) {
 					return new Rectangle(new Point(((isMaximized && (animatingTopInner || IsFullyMaximized)) ? ClientSize.Width - 1 : ClientSize.Width - (int) ((borderWidth + titleBarPadding.Width) * DpiScale.Height)) - closeSize.Width,
-						(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 1 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height)), closeSize);
+						(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 0 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height)), closeSize);
 				} else
 					return Rectangle.Empty;
 			}
@@ -438,7 +438,7 @@ namespace System.Windows.Forms {
 			get {
 				if (maximizeEnabled) {
 					Rectangle bounds = new Rectangle(new Point((isMaximized && (animatingTopInner || IsFullyMaximized)) ? ClientSize.Width - 1 : ClientSize.Width - (int) ((borderWidth + titleBarPadding.Width) * DpiScale.Height),
-						(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 1 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height)), maximizeButtonSize);
+						(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 0 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height)), maximizeButtonSize);
 					if (closeEnabled)
 						bounds.X -= closeSize.Width;
 					bounds.X -= maximizeButtonSize.Width;
@@ -456,7 +456,7 @@ namespace System.Windows.Forms {
 			get {
 				if (MinimizeEnabled) {
 					Rectangle bounds = new Rectangle(new Point((isMaximized && (animatingTopInner || IsFullyMaximized)) ? ClientSize.Width - 1 : ClientSize.Width - (int) ((borderWidth + titleBarPadding.Width) * DpiScale.Height),
-						(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 1 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height)), maximizeButtonSize);
+						(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 0 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height)), maximizeButtonSize);
 					if (closeEnabled)
 						bounds.X -= closeSize.Width;
 					if (maximizeEnabled)
@@ -475,7 +475,7 @@ namespace System.Windows.Forms {
 		public Rectangle ControlBoxBounds {
 			get {
 				Rectangle bounds = new Rectangle((isMaximized && (animatingTopInner || IsFullyMaximized)) ? ClientSize.Width - 1 : ClientSize.Width - (int) ((borderWidth + titleBarPadding.Width) * DpiScale.Height),
-					(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 1 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height), 0, closeSize.Height);
+					(isMaximized && (animatingTopInner || IsFullyMaximized)) ? 0 : (int) ((borderWidth / 2 + titleBarPadding.Height) * DpiScale.Height), 0, closeSize.Height);
 				if (closeEnabled) {
 					bounds.X -= closeSize.Width;
 					bounds.Width += closeSize.Width;
@@ -1940,11 +1940,7 @@ namespace System.Windows.Forms {
 			if (closeEnabled) {
 				Rectangle rect = CloseBounds;
 				rect.Width++;
-				if ((isMaximized && (animatingTopInner || IsFullyMaximized))) {
-					rect.Y--;
-					rect.Height += 3;
-				} else
-					rect.Height += 2;
+				rect.Height += 2;
 				return rect.Contains(point);
 			} else
 				return false;
@@ -1962,11 +1958,7 @@ namespace System.Windows.Forms {
 				Rectangle rect = MaximizeBounds;
 				if (!closeEnabled)
 					rect.Width++;
-				if ((isMaximized && (animatingTopInner || IsFullyMaximized))) {
-					rect.Y--;
-					rect.Height += 3;
-				} else
-					rect.Height += 2;
+				rect.Height += 2;
 				return rect.Contains(point);
 			} else
 				return false;
@@ -1984,11 +1976,7 @@ namespace System.Windows.Forms {
 				Rectangle rect = MinimizeBounds;
 				if (!(closeEnabled || maximizeEnabled))
 					rect.Width++;
-				if ((isMaximized && (animatingTopInner || IsFullyMaximized))) {
-					rect.Y--;
-					rect.Height += 3;
-				} else
-					rect.Height += 2;
+				rect.Height += 2;
 				return rect.Contains(point);
 			} else
 				return false;
@@ -3977,6 +3965,7 @@ namespace System.Windows.Forms {
 						g.DrawLine(XColor, bounds.X, bounds.Bottom, bounds.Right, bounds.Y);
 					}
 				}
+				bool maximized = isMaximized && (animatingTopInner || IsFullyMaximized);
 				if (maximizeEnabled) {
 					Rectangle maximizeBounds = MaximizeBounds;
 					if (rect.IntersectsWith(maximizeBounds)) {
@@ -3986,7 +3975,7 @@ namespace System.Windows.Forms {
 						maximizeButtonRenderer.RenderBackground(g, maximizeBounds);
 						g.SmoothingMode = SmoothingMode.None;
 						g.PixelOffsetMode = PixelOffsetMode.None;
-						if ((isMaximized && (animatingTopInner || IsFullyMaximized))) {
+						if (maximized) {
 							int difference = (int) (maximizeBounds.Height * 0.14F);
 							int size = bounds - difference;
 							int differentX = location.X + difference;
@@ -4021,14 +4010,22 @@ namespace System.Windows.Forms {
 				}
 				g.SmoothingMode = SmoothingMode.None;
 				g.PixelOffsetMode = PixelOffsetMode.None;
-				if (outlineColor.Color.A != 0) {
-					g.DrawLine(outlineColor, 0, 0, clientSize.Width, 0);
-					g.DrawLine(outlineColor, 0, 0, 0, clientSize.Height);
-					g.DrawLine(outlineColor, clientSize.Width - 1, 0, clientSize.Width - 1, clientSize.Height);
-					g.DrawLine(outlineColor, 0, clientSize.Height - 1, clientSize.Width - 1, clientSize.Height - 1);
+				Rectangle workingArea = WorkingArea;
+				Rectangle windowBounds = Bounds;
+				bool fullWidth = windowBounds.Width == workingArea.Width && windowBounds.X == workingArea.X;
+				bool fullHeight = windowBounds.Height == workingArea.Height && windowBounds.Y == workingArea.Y;
+				if (!(outlineColor.Color.A == 0 || (fullWidth && fullHeight))) {
+					if (!fullWidth) {
+						g.DrawLine(outlineColor, 0, 0, 0, clientSize.Height);
+						g.DrawLine(outlineColor, clientSize.Width - 1, 0, clientSize.Width - 1, clientSize.Height);
+					}
+					if (!fullHeight) {
+						g.DrawLine(outlineColor, 0, 0, clientSize.Width, 0);
+						g.DrawLine(outlineColor, 0, clientSize.Height - 1, clientSize.Width - 1, clientSize.Height - 1);
+					}
 				}
 				if (inlineColor.Color.A != 0) {
-					if ((isMaximized && (animatingTopInner || IsFullyMaximized)))
+					if (maximized)
 						g.DrawLine(inlineColor, 0, titleBarHeight - 1, clientSize.Width - 1, titleBarHeight - 1);
 					else {
 						g.DrawLine(inlineColor, borderWidth - 1, titleBarHeight - 1, clientSize.Width - borderWidth, titleBarHeight - 1);
