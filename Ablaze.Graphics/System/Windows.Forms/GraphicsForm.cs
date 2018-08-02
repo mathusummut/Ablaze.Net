@@ -566,7 +566,7 @@ namespace System.Windows.Forms {
 						GdiTexture.Bind();
 					globalShader.Bind();
 					Mesh2D.Setup2D(GLViewport.Size);
-					Mesh2D.DrawTexture2D(GdiTexture, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, rectMesh);
+					Mesh2D.DrawTexture2D(GdiTexture, Vector3.Zero, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, rectMesh);
 				}
 				if (!RenderBorderOnGdiLayer)
 					DrawBorderGL();

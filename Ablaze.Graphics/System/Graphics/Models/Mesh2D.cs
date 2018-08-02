@@ -49,19 +49,20 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Draws the specified texture on screen on a 2D orthographic projection.
+		/// Draws the specified texture on screen on a 2D orthographic projection
 		/// </summary>
-		/// <param name="texture">The texture to render on screen.</param>
-		/// <param name="location">The location to render the texture at.</param>
-		/// <param name="size">The size to render the texture at.</param>
-		/// <param name="rotation">The rotation of the texture.</param>
-		/// <param name="sharedRectMesh"></param>
-		public static void DrawTexture2D(ITexture texture, Vector3 location, Vector2 size, Vector3 rotation, MeshComponent sharedRectMesh = null) {
+		/// <param name="texture">The texture to render on screen</param>
+		/// <param name="origin">The origin coordinate in the current 2D orthographic projection (usually {0, 0, 0}), relative to which the location is specified</param>
+		/// <param name="location">The location to render the texture at. It is the target location of the top-left coordinate of the texture to be drawn</param>
+		/// <param name="size">The size to render the texture at</param>
+		/// <param name="rotation">The rotation of the texture</param>
+		/// <param name="sharedRectMesh">The 2D quadrilateral mesh to use for rendering, that must be created with CreateShared2DMeshRect(). Can be null</param>
+		public static void DrawTexture2D(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, Vector3 rotation, MeshComponent sharedRectMesh = null) {
 			if (texture == null)
 				return;
-			if (sharedRectMesh == null)
+			else if (sharedRectMesh == null)
 				sharedRectMesh = CreateShared2DMeshRect();
-			sharedRectMesh.Location = new Vector3(location.X / size.X, location.Y / size.Y, 0f);
+			sharedRectMesh.Location = new Vector3(origin.X + (location.X - origin.X) / size.X, origin.Y + (location.Y - origin.Y) / size.Y, 0f);
 			sharedRectMesh.Scale = new Vector3(size, 0f);
 			sharedRectMesh.Rotation = rotation;
 			sharedRectMesh.Render(texture);

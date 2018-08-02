@@ -151,9 +151,9 @@ namespace Ablaze.ModelViewer {
 			MouseWheel += ModelViewer_MouseWheel;
 		}
 
-		private void Button_Click(object sender, EventArgs e) {
+		/*private void Button_Click(object sender, EventArgs e) {
 			Console.WriteLine("click");
-		}
+		}*/
 
 		private static void ModelViewer_DragEnter(object sender, DragEventArgs e) {
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))

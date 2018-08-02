@@ -12,13 +12,14 @@ using AForge.Video.DirectShow;
 namespace Particles {
 	public class ParticlesDemo : GraphicsForm {
 		public static BgraColor EdgeColor = BgraColor.Red, IgnoreColor = BgraColor.Black;
-		public const float threshold = 0.05f;
+		public const float threshold = 800f;
 		public const int edgeTolerance = 25, borderOffset = 15, noiseRemovalRadius = 12, significantCloseEdgeCount = 6;
 		private object SyncRoot = new object(), bitmapSyncRoot = new object();
 		internal int widthMinusOne, heightMinusOne, widthMinusBorderOffset, heightMinusBorderOffset;
 		private static VideoCaptureDevice webcam;
 		private Texture2D texture;
 		private BgraColor[] resultant;
+		private Vector2 webcamSize;
 		private int startI, endI;
 		internal int webcamWidth, webcamHeight;
 		internal bool[][] isEdge, edgeBuffer, ignore;
@@ -37,6 +38,7 @@ namespace Particles {
 		public ParticlesDemo() {
 			updateTexture = UpdateTexture;
 			InitializeComponent();
+			BackColor = (Color) IgnoreColor;
 			EnableFullscreenOnAltEnter = true;
 			UpdateInterval = 30;
 			checkPixel = CheckPixel;
@@ -45,6 +47,7 @@ namespace Particles {
 			Size size = webcam.VideoResolution.FrameSize;
 			webcamWidth = size.Width;
 			webcamHeight = size.Height;
+			webcamSize = new Vector2(webcamWidth, webcamHeight);
 			texture = new Texture2D(webcamWidth, webcamHeight, true, false);
 			bitmap = new Bitmap(webcamWidth, webcamHeight);
 			widthMinusOne = webcamWidth - 1;
@@ -158,7 +161,10 @@ namespace Particles {
 			if (showEdges) {
 				lock (bitmapSyncRoot) {
 					bitmap.SetAllPixels(resultant);
-					InvokeOnGLThreadSync(new InvocationData(updateTexture, bitmap));
+					if (IsGdiEnabled)
+						InvalidateGdi();
+					else
+						InvokeOnGLThreadSync(new InvocationData(updateTexture, bitmap));			
 				}
 			}
 		}
@@ -179,13 +185,24 @@ namespace Particles {
 		}
 
 		protected override void OnUpdate(double elapsedMilliseconds) {
-			Particles.Update();
+			ParticleManager particles = Particles;
+			if (particles != null)
+				particles.Update();
 			InvalidateGL();
+		}
+
+		protected override void OnPaintGdi(Graphics g, Rectangle clippingRect, bool clearBeforeRedraw) {
+			Size view = ViewSize;
+			lock (bitmapSyncRoot)
+				g.DrawImage(bitmap, new Rectangle(Point.Empty, view));
+			view.Width -= borderOffset * 2;
+			view.Height -= borderOffset * 2;
+			Particles.Render2D(g, view);
 		}
 
 		private object UpdateTexture(object image) {
 			Bitmap bitmap = (Bitmap) image;
-			texture.UpdateRegion(bitmap, new Rectangle(0, 0, webcamWidth, webcamHeight), Point.Empty);
+			texture.UpdateRegion(bitmap.ConvertPixelFormat(System.Drawing.Imaging.PixelFormat.Format32bppArgb), new Rectangle(0, 0, webcamWidth, webcamHeight), Point.Empty);
 			OnPaintGL();
 			return null;
 		}
@@ -226,9 +243,13 @@ namespace Particles {
 			int y = i / webcamWidth;
 			if (edgeBuffer[x][y] && !ignore[x][y]) {
 				int currentX, currentY, counter = 0;
+				ParticleManager manager = Particles;
+				if (manager == null)
+					return;
+				Point[] concentric = manager.concentricPoints;
 				for (int pointIndex = 0; pointIndex < noiseRemovalRadius && counter < significantCloseEdgeCount; pointIndex++) {
-					currentX = x + Particles.concentricPoints[pointIndex].X;
-					currentY = y + Particles.concentricPoints[pointIndex].Y;
+					currentX = x + concentric[pointIndex].X;
+					currentY = y + concentric[pointIndex].Y;
 					if (currentY >= borderOffset && currentY < heightMinusBorderOffset && currentX >= borderOffset && currentX < widthMinusBorderOffset && edgeBuffer[currentX][currentY] && !ignore[currentX][currentY])
 						counter++;
 				}
@@ -248,7 +269,8 @@ namespace Particles {
 		protected override void OnGLInitialized() {
 			base.OnGLInitialized();
 			MeshComponent.SetupGLEnvironment();
-			GL.ClearColor((Color) IgnoreColor);
+			Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-1f, 1f, 1f, -1f, -1f, 5f);
+			Mesh2D.Setup2D(ref ortho);
 			webcamMesh = Mesh2D.CreateShared2DMeshRect();
 		}
 
@@ -257,12 +279,8 @@ namespace Particles {
 		/// </summary>
 		protected override void OnPaintGL() {
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			//Enter drawing code here
-			int halfWidth = webcamWidth / 2, halfHeight = webcamHeight / 2;
-			Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-halfWidth, halfWidth, halfHeight, -halfHeight, 0.01f, 1000f);
-			Mesh2D.Setup2D(ref ortho);
-			Mesh2D.DrawTexture2D(texture, new Vector3(-halfWidth, -halfHeight, 0f), new Vector2(webcamWidth, webcamHeight), Vector3.Zero, webcamMesh);
-			Particles.Render();
+			Mesh2D.DrawTexture2D(texture, Vector3.Zero, new Vector3(-1f, -1f, 4f), new Vector2(2f, 2f), Vector3.Zero, webcamMesh);
+			//Particles.Render();
 		}
 
 		/// <summary>

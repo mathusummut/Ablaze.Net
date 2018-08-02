@@ -1308,9 +1308,8 @@ namespace System.Drawing {
 			int i;
 			switch (componentCount) {
 				case 4:
-					for (i = 0; i < pixelComponentCount; i += 4) {
+					for (i = 0; i < pixelComponentCount; i += 4)
 						colors[i >> 2] = Color.FromArgb(this[i + 3], this[i + 2], this[i + 1], this[i]);
-					}
 					break;
 				case 3:
 					int temp = 0;
@@ -1344,25 +1343,25 @@ namespace System.Drawing {
 				int i;
 				switch (componentCount) {
 					case 4:
-						for (i = 0; i < pixelComponentCount; i += 4)
-							colors[i >> 2] = *((BgraColor*) ptr);
+						BgraColor* color = (BgraColor*) ptr;
+						for (i = 0; i < pixelCount; i++, color++)
+							colors[i] = *color;
 						break;
 					case 3:
-						int temp = 0;
-						for (i = 0; i < pixelComponentCount; i += 3, temp++)
-							colors[temp] = new BgraColor(*(ptr + 2), *(ptr + 1), *ptr);
+						for (i = 0; i < pixelCount; i++, ptr += 3)
+							colors[i] = new BgraColor(*(ptr + 2), *(ptr + 1), *ptr);
 						break;
 					case 1: {
 							byte component;
-							for (i = 0; i < pixelCount; i++) {
+							for (i = 0; i < pixelCount; i++, ptr++) {
 								component = *ptr;
 								colors[i] = new BgraColor(component, component, component);
 							}
 						}
 						break;
 					default:
-						for (i = 0; i < pixelComponentCount; i += 2)
-							colors[i >> 1] = new BgraColor(0, *(ptr + 1), *ptr);
+						for (i = 0; i < pixelCount; i++, ptr += 2)
+							colors[i] = new BgraColor(0, *(ptr + 1), *ptr);
 						break;
 				}
 			}
