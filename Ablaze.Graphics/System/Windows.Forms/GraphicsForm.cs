@@ -1005,7 +1005,7 @@ namespace System.Windows.Forms {
 				if (dispatcher == null)
 					InvokeOnGLThreadSync(new InvocationData(unload, callOnUnload), 2500, false);
 				else {
-					dispatcher.Invoke(new InvocationData(unload, callOnUnload), 1500, false);
+					dispatcher.Invoke(new InvocationData(unload, callOnUnload), 2500, false);
 					dispatcher.Dispose();
 				}
 				Unloading = false;

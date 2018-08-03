@@ -12,7 +12,7 @@ using AForge.Video.DirectShow;
 namespace Particles {
 	public class ParticlesDemo : GraphicsForm {
 		public static BgraColor EdgeColor = BgraColor.Red, IgnoreColor = BgraColor.Black;
-		public const float threshold = 800f;
+		public const float threshold = 1000f;
 		public const int edgeTolerance = 25, borderOffset = 15, noiseRemovalRadius = 12, significantCloseEdgeCount = 6;
 		private object SyncRoot = new object(), bitmapSyncRoot = new object();
 		internal int widthMinusOne, heightMinusOne, widthMinusBorderOffset, heightMinusBorderOffset;
@@ -285,13 +285,13 @@ namespace Particles {
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		public static void Main(string[] args) {
+		public static void Main() {
 			Application.EnableVisualStyles();
 			System.Diagnostics.ErrorHandler.Behavior = System.Diagnostics.ErrorDialogAction.ThrowRegardless;
 			devices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 			if (devices.Count == 0) {
 				if (StyledMessageBox.Show("No webcam device has been found. Retry?", "Error", false, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) == DialogResult.Retry)
-					Main(args);
+					Main();
 				return;
 			}
 			using (VideoCaptureDeviceForm form = new VideoCaptureDeviceForm()) {
