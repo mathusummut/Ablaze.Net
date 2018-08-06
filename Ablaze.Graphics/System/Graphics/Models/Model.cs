@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Graphics.OGL;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -35,9 +36,18 @@ namespace System.Graphics.Models {
 		private int vertices, triangles;
 		private object SyncRoot = new object();
 		/// <summary>
-		/// A list of the component structures managed by the model.
+		/// A list of the component structures managed by the model
 		/// </summary>
 		private List<IModel> components = new List<IModel>();
+
+		/// <summary>
+		/// Gets a read-only wrapper for the components in the model
+		/// </summary>
+		public ReadOnlyCollection<IModel> Components {
+			get {
+				return components.AsReadOnly();
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the parent model (can be null).
@@ -924,33 +934,45 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the resources used model.
+		/// Called every time Dispose() is called. It is not recommended to dispose if finalizer is true.
+		/// </summary>
+		/// <param name="finalizer">Whether the model is being disposed automatically by the garbage collector</param>
+		protected virtual void OnDisposing(bool finalizer) {
+		}
+
+		/// <summary>
+		/// Disposes of the resources used model
 		/// </summary>
 		~Model() {
-			Dispose(true, true);
+			Dispose(true, true, true);
 		}
 
 		/// <summary>
-		/// Disposes of the resources used by the model.
+		/// Disposes of the resources used by the model
 		/// </summary>
 		public void Dispose() {
-			Dispose(true, true);
+			Dispose(true, true, false);
 		}
 
 		/// <summary>
-		/// Disposes of the resources used by the model.
+		/// Disposes of the resources used by the model
 		/// </summary>
 		/// <param name="disposeChildren">Whether to dispose of the child components of the model.</param>
 		public void Dispose(bool disposeChildren) {
-			Dispose(disposeChildren, true);
+			Dispose(disposeChildren, true, false);
 		}
 
 		/// <summary>
-		/// Disposes of the resources used by the model.
+		/// Disposes of the resources used by the model
 		/// </summary>
 		/// <param name="disposeChildren">Whether to dispose of the child components of the model.</param>
 		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically.</param>
 		public void Dispose(bool disposeChildren, bool removeFromParent) {
+			Dispose(disposeChildren, removeFromParent, false);
+		}
+
+		private void Dispose(bool disposeChildren, bool removeFromParent, bool finalizer) {
+			OnDisposing(finalizer);
 			lock (SyncRoot) {
 				if (parent != null) {
 					if (removeFromParent)

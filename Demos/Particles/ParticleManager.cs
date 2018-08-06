@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Graphics.Models;
 
 namespace Particles {
-	public class ParticleManager : IDisposable {
+	public class ParticleManager : Scene {
 		public const int NumberOfParticles = 15;
 		public const int edgeDistance = 150;
 		public const float particleProximity = 115f;
@@ -20,6 +20,7 @@ namespace Particles {
 		/// Use this for initialization
 		/// </summary>
 		public ParticleManager(ParticlesDemo parent) {
+			LightingEnabled = false;
 			this.parent = parent;
 			updateParticle = UpdateParticle;
 			int x;
@@ -32,11 +33,12 @@ namespace Particles {
 			points.RemoveAt(0);
 			concentricPoints = points.ToArray();
 			particles = new Particle[NumberOfParticles];
-			Texture2D texture = new Texture2D(Properties.Resources.Particle, NPotTextureScaleMode.Pad, true, false, true);
-			for (int i = 0; i < particles.Length; i++) {
-				particles[i] = new Particle(Mesh2D.MeshFromTexture(texture, new Vector3(((float) UniformRandom.RandomDouble) * parent.webcamWidth - parent.webcamWidth / 2, ((float) UniformRandom.RandomDouble) * parent.webcamHeight - parent.webcamHeight / 2, 0f), new Vector2(texture.TextureSize.Width, texture.TextureSize.Height)));
-				particles[i].Scale = new Vector3(0.05f / texture.TextureSize.Width);
-				particles[i].Name = "Particle " + i;
+			Texture2D texture = new Texture2D(Properties.Resources.Particle, NPotTextureScaleMode.ScaleUp, true, true, false);
+			for (int i = 0; i < NumberOfParticles; i++) {
+				Particle particle = new Particle(texture, new Vector2(UniformRandom.RandomFloat * 2f - 1f, UniformRandom.RandomFloat * 2f - 1f), new Vector2(0.2f, 0.2f));
+				particle.Name = "Particle " + i;
+				particles[i] = particle;
+				Add(particle);
 			}
 		}
 
@@ -90,24 +92,9 @@ namespace Particles {
 			return null;
 		}
 
-		public void Render() {
-			for (int i = 0; i < particles.Length; i++)
-				particles[i].Render();
-		}
-
 		public void Render2D(Graphics g, Size canvasSize) {
 			for (int i = 0; i < particles.Length; i++)
 				particles[i].Render2D(g, canvasSize);
-		}
-
-		~ParticleManager() {
-			Dispose();
-		}
-
-		public void Dispose() {
-			for (int i = 0; i < particles.Length; i++)
-				particles[i].Dispose();
-			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>
@@ -121,7 +108,7 @@ namespace Particles {
 		public static Vector2 Approach(Vector2 currentPos, Vector2 flockPoint, float distance, float attractSpeed, float repelSpeed) {
 			Vector2 distVector = flockPoint - currentPos;
 			float targetDistance = distVector.Length() - distance;
-			Vector2 resultantDist = Vector2.Normalize(distVector.LengthSquared() <= float.Epsilon ? new Vector2((float) UniformRandom.RandomDouble, (float) UniformRandom.RandomDouble) : distVector);
+			Vector2 resultantDist = Vector2.Normalize(distVector.LengthSquared() <= float.Epsilon ? new Vector2(UniformRandom.RandomFloat, UniformRandom.RandomFloat) : distVector);
 			return currentPos + resultantDist * ((targetDistance < 0f ? repelSpeed : attractSpeed) * targetDistance);
 		}
 
@@ -140,7 +127,7 @@ namespace Particles {
 			Vector2 normal = new Vector2(-distVector.Y, distVector.X);
 			Vector2 resultantDist;
 			if (distVector.LengthSquared() <= float.Epsilon)
-				resultantDist = Vector2.Normalize(new Vector2((float) UniformRandom.RandomDouble, (float) UniformRandom.RandomDouble)) * repelSpeed;
+				resultantDist = Vector2.Normalize(new Vector2(UniformRandom.RandomFloat, UniformRandom.RandomFloat) * repelSpeed);
 			else {
 				float remainingEnergy = targetDistance == 0f ? Math.Sign(targetDistance - kineticEnergy) : (kineticEnergy / targetDistance) * Math.Sign(targetDistance - kineticEnergy);
 				resultantDist = Vector2.Normalize(distVector + normal * remainingEnergy);

@@ -5,8 +5,13 @@ using System.Numerics;
 
 namespace Particles {
 	public class Particle : MeshComponent {
-		public Particle(MeshComponent component) : base(component) {
-			component.Dispose();
+		public Particle(Texture2D texture, Vector2 location, Vector2 size) : base(texture, MeshExtensions.TriangulateQuads(new Vertex[] {
+			new Vertex(new Vector3(location, 0f), Vector2.UnitY),
+			new Vertex(new Vector3(location.X + size.X, location.Y, 0f), Vector2.One),
+			new Vertex(new Vector3(location.X + size.X, location.Y + size.Y, 0f), Vector2.UnitX),
+			new Vertex(new Vector3(location.X, location.Y + size.Y, 0f), Vector2.Zero)
+		}), false) {
+			LowOpacity = true;
 		}
 
 		public void Update(Particle[] particles) {

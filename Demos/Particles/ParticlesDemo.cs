@@ -87,6 +87,7 @@ namespace Particles {
 				resultant[i] = IgnoreColor;
 			Particles = new ParticleManager(this);
 			InitializeGL(true);
+			IsGdiEnabled = true;
 		}
 
 		protected override void OnShown(EventArgs e) {
@@ -105,7 +106,8 @@ namespace Particles {
 				TakeSnapshotToIgnore(colors);
 				takeSnapshot = false;
 			}
-			UpdateWebcamCanvas();
+			if (showEdges)
+				UpdateWebcamCanvas();
 		}
 
 		private void TakeSnapshotToIgnore(BgraColor[] colors) {
@@ -158,15 +160,12 @@ namespace Particles {
 		}
 
 		private void UpdateWebcamCanvas() {
-			if (showEdges) {
-				lock (bitmapSyncRoot) {
-					bitmap.SetAllPixels(resultant);
-					if (IsGdiEnabled)
-						InvalidateGdi();
-					else
-						InvokeOnGLThreadSync(new InvocationData(updateTexture, bitmap));
-				}
-			}
+			lock (bitmapSyncRoot)
+				bitmap.SetAllPixels(resultant);
+			if (IsGdiEnabled)
+				InvalidateGdi();
+			else
+				InvokeOnGLThreadAsync(new InvocationData(updateTexture, bitmap));
 		}
 
 		private void ParticlesDemo_MouseUp(object sender, MouseEventArgs e) {
@@ -186,7 +185,10 @@ namespace Particles {
 			ParticleManager particles = Particles;
 			if (particles != null)
 				particles.Update();
-			InvalidateGL();
+			if (IsGdiEnabled)
+				InvalidateGL();
+			else
+				InvalidateGdi(GdiRenderMode.GdiAsync);
 		}
 
 		protected override void OnPaintGdi(Graphics g, Rectangle clippingRect, bool clearBeforeRedraw) {
@@ -200,7 +202,8 @@ namespace Particles {
 
 		private object UpdateTexture(object image) {
 			Bitmap bitmap = (Bitmap) image;
-			texture.UpdateRegion(bitmap.ConvertPixelFormat(System.Drawing.Imaging.PixelFormat.Format32bppArgb), new Rectangle(0, 0, webcamWidth, webcamHeight), Point.Empty);
+			lock (bitmapSyncRoot)
+				texture.UpdateRegion(bitmap, new Rectangle(0, 0, webcamWidth, webcamHeight), Point.Empty);
 			OnPaintGL();
 			return null;
 		}
@@ -262,18 +265,19 @@ namespace Particles {
 		}
 
 		/// <summary>
-		/// Called when the OpenGL context is initialized.
+		/// Called when the OpenGL context is initialized
 		/// </summary>
 		protected override void OnGLInitialized() {
 			base.OnGLInitialized();
 			MeshComponent.SetupGLEnvironment();
-			Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-1f, 1f, 1f, -1f, -1f, 5f);
+			//Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-1f, 1f, 1f, -1f, -1f, 5f);
+			Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-2f, 2f, 2f, -2f, -1f, 5f);
 			Mesh2D.Setup2D(ref ortho);
 			webcamMesh = Mesh2D.CreateShared2DMeshRect();
 		}
 
 		/// <summary>
-		/// Called whenever a GL render takes place.
+		/// Called whenever a GL render takes place
 		/// </summary>
 		protected override void OnPaintGL() {
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -282,7 +286,7 @@ namespace Particles {
 		}
 
 		/// <summary>
-		/// The main entry point for the application.
+		/// The main entry point for the application
 		/// </summary>
 		[STAThread]
 		public static void Main() {

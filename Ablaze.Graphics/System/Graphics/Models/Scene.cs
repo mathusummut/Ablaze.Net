@@ -95,23 +95,23 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates a new scene from the specified components.
+		/// Creates a new scene from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the scene.</param>
+		/// <param name="components">The components that are to make up the scene</param>
 		public Scene(params MeshComponent[] components) : base(components) {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Clones the specified scene.
+		/// Clones the specified scene
 		/// </summary>
-		/// <param name="model">The scene to clone.</param>
+		/// <param name="model">The scene to clone</param>
 		public Scene(Scene model) : base(model) {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Restore the scene parameters to the default.
+		/// Restore the scene parameters to the default
 		/// </summary>
 		public void RestoreDefaults() {
 			Camera = DefaultCamera;
@@ -120,25 +120,25 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Prepares the scene for loading (called just before LoadScene()).
+		/// Prepares the scene for loading (called just before LoadScene())
 		/// </summary>
 		public virtual void PrepareScene() {
 		}
 
 		/// <summary>
-		/// Loads the scene. If this code is auto-generated, please do not modify it by hand unless you know what you are doing.
+		/// Loads the scene. If this code is auto-generated, please do not modify it by hand unless you know what you are doing
 		/// </summary>
 		public virtual void LoadScene() {
 		}
 
 		/// <summary>
-		/// Called after the scene is loaded.
+		/// Called after the scene is loaded
 		/// </summary>
 		public virtual void OnSceneLoaded() {
 		}
 
 		/// <summary>
-		/// Called *after* the scene is rendered.
+		/// Called *after* the scene is rendered
 		/// </summary>
 		public virtual void OnRendered() {
 		}

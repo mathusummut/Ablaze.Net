@@ -947,7 +947,6 @@ namespace System.Graphics.Models {
 			Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(Maths.PiOver4F, viewPort.Y == 0f ? 1f : viewPort.X / viewPort.Y, shortestDistance, 80000f);
 			GlobalShader globalShader = (GlobalShader) Shader.CurrentShader;
 			globalShader.SetUniformValue(GlobalShaderParams.ProjectionMatrix.ToString(), ref projection, ShaderSetMode.SetImmediately);
-			Matrix4 modelView = Matrix4.Identity;
 			globalShader.SetUniformValue(GlobalShaderParams.ModelViewMatrix.ToString(), ref camera, ShaderSetMode.SetImmediately);
 			globalShader.SetUniformValue(GlobalShaderParams.LightingEnabled.ToString(), 1f, ShaderSetMode.SetImmediately);
 			GL.Enable(EnableCap.DepthTest);
