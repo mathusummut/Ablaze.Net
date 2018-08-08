@@ -69,7 +69,7 @@ namespace Ablaze.ModelViewer {
 			InitializeGL(true, new GraphicsMode(ColorFormat.Bit32, 24, 8, msaa, ColorFormat.Empty, true, false), new MajorMinorVersion(1));
 			statusLabel = new StyledLabel() {
 				BackColor = Color.Transparent,
-				Blur = 4,
+				Blur = 2,
 				Font = new Font("Cambria", 13f, FontStyle.Regular, GraphicsUnit.Point, 0),
 				ForeColor = Color.White,
 				LineSpacingMultiplier = 0.25f,
@@ -83,11 +83,6 @@ namespace Ablaze.ModelViewer {
 				Text = "Loading..."
 			};
 			GdiControls.Add(statusLabel);
-			/*Button button = new StyledButton();
-			button.Text = "ayy";
-			button.Bounds = new Rectangle(10, 10, 50, 50);
-			button.Click += Button_Click;
-			statusLabel.Controls.Add(button);*/
 			UpdateInterval = 6;
 			StyleRenderer renderer = (StyleRenderer) menuStrip.Renderer;
 			renderer.SuppressColorChecking = true;
@@ -150,10 +145,6 @@ namespace Ablaze.ModelViewer {
 			MouseUp += ModelViewer_MouseUp;
 			MouseWheel += ModelViewer_MouseWheel;
 		}
-
-		/*private void Button_Click(object sender, EventArgs e) {
-			Console.WriteLine("click");
-		}*/
 
 		private static void ModelViewer_DragEnter(object sender, DragEventArgs e) {
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))

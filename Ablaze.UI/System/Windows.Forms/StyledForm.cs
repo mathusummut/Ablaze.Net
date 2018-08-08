@@ -1765,8 +1765,12 @@ namespace System.Windows.Forms {
 			if (invalidateChildren && IsGLEnabled) {
 				for (int i = 0; i < Controls.Count; i++)
 					Controls[i].Invalidate(true);
-			} else if (!IsGLEnabled)
-				base.Invalidate(ViewPort, invalidateChildren);
+			} else if (!IsGLEnabled) {
+				if (IsHandleCreated)
+					base.Invalidate(ViewPort, invalidateChildren);
+				else
+					NotifyInvalidate(ViewPort);
+			}
 		}
 
 		/// <summary>
@@ -1800,8 +1804,12 @@ namespace System.Windows.Forms {
 					if (client.IntersectsWith(new Rectangle(Point.Empty, ctrl.Size)))
 						ctrl.Invalidate(client, true);
 				}
-			} else if (!IsGLEnabled)
-				base.Invalidate(rect, invalidateChildren);
+			} else if (!IsGLEnabled) {
+				if (IsHandleCreated)
+					base.Invalidate(rect, invalidateChildren);
+				else
+					NotifyInvalidate(rect);
+			}
 		}
 
 		/// <summary>
@@ -1990,7 +1998,7 @@ namespace System.Windows.Forms {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool IsPointInBorder(Point point) {
-			return IsBorderVisible && ClientRectangle.Contains(point) && !ViewPort.Contains(point);
+			return IsBorderVisible && Enabled && ClientRectangle.Contains(point) && !ViewPort.Contains(point);
 		}
 
 		private void border_MouseDown(object sender, MouseEventArgs e) {
@@ -3299,8 +3307,8 @@ namespace System.Windows.Forms {
 		/// <param name="e">Ignored.</param>
 		protected override void OnResizeEnd(EventArgs e) {
 			base.OnResizeEnd(e);
-			Invalidate(false);
-			RedrawBorder(false);
+			if (!IsGLEnabled)
+				base.Invalidate(false);
 		}
 
 		/// <summary>
@@ -3954,13 +3962,18 @@ namespace System.Windows.Forms {
 				Icon icon = Icon;
 				if (iconBounds.Width > 0 && icon != null && ShowIcon && rect.IntersectsWith(iconBounds))
 					g.DrawIcon(icon, iconBounds);
+				StyleRenderer renderer;
+				bool enabled = Enabled;
 				if (closeEnabled) {
 					Rectangle closeBounds = CloseBounds;
 					if (rect.IntersectsWith(closeBounds)) {
 						int size = (int) (closeBounds.Height * 0.45F);
 						Rectangle bounds = new Rectangle(closeBounds.X + (closeBounds.Width - size) / 2 + 1, closeBounds.Y + (closeBounds.Height - size) / 2 + 1, size, size);
-						closeButtonRenderer.Enabled = Enabled;
-						closeButtonRenderer.RenderBackground(g, closeBounds);
+						renderer = closeButtonRenderer;
+						if (renderer == null)
+							return;
+						renderer.Enabled = enabled;
+						renderer.RenderBackground(g, closeBounds);
 						g.DrawLine(XColor, bounds.Location, new PointF(bounds.Right, bounds.Bottom));
 						g.DrawLine(XColor, bounds.X, bounds.Bottom, bounds.Right, bounds.Y);
 					}
@@ -3971,8 +3984,11 @@ namespace System.Windows.Forms {
 					if (rect.IntersectsWith(maximizeBounds)) {
 						int bounds = (int) (maximizeBounds.Height * 0.45F);
 						Point location = new Point(maximizeBounds.X + (maximizeBounds.Width - bounds) / 2, maximizeBounds.Y + (maximizeBounds.Height + 1 - bounds) / 2);
-						maximizeButtonRenderer.Enabled = Enabled;
-						maximizeButtonRenderer.RenderBackground(g, maximizeBounds);
+						renderer = maximizeButtonRenderer;
+						if (renderer == null)
+							return;
+						renderer.Enabled = enabled;
+						renderer.RenderBackground(g, maximizeBounds);
 						g.SmoothingMode = SmoothingMode.None;
 						g.PixelOffsetMode = PixelOffsetMode.None;
 						if (maximized) {
@@ -3997,8 +4013,11 @@ namespace System.Windows.Forms {
 					if (rect.IntersectsWith(minimizeBounds)) {
 						const int sizeY = 1;
 						int sizeX = minimizeBounds.Height / 2;
-						minimizeButtonRenderer.Enabled = Enabled;
-						minimizeButtonRenderer.RenderBackground(g, minimizeBounds);
+						renderer = minimizeButtonRenderer;
+						if (renderer == null)
+							return;
+						renderer.Enabled = enabled;
+						renderer.RenderBackground(g, minimizeBounds);
 						g.SmoothingMode = SmoothingMode.None;
 						g.PixelOffsetMode = PixelOffsetMode.None;
 						g.FillRectangle(MinimizeFill, minimizeBounds.X + (minimizeBounds.Width - sizeX) / 2 + 1, minimizeBounds.Y + (int) ((minimizeBounds.Height + 1) * 0.7F) - sizeY, sizeX, sizeY);

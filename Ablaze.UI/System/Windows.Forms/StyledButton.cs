@@ -18,6 +18,7 @@ namespace System.Windows.Forms {
 	public class StyledButton : Button, ISmartControl {
 		private static object EventKeyDown = typeof(Control).GetField(nameof(EventKeyDown), BindingFlags.Static | BindingFlags.NonPublic);
 		private static object EventKeyUp = typeof(Control).GetField(nameof(EventKeyUp), BindingFlags.Static | BindingFlags.NonPublic);
+		private UIAnimationHandler animationHandler;
 		/// <summary>
 		/// Fired when the image has been changed.
 		/// </summary>
@@ -416,7 +417,8 @@ namespace System.Windows.Forms {
 			checkBox.Padding = DefaultPadding;
 			if (text != null)
 				checkBox.Text = text;
-			Renderer = new StyleRenderer(UIAnimator.GetFunctionToInvalidateControlOnUpdate(this, false));
+			animationHandler = UIAnimator.GetFunctionToInvalidateControlOnUpdate(this, false);
+			Renderer = new StyleRenderer(animationHandler);
 			Renderer.NormalInnerBorderColor = Color.FromArgb(177, 240, 245);
 			if (!StyledForm.DesignMode)
 				Renderer.CheckColors += Renderer_CheckColors;
@@ -425,14 +427,50 @@ namespace System.Windows.Forms {
 		private void Renderer_CheckColors() {
 			if (Renderer.Pressed) {
 				if (ForeColor != PressedTextColor)
-					UIAnimator.SharedAnimator.Animate(forecolorProperty, PressedTextColor, Renderer.AnimationSpeed, 2.0, true, UIAnimator.GetFunctionToInvalidateControlOnUpdate(this), false);
+					UIAnimator.SharedAnimator.Animate(forecolorProperty, PressedTextColor, Renderer.AnimationSpeed, 2.0, true, animationHandler, false);
 			} else if (Renderer.MouseHovering) {
 				if (ForeColor != HoverTextColor)
-					UIAnimator.SharedAnimator.Animate(forecolorProperty, HoverTextColor, Renderer.AnimationSpeed, 2.0, true, UIAnimator.GetFunctionToInvalidateControlOnUpdate(this), false);
+					UIAnimator.SharedAnimator.Animate(forecolorProperty, HoverTextColor, Renderer.AnimationSpeed, 2.0, true, animationHandler, false);
 			} else {
 				if (ForeColor != NormalTextColor)
-					UIAnimator.SharedAnimator.Animate(forecolorProperty, NormalTextColor, Renderer.AnimationSpeed, 2.0, true, UIAnimator.GetFunctionToInvalidateControlOnUpdate(this), false);
+					UIAnimator.SharedAnimator.Animate(forecolorProperty, NormalTextColor, Renderer.AnimationSpeed, 2.0, true, animationHandler, false);
 			}
+		}
+
+		/// <summary>
+		/// Invalidates the entire surface of the control and causes the control to be redrawn
+		/// </summary>
+		public new void Invalidate() {
+			Invalidate(false);
+		}
+
+		/// <summary>
+		/// Invalidates the entire surface of the control and causes the control to be redrawn
+		/// </summary>
+		/// <param name="invalidateChildren">If true, child controls are invalidated as well</param>
+		public new void Invalidate(bool invalidateChildren) {
+			if (IsHandleCreated)
+				base.Invalidate(invalidateChildren);
+			else
+				NotifyInvalidate(ClientRectangle);
+		}
+
+		/// <summary>
+		/// Invalidates the specified region of the control in client coordinates</summary>
+		/// <param name="rect">The region to invalidate in client coordinates</param>
+		public new void Invalidate(Rectangle rect) {
+			Invalidate(rect, false);
+		}
+
+		/// <summary>
+		/// Invalidates the specified region of the control in client coordinates</summary>
+		/// <param name="rect">The region to invalidate in client coordinates</param>
+		/// <param name="invalidateChildren">If true, child controls are invalidated as well</param>
+		public virtual new void Invalidate(Rectangle rect, bool invalidateChildren) {
+			if (IsHandleCreated)
+				base.Invalidate(rect, invalidateChildren);
+			else
+				NotifyInvalidate(rect);
 		}
 
 		/// <summary>

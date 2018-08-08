@@ -719,8 +719,17 @@ namespace System.Windows.Forms {
 		/// </summary>
 		public new void Invalidate() {
 			Control parent = Parent;
-			if (parent != null)
-				parent.Invalidate();
+			if (parent != null) {
+				StyledMenuStrip menu = parent as StyledMenuStrip;
+				if (menu == null) {
+					StyledContextMenu context = parent as StyledContextMenu;
+					if (context == null)
+						parent.Invalidate();
+					else
+						context.Invalidate();
+				} else
+					menu.Invalidate();
+			}
 		}
 
 		/// <summary>

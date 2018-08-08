@@ -308,6 +308,42 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Invalidates the entire surface of the control and causes the control to be redrawn
+		/// </summary>
+		public new void Invalidate() {
+			Invalidate(false);
+		}
+
+		/// <summary>
+		/// Invalidates the entire surface of the control and causes the control to be redrawn
+		/// </summary>
+		/// <param name="invalidateChildren">If true, child controls are invalidated as well</param>
+		public new void Invalidate(bool invalidateChildren) {
+			if (IsHandleCreated)
+				base.Invalidate(invalidateChildren);
+			else
+				NotifyInvalidate(ClientRectangle);
+		}
+
+		/// <summary>
+		/// Invalidates the specified region of the control in client coordinates</summary>
+		/// <param name="rect">The region to invalidate in client coordinates</param>
+		public new void Invalidate(Rectangle rect) {
+			Invalidate(rect, false);
+		}
+
+		/// <summary>
+		/// Invalidates the specified region of the control in client coordinates</summary>
+		/// <param name="rect">The region to invalidate in client coordinates</param>
+		/// <param name="invalidateChildren">If true, child controls are invalidated as well</param>
+		public virtual new void Invalidate(Rectangle rect, bool invalidateChildren) {
+			if (IsHandleCreated)
+				base.Invalidate(rect, invalidateChildren);
+			else
+				NotifyInvalidate(rect);
+		}
+
+		/// <summary>
 		/// Creates a StyledItem instance from the specified parameters.
 		/// </summary>
 		/// <param name="text">The text to show on the item.</param>

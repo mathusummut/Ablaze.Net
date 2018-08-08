@@ -26,6 +26,7 @@ namespace System.Windows.Forms {
 		private static object selectedItemKey = typeof(ComboBox).GetField("EVENT_SELECTEDITEMCHANGED", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
 		private static object selectionChangeCommittedKey = typeof(ComboBox).GetField("EVENT_SELECTIONCHANGECOMMITTED", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
 		private static PropertyInfo ComponentEvents = typeof(Component).GetProperty("Events", BindingFlags.Instance | BindingFlags.NonPublic);
+		private UIAnimationHandler animationHandler;
 		private bool wasPressed, isInside;
 		private ImageLayout backgroundLayout = ImageLayout.Stretch;
 		private StyleRenderer itemRenderer;
@@ -407,7 +408,8 @@ namespace System.Windows.Forms {
 			DropDownStyle = ComboBoxStyle.DropDownList;
 			Name = nameof(StyledComboBox);
 			base.Items.Add(Key);
-			Renderer = new StyleRenderer(UIAnimator.GetFunctionToInvalidateControlOnUpdate(this, false)) {
+			animationHandler = UIAnimator.GetFunctionToInvalidateControlOnUpdate(this, false);
+			Renderer = new StyleRenderer(animationHandler) {
 				SuppressColorChecking = true,
 				SuppressFunctionCallOnRefresh = true,
 				RoundCornerRadius = 0f,
@@ -448,13 +450,13 @@ namespace System.Windows.Forms {
 		private void Renderer_CheckColors() {
 			if (Renderer.Pressed) {
 				if (ForeColor != PressedTextColor)
-					UIAnimator.SharedAnimator.Animate(forecolorProperty, PressedTextColor, Renderer.AnimationSpeed, 2.0, true, UIAnimator.GetFunctionToInvalidateControlOnUpdate(this), false);
+					UIAnimator.SharedAnimator.Animate(forecolorProperty, PressedTextColor, Renderer.AnimationSpeed, 2.0, true, animationHandler, false);
 			} else if (Renderer.MouseHovering) {
 				if (ForeColor != HoverTextColor)
-					UIAnimator.SharedAnimator.Animate(forecolorProperty, HoverTextColor, Renderer.AnimationSpeed, 2.0, true, UIAnimator.GetFunctionToInvalidateControlOnUpdate(this), false);
+					UIAnimator.SharedAnimator.Animate(forecolorProperty, HoverTextColor, Renderer.AnimationSpeed, 2.0, true, animationHandler, false);
 			} else {
 				if (ForeColor != NormalTextColor)
-					UIAnimator.SharedAnimator.Animate(forecolorProperty, NormalTextColor, Renderer.AnimationSpeed, 2.0, true, UIAnimator.GetFunctionToInvalidateControlOnUpdate(this), false);
+					UIAnimator.SharedAnimator.Animate(forecolorProperty, NormalTextColor, Renderer.AnimationSpeed, 2.0, true, animationHandler, false);
 			}
 		}
 
@@ -467,6 +469,42 @@ namespace System.Windows.Forms {
 		/// Does nothing.
 		/// </summary>
 		protected override void OnLayout(LayoutEventArgs e) {
+		}
+
+		/// <summary>
+		/// Invalidates the entire surface of the control and causes the control to be redrawn
+		/// </summary>
+		public new void Invalidate() {
+			Invalidate(false);
+		}
+
+		/// <summary>
+		/// Invalidates the entire surface of the control and causes the control to be redrawn
+		/// </summary>
+		/// <param name="invalidateChildren">If true, child controls are invalidated as well</param>
+		public new void Invalidate(bool invalidateChildren) {
+			if (IsHandleCreated)
+				base.Invalidate(invalidateChildren);
+			else
+				NotifyInvalidate(ClientRectangle);
+		}
+
+		/// <summary>
+		/// Invalidates the specified region of the control in client coordinates</summary>
+		/// <param name="rect">The region to invalidate in client coordinates</param>
+		public new void Invalidate(Rectangle rect) {
+			Invalidate(rect, false);
+		}
+
+		/// <summary>
+		/// Invalidates the specified region of the control in client coordinates</summary>
+		/// <param name="rect">The region to invalidate in client coordinates</param>
+		/// <param name="invalidateChildren">If true, child controls are invalidated as well</param>
+		public virtual new void Invalidate(Rectangle rect, bool invalidateChildren) {
+			if (IsHandleCreated)
+				base.Invalidate(rect, invalidateChildren);
+			else
+				NotifyInvalidate(rect);
 		}
 
 		/// <summary>

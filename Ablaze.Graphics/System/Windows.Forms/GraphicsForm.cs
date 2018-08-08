@@ -800,7 +800,7 @@ namespace System.Windows.Forms {
 				&& ((toCheck & ChildSkip.Disabled) != ChildSkip.Disabled || ctrl.Enabled)
 				&& ((toCheck & ChildSkip.DontRespondToMouse) != ChildSkip.DontRespondToMouse || InvokeWndProc(ctrl, new Message() {
 					Msg = (int) Platforms.Windows.WindowMessage.NCHITTEST,
-					HWnd = ctrl.Handle,
+					HWnd = ctrl.IsHandleCreated ? ctrl.Handle : IntPtr.Zero,
 					WParam = IntPtr.Zero,
 					LParam = new IntPtr(((rect.Y + viewportCoordinate.Y) << 16) | ((rect.X + viewportCoordinate.X) & 0xFFFF))
 				}) != TransparentControl.HTTRANSPARENT)) {
@@ -1310,7 +1310,9 @@ namespace System.Windows.Forms {
 			if (!(DpiScale.Width == 1f && DpiScale.Height == 1f))
 				ctrl.Scale(new SizeF(DpiScale.Width, DpiScale.Height));
 			AddInvalidateEventHandler(ctrl);
-			IntPtr handle = ctrl.Handle;
+			if (!(ctrl is IDrawable)) {
+				IntPtr handle = ctrl.Handle;
+			}
 			InvalidateGdi(GdiRenderMode.GdiAsync, GetInvalidateRect(ctrl, ctrl.ClientRectangle), false);
 			return false;
 		}
@@ -1459,14 +1461,11 @@ namespace System.Windows.Forms {
 		/// </summary>
 		protected override void OnResizeEnd(EventArgs e) {
 			base.OnResizeEnd(e);
-			if (IsMinimized)
-				return;
-			else if (IsGLEnabled) {
+			if (!IsMinimized && IsGLEnabled) {
 				InvokeOnGLThreadAsync(new InvocationData(viewSizeChanged), true);
 				if (gdiEnabled)
 					InvalidateGdi(GdiRenderMode.GdiAsync);
-			} else if (!AnimatingBounds)
-				Invalidate(false);
+			}
 		}
 
 		/// <summary>
