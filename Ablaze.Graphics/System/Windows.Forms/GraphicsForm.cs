@@ -975,19 +975,6 @@ namespace System.Windows.Forms {
 			InvalidateGL();
 		}
 
-		private void SetGdiSize(Size value, bool forceInvalidate = false) {
-			if (value.Width < 1)
-				value.Width = 1;
-			if (value.Height < 1)
-				value.Height = 1;
-			if (value == gdiBounds.Size)
-				return;
-			bool invalidate = forceInvalidate || value.Width > gdiBounds.Width || value.Height > gdiBounds.Height;
-			gdiBounds.Size = value;
-			if (invalidate)
-				InvalidateGdi(GdiRenderMode.GdiAsync);
-		}
-
 		/// <summary>
 		/// Disposes of the OpenGL context.
 		/// </summary>
@@ -1430,10 +1417,14 @@ namespace System.Windows.Forms {
 		/// </summary>
 		protected override void OnClientSizeChanged(EventArgs e) {
 			Size newClientSize = ClientSize;
+			if (newClientSize.Width < 1)
+				newClientSize.Width = 1;
+			if (newClientSize.Height < 1)
+				newClientSize.Height = 1;
 			if (clientSize == newClientSize)
 				return;
-			bool needsGdiRepaint = newClientSize.Width > clientSize.Width || newClientSize.Height > clientSize.Height;
 			clientSize = newClientSize;
+			gdiBounds.Size = newClientSize;
 			base.OnClientSizeChanged(e);
 			if (IsMinimized)
 				return;
@@ -1442,18 +1433,10 @@ namespace System.Windows.Forms {
 					InvokeOnGLThreadSync(new InvocationData(viewSizeChanged), 75, true);
 				else
 					InvokeOnGLThreadAsync(new InvocationData(viewSizeChanged), true);
-				if (!AnimatingBounds && needsGdiRepaint && gdiEnabled)
+				if (!AnimatingBounds && gdiEnabled)
 					InvalidateGdi(GdiRenderMode.GdiAsync);
 			} else if (!AnimatingBounds)
 				Invalidate(false);
-		}
-
-		/// <summary>
-		/// Called when the window is resized
-		/// </summary>
-		protected override void OnResize(EventArgs e) {
-			base.OnResize(e);
-			SetGdiSize(Size, false);
 		}
 
 		/// <summary>
