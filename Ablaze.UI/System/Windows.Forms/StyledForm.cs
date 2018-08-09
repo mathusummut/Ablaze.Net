@@ -3781,10 +3781,8 @@ namespace System.Windows.Forms {
 			else
 				borderChanged--;
 			CheckBorderStyle();
-			if (!AnimatingBounds) {
+			if (!AnimatingBounds)
 				Invalidate(false);
-				RedrawBorder(false);
-			}
 		}
 
 		private void CheckBorderStyle() {

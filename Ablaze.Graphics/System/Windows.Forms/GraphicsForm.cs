@@ -271,16 +271,6 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// If true, the invalidated GDI region is cleared to transparent before drawing.
-		/// </summary>
-		[Description("If true, the invalidated GDI region is cleared to transparent before drawing.")]
-		[DefaultValue(true)]
-		public bool ClearInvalidatedGdi {
-			get;
-			set;
-		}
-
-		/// <summary>
 		/// Gets or sets the XYZ rotation of the GDI layer in radians. Kinda weird feature, might not work properly
 		/// </summary>
 		[Browsable(false)]
@@ -514,7 +504,6 @@ namespace System.Windows.Forms {
 			controlAdded = Ctrl_ControlAdded;
 			controlRemoved = Ctrl_ControlRemoved;
 			PaintGL = CallPaintGL;
-			ClearInvalidatedGdi = true;
 			unload = CallUnload;
 			GdiScale = Vector2.One;
 			invalidateGdiInner = InvalidateGdiInner;

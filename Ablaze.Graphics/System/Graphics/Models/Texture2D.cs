@@ -365,6 +365,8 @@ namespace System.Graphics.Models {
 		/// <param name="srcRegion">The region from the source bitmap to update with.</param>
 		/// <param name="textureRectLoc">The target texture coordinate to update the region at.</param>
 		public void UpdateRegion(Bitmap source, Rectangle srcRegion, Point textureRectLoc) {
+			if (srcRegion.Width <= 0 || srcRegion.Height <= 0)
+				return;
 			Bind(TextureWrapMode.ClampToEdge);
 			GL.PixelStore(PixelStoreParameter.UnpackRowLength, source.Width);
 			BitmapData data = source.LockBits(srcRegion, ImageLockMode.ReadOnly, source.PixelFormat);
