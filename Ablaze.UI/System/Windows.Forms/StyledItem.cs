@@ -283,6 +283,8 @@ namespace System.Windows.Forms {
 			}
 			set {
 				CheckBox.CheckOnClick = value;
+				if (value)
+					ShowCheckBox = true;
 			}
 		}
 

@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Gets whether the control supports OpenGL rendering.
 		/// </summary>
+		[Browsable(false)]
 		public bool SupportsGL {
 			get {
 				return false;
