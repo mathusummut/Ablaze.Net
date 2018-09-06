@@ -254,7 +254,7 @@ namespace System.Graphics {
 		/// </summary>
 		/// <returns>A <see cref="System.String"/> that describes this instance.</returns>
 		public override string ToString() {
-			return string.Format("{0} ({1})", BitsPerPixel, (IsIndexed ? " indexed" : Red.ToString() + Green + Blue + Alpha));
+			return string.Format("{0} ({1})", BitsPerPixel, (IsIndexed ? " indexed" : Red.ToStringLookup() + Green.ToStringLookup() + Blue.ToStringLookup() + Alpha.ToStringLookup()));
 		}
 	}
 }

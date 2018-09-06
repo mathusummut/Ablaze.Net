@@ -82,7 +82,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Ablaze.snk" />
-    <None Include="app.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ModelViewer.resx">

@@ -59,6 +59,14 @@ namespace System.Windows.Forms {
 			OnResize(EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Sets whether the prompt is visible.
+		/// </summary>
+		/// <param name="value">The visibility flag.</param>
+		protected override void SetVisibleCore(bool value) {
+			base.SetVisibleCore(DesignMode ? false : value);
+		}
+
 		private void button1_Click(object sender, EventArgs e) {
 			Input = TextBox.Text;
 			DialogResult = DialogResult.OK;

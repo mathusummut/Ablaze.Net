@@ -1021,7 +1021,7 @@ namespace System.Windows.Forms {
 				StringBuilder builder = new StringBuilder(text.Length);
 				string str;
 				char c;
-				float fontHeight = font.Height;
+				float height, fontHeight = font.Height;
 				path = outline == null && !cache ? null : new GraphicsPath();
 				if (format.LineAlignment == StringAlignment.Far) {
 					for (int i = text.Length - 1; i >= 0; i--) {
@@ -1034,10 +1034,11 @@ namespace System.Windows.Forms {
 								else
 									path.AddString(str, font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
 							}
+							height = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height;
 							if (c == '\n')
-								area.Height -= builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height;
+								area.Height -= height;
 							else
-								area.Height -= (builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height) * lineSpacingMultiplier;
+								area.Height -= height * lineSpacingMultiplier;
 							if (area.Height > 0)
 								builder.Length = 0;
 							else
@@ -1064,10 +1065,11 @@ namespace System.Windows.Forms {
 								else
 									path.AddString(str, font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
 							}
+							height = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height;
 							if (c == '\n')
-								lineHeight = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height;
+								lineHeight = height;
 							else
-								lineHeight = (builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height) * lineSpacingMultiplier;
+								lineHeight = height * lineSpacingMultiplier;
 							area.Y += lineHeight;
 							area.Height -= lineHeight;
 							if (area.Height > 0)

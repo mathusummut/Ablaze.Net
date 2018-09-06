@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Threading;
 
 namespace System.Windows.Forms {
@@ -59,7 +58,6 @@ namespace System.Windows.Forms {
 		}
 
 		private sealed class MessageBoxForm : Form {
-			private static char[] NewLine = new char[] { '\n' };
 			private MessageBoxDefaultButton defaultButton;
 			private StyledButton button1, button2, button3;
 			private StyledLabel label;
@@ -171,15 +169,12 @@ namespace System.Windows.Forms {
 				button1.Font = Font;
 				button2.Font = Font;
 				button3.Font = Font;
-				string[] stringRows = text.Split(NewLine, StringSplitOptions.None);
-				int temp, maxStringWidth = 0;
-				for (int i = 0; i < stringRows.Length; i++) {
-					temp = TextRenderer.MeasureText(stringRows[i], Font).Width;
-					if (temp > maxStringWidth)
-						maxStringWidth = temp;
-				}
-				label.Height = TextRenderer.MeasureText(text, Font).Height + 10;
-				ClientSize = new Size(Math.Max(Math.Max(maxStringWidth, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 50, label.Bottom + button1.Height + 28);
+				Size maxSize = Screen.GetWorkingArea(this).Size;
+				Size size = label.GetAutoSize(maxSize, false);
+				if (size.Width > size.Height * 3)
+					size = label.GetAutoSize(new Size(Math.Max(size.Height * 3, maxSize.Width), maxSize.Height), false);
+				ClientSize = new Size(Math.Max(Math.Max(size.Width, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 50, size.Height + label.Margin.Vertical + button1.Height + 28);
+				label.Height = size.Height;
 				button1.Top = ClientSize.Height - (button1.Height + 10);
 				button2.Top = button1.Top;
 				button3.Top = button1.Top;
@@ -313,11 +308,12 @@ namespace System.Windows.Forms {
 				// 
 				// label
 				// 
+				this.label.AutoSize = false;
 				this.label.BackColor = System.Drawing.Color.White;
 				this.label.BorderStyle = System.Windows.Forms.BorderStyle.None;
 				this.label.Dock = System.Windows.Forms.DockStyle.Top;
 				this.label.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-				this.label.Margin = new System.Windows.Forms.Padding(0);
+				this.label.Margin = new System.Windows.Forms.Padding(3);
 				this.label.Name = "label";
 				this.label.Size = new System.Drawing.Size(200, 20);
 				this.label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -352,7 +348,6 @@ namespace System.Windows.Forms {
 		}
 
 		private sealed class MessageBoxStyledForm : StyledForm {
-			private static char[] NewLine = new char[] { '\n' };
 			private MessageBoxDefaultButton defaultButton;
 			private StyledButton button1, button2, button3;
 			private StyledLabel label;
@@ -465,15 +460,12 @@ namespace System.Windows.Forms {
 				button1.Font = Font;
 				button2.Font = Font;
 				button3.Font = Font;
-				string[] stringRows = text.Split(NewLine, StringSplitOptions.None);
-				int temp, maxStringWidth = 0;
-				for (int i = 0; i < stringRows.Length; i++) {
-					temp = TextRenderer.MeasureText(stringRows[i], Font).Width;
-					if (temp > maxStringWidth)
-						maxStringWidth = temp;
-				}
-				label.Height = TextRenderer.MeasureText(text, Font).Height + 10;
-				ClientSize = new Size(Math.Max(Math.Max(maxStringWidth, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 50, label.Bottom + button1.Height + 28);
+				Size maxSize = Screen.GetWorkingArea(this).Size;
+				Size size = label.GetAutoSize(maxSize, false);
+				if (size.Width > size.Height * 3)
+					size = label.GetAutoSize(new Size(Math.Max(size.Height * 3, maxSize.Width), maxSize.Height), false);
+				ClientSize = new Size(Math.Max(Math.Max(size.Width, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 50, size.Height + label.Margin.Vertical + button1.Height + 28);
+				label.Height = size.Height;
 				button1.Top = ClientSize.Height - (button1.Height + 10);
 				button2.Top = button1.Top;
 				button3.Top = button1.Top;
@@ -609,11 +601,12 @@ namespace System.Windows.Forms {
 				// 
 				// label
 				// 
+				this.label.AutoSize = false;
 				this.label.BackColor = System.Drawing.Color.White;
 				this.label.BorderStyle = System.Windows.Forms.BorderStyle.None;
 				this.label.Dock = System.Windows.Forms.DockStyle.Top;
 				this.label.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-				this.label.Margin = new System.Windows.Forms.Padding(0);
+				this.label.Margin = new System.Windows.Forms.Padding(3);
 				this.label.Name = "label";
 				this.label.Size = new System.Drawing.Size(200, 20);
 				this.label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

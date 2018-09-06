@@ -96,6 +96,14 @@ namespace System.Windows.Forms {
 			mainMenu.MouseUp += mainMenu_MouseUp;
 		}
 
+		/// <summary>
+		/// Sets whether the prompt is visible.
+		/// </summary>
+		/// <param name="value">The visibility flag.</param>
+		protected override void SetVisibleCore(bool value) {
+			base.SetVisibleCore(DesignMode ? false : value);
+		}
+
 		private void ToolWindow_FindNextDownClick(FindAndReplace obj) {
 			RichTextBoxFinds options = RichTextBoxFinds.NoHighlight;
 			if (obj.MatchCase)

@@ -409,11 +409,11 @@ namespace System.Graphics.Models.Parsers {
 				writer.Write("#Exported from Ablaze.Net\n\n");
 				for (i = 0; i < vertexArray.Length; i++) {
 					writer.Write("v ");
-					writer.Write(((decimal) vertexArray[i].X).ToString(), 10);
+					writer.Write((decimal) vertexArray[i].X);
 					writer.Write(' ');
-					writer.Write(((decimal) vertexArray[i].Y).ToString());
+					writer.Write((decimal) vertexArray[i].Y);
 					writer.Write(' ');
-					writer.Write(((decimal) vertexArray[i].Z).ToString());
+					writer.Write((decimal) vertexArray[i].Z);
 					writer.Write('\n');
 				}
 				for (i = 0; i < texArray.Length; i++) {

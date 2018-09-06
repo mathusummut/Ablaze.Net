@@ -173,21 +173,21 @@ namespace System.Diagnostics {
 		private static string DateToString(DateTime date) {
 			StringBuilder builder = new StringBuilder(23);
 			int temp = date.Day;
-			builder.Append(temp < 10 ? "0" + temp : temp.ToString());
+			builder.Append(temp < 10 ? "0" + temp : temp.ToStringLookup());
 			builder.Append('/');
 			temp = date.Month;
-			builder.Append(temp < 10 ? "0" + temp : temp.ToString());
+			builder.Append(temp < 10 ? "0" + temp : temp.ToStringLookup());
 			builder.Append('/');
 			builder.Append(date.Year.ToString());
 			builder.Append(" at ");
 			temp = date.Hour;
-			builder.Append(temp < 10 ? "0" + temp : temp.ToString());
+			builder.Append(temp < 10 ? "0" + temp : temp.ToStringLookup());
 			builder.Append(':');
 			temp = date.Minute;
-			builder.Append(temp < 10 ? "0" + temp : temp.ToString());
+			builder.Append(temp < 10 ? "0" + temp : temp.ToStringLookup());
 			builder.Append(':');
 			temp = date.Second;
-			builder.Append(temp < 10 ? "0" + temp : temp.ToString());
+			builder.Append(temp < 10 ? "0" + temp : temp.ToStringLookup());
 			return builder.ToString();
 		}
 

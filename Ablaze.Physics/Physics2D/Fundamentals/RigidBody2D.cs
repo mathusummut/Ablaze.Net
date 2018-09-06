@@ -7,7 +7,7 @@ namespace Ablaze.Physics.System {
 		//A collection of minimal particles necessary to form a boundary
 		//Susceptible only to rotational and linear 2D forces
 		//Not affected by Force2D - that is reserved for particles only
-		
+
 		//How it will work : Several particles can be added/removed from this rigidbody
 		//In doing so the center and mass update to keep calculations correct
 		//The particles will ideally be placed at the same position as the vertices of the models

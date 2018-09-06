@@ -85,6 +85,14 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Sets whether the prompt is visible.
+		/// </summary>
+		/// <param name="value">The visibility flag.</param>
+		protected override void SetVisibleCore(bool value) {
+			base.SetVisibleCore(DesignMode ? false : value);
+		}
+
+		/// <summary>
 		/// Called when the dialog is shown.
 		/// </summary>
 		/// <param name="e">Ignored.</param>

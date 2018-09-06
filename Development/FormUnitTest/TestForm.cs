@@ -45,6 +45,7 @@ namespace FormUnitTest {
 		private StyledItem styledItem31;
 		private StyledItem styledItem24;
 		private StyledItem styledItem25;
+		private StyledLabel styledLabel1;
 		private StyledArrowButton styledArrowButton1;
 
 		public TestForm() {
@@ -77,6 +78,7 @@ namespace FormUnitTest {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
 			this.styledArrowButton1 = new System.Windows.Forms.StyledArrowButton();
 			this.styledButton1 = new System.Windows.Forms.StyledButton();
 			this.styledContextMenu1 = new System.Windows.Forms.StyledContextMenu(this.components);
@@ -118,6 +120,7 @@ namespace FormUnitTest {
 			this.sliderDialog1 = new System.Windows.Forms.SliderDialog(this.components);
 			this.styledSlider2 = new System.Windows.Forms.StyledSlider();
 			this.styledCheckBox2 = new System.Windows.Forms.StyledCheckBox();
+			this.styledLabel1 = new System.Windows.Forms.StyledLabel();
 			this.styledContextMenu1.SuspendLayout();
 			this.styledMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -126,6 +129,7 @@ namespace FormUnitTest {
 			// 
 			this.styledArrowButton1.BackColor = System.Drawing.Color.Transparent;
 			this.styledArrowButton1.BackgroundImage = global::FormUnitTest.Properties.Resources.wood;
+			this.styledArrowButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.styledArrowButton1.Location = new System.Drawing.Point(7, 77);
 			this.styledArrowButton1.Name = "styledArrowButton1";
 			this.styledArrowButton1.Rotation = 10F;
@@ -140,7 +144,7 @@ namespace FormUnitTest {
 			this.styledButton1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.styledButton1.BackgroundImage = global::FormUnitTest.Properties.Resources.wood;
 			this.styledButton1.ContextMenuStrip = this.styledContextMenu1;
-			this.styledButton1.Image = null;
+			this.styledButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.styledButton1.Location = new System.Drawing.Point(444, 77);
 			this.styledButton1.Name = "styledButton1";
 			this.styledButton1.Size = new System.Drawing.Size(124, 59);
@@ -203,14 +207,15 @@ namespace FormUnitTest {
 			// 
 			this.styledMenuStrip1.AutoSize = false;
 			this.styledMenuStrip1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
+			this.styledMenuStrip1.ForeColor = System.Drawing.Color.Black;
 			this.styledMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.styledItem1,
             this.styledItem2,
             this.styledItem3,
             this.styledItem4});
-			this.styledMenuStrip1.Location = new System.Drawing.Point(4, 31);
+			this.styledMenuStrip1.Location = new System.Drawing.Point(4, 29);
 			this.styledMenuStrip1.Name = "styledMenuStrip1";
-			this.styledMenuStrip1.Size = new System.Drawing.Size(641, 24);
+			this.styledMenuStrip1.Size = new System.Drawing.Size(1057, 24);
 			this.styledMenuStrip1.TabIndex = 4;
 			this.styledMenuStrip1.Text = "styledMenuStrip1";
 			this.styledMenuStrip1.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
@@ -499,6 +504,7 @@ namespace FormUnitTest {
 			this.styledComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.styledComboBox1.DropDownHeight = 1;
 			this.styledComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.styledComboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.styledComboBox1.FormattingEnabled = true;
 			this.styledComboBox1.IntegralHeight = false;
 			this.styledComboBox1.Items.AddRange(new object[] {
@@ -516,6 +522,7 @@ namespace FormUnitTest {
 			this.styledSlider1.BackColor = System.Drawing.Color.Transparent;
 			this.styledSlider1.BackgroundImage = global::FormUnitTest.Properties.Resources.wood;
 			this.styledSlider1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.styledSlider1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.styledSlider1.Increment = 0F;
 			this.styledSlider1.LabelPadding = 2;
 			this.styledSlider1.LargeChange = 12.5F;
@@ -528,12 +535,18 @@ namespace FormUnitTest {
 			// 
 			// sliderDialog1
 			// 
+			this.sliderDialog1.ActiveBorderOpacity = 0.75F;
+			this.sliderDialog1.AllowDrop = true;
+			this.sliderDialog1.BackColorOpacity = ((byte)(255));
 			this.sliderDialog1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
+			this.sliderDialog1.BorderCursor = System.Windows.Forms.Cursors.Default;
 			this.sliderDialog1.BorderWidth = 4;
 			this.sliderDialog1.CausesValidation = false;
-			this.sliderDialog1.ClientSize = new System.Drawing.Size(342, 118);
+			this.sliderDialog1.ClientSize = new System.Drawing.Size(342, 124);
 			this.sliderDialog1.EnableFullscreenOnAltEnter = false;
+			this.sliderDialog1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 			this.sliderDialog1.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.sliderDialog1.InactiveBorderOpacity = 0.5F;
 			this.sliderDialog1.InlineColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.sliderDialog1.KeyPreview = true;
 			this.sliderDialog1.Location = new System.Drawing.Point(0, 0);
@@ -547,10 +560,12 @@ namespace FormUnitTest {
 			this.sliderDialog1.Padding = new System.Windows.Forms.Padding(4, 31, 4, 4);
 			this.sliderDialog1.ShowIcon = false;
 			this.sliderDialog1.ShowInTaskbar = false;
+			this.sliderDialog1.ShowShadow = true;
 			this.sliderDialog1.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.sliderDialog1.SystemMenu = null;
 			this.sliderDialog1.SystemMenuStrip = null;
 			this.sliderDialog1.Text = "sliderDialog1";
+			this.sliderDialog1.TitleBarBadding = new System.Drawing.Size(0, 1);
 			this.sliderDialog1.TitleBarHeight = 31;
 			this.sliderDialog1.Visible = false;
 			this.sliderDialog1.WindowCursor = System.Windows.Forms.Cursors.Default;
@@ -558,6 +573,7 @@ namespace FormUnitTest {
 			// styledSlider2
 			// 
 			this.styledSlider2.BackColor = System.Drawing.Color.Transparent;
+			this.styledSlider2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.styledSlider2.Increment = 0F;
 			this.styledSlider2.LabelPadding = 2;
 			this.styledSlider2.LargeChange = 12.5F;
@@ -571,11 +587,23 @@ namespace FormUnitTest {
 			// styledCheckBox2
 			// 
 			this.styledCheckBox2.BackColor = System.Drawing.Color.Transparent;
+			this.styledCheckBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.styledCheckBox2.Location = new System.Drawing.Point(444, 228);
 			this.styledCheckBox2.Name = "styledCheckBox2";
 			this.styledCheckBox2.Size = new System.Drawing.Size(156, 23);
 			this.styledCheckBox2.TabIndex = 8;
 			this.styledCheckBox2.Text = "styledCheckBox2";
+			// 
+			// styledLabel1
+			// 
+			this.styledLabel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
+			this.styledLabel1.ForeColor = System.Drawing.Color.Black;
+			this.styledLabel1.Location = new System.Drawing.Point(655, 112);
+			this.styledLabel1.Name = "styledLabel1";
+			this.styledLabel1.Size = new System.Drawing.Size(304, 266);
+			this.styledLabel1.TabIndex = 9;
+			this.styledLabel1.Text = resources.GetString("styledLabel1.Text");
+			this.styledLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// TestForm
 			// 
@@ -583,7 +611,8 @@ namespace FormUnitTest {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::FormUnitTest.Properties.Resources.sunset;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-			this.ClientSize = new System.Drawing.Size(649, 480);
+			this.ClientSize = new System.Drawing.Size(1065, 480);
+			this.Controls.Add(this.styledLabel1);
 			this.Controls.Add(this.styledCheckBox2);
 			this.Controls.Add(this.styledSlider2);
 			this.Controls.Add(this.styledSlider1);
@@ -595,14 +624,6 @@ namespace FormUnitTest {
 			this.MainMenuStrip = this.styledMenuStrip1;
 			this.Name = "TestForm";
 			this.Text = "TestForm";
-			this.Controls.SetChildIndex(this.styledMenuStrip1, 0);
-			this.Controls.SetChildIndex(this.styledArrowButton1, 0);
-			this.Controls.SetChildIndex(this.styledButton1, 0);
-			this.Controls.SetChildIndex(this.styledCheckBox1, 0);
-			this.Controls.SetChildIndex(this.styledComboBox1, 0);
-			this.Controls.SetChildIndex(this.styledSlider1, 0);
-			this.Controls.SetChildIndex(this.styledSlider2, 0);
-			this.Controls.SetChildIndex(this.styledCheckBox2, 0);
 			this.styledContextMenu1.ResumeLayout(false);
 			this.styledMenuStrip1.ResumeLayout(false);
 			this.styledMenuStrip1.PerformLayout();

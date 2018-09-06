@@ -51,6 +51,14 @@ namespace System.Windows.Forms {
 			UIScaler.AddToScaler(this);
 		}
 
+		/// <summary>
+		/// Sets whether the prompt is visible.
+		/// </summary>
+		/// <param name="value">The visibility flag.</param>
+		protected override void SetVisibleCore(bool value) {
+			base.SetVisibleCore(DesignMode ? false : value);
+		}
+
 		private void button_Click(object sender, EventArgs e) {
 			DialogResult = DialogResult.OK;
 			CloseAsync();

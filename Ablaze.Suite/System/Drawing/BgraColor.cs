@@ -1090,7 +1090,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <returns>A System.String that describes this BgraColor structure.</returns>
 		public override string ToString() {
-			return string.Format("(A: {0}, R: {1}, G: {2}, B: {3})", A.ToString(), R.ToString(), G.ToString(), B.ToString());
+			return string.Format("(A: {0}, R: {1}, G: {2}, B: {3})", A.ToStringLookup(), R.ToStringLookup(), G.ToStringLookup(), B.ToStringLookup());
 		}
 
 		/// <summary>
