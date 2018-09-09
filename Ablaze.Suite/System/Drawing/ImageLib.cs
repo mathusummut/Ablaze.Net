@@ -126,23 +126,23 @@ namespace System.Drawing {
 			PointF p2;
 			switch (direction) {
 				case Direction.Down:
-					p0 = new PointF(bounds.Left + halfWidth, bounds.Bottom);
-					p1 = new PointF(bounds.Left, bounds.Top);
-					p2 = new PointF(bounds.Right, bounds.Top);
+					p0 = new PointF(bounds.X + halfWidth, bounds.Bottom);
+					p1 = new PointF(bounds.X, bounds.Y);
+					p2 = new PointF(bounds.Right, bounds.Y);
 					break;
 				case Direction.Left:
-					p0 = new PointF(bounds.Left, bounds.Top + halfHeight);
-					p1 = new PointF(bounds.Right, bounds.Top);
+					p0 = new PointF(bounds.X, bounds.Y + halfHeight);
+					p1 = new PointF(bounds.Right, bounds.Y);
 					p2 = new PointF(bounds.Right, bounds.Bottom);
 					break;
 				case Direction.Right:
-					p0 = new PointF(bounds.Right, bounds.Top + halfHeight);
-					p1 = new PointF(bounds.Left, bounds.Bottom);
-					p2 = new PointF(bounds.Left, bounds.Top);
+					p0 = new PointF(bounds.Right, bounds.Y + halfHeight);
+					p1 = new PointF(bounds.X, bounds.Bottom);
+					p2 = new PointF(bounds.X, bounds.Y);
 					break;
 				default:
-					p0 = new PointF(bounds.Left + halfWidth, bounds.Top);
-					p1 = new PointF(bounds.Left, bounds.Bottom);
+					p0 = new PointF(bounds.X + halfWidth, bounds.Y);
+					p1 = new PointF(bounds.X, bounds.Bottom);
 					p2 = new PointF(bounds.Right, bounds.Bottom);
 					break;
 			}
@@ -1520,7 +1520,7 @@ namespace System.Drawing {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static Point CenterOf(this Rectangle rect) {
-			return new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
+			return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
 		}
 
 		/// <summary>
@@ -1532,19 +1532,19 @@ namespace System.Drawing {
 		public static Point AlignRectangle(this Rectangle bounds, Size size, ContentAlignment alignment) {
 			switch (alignment) {
 				case ContentAlignment.MiddleCenter:
-					return new Point(bounds.Left + (bounds.Width - size.Width) / 2, bounds.Top + (bounds.Height - size.Height) / 2);
+					return new Point(bounds.X + (bounds.Width - size.Width) / 2, bounds.Y + (bounds.Height - size.Height) / 2);
 				case ContentAlignment.MiddleLeft:
-					return new Point(bounds.X, bounds.Top + (bounds.Height - size.Height) / 2);
+					return new Point(bounds.X, bounds.Y + (bounds.Height - size.Height) / 2);
 				case ContentAlignment.MiddleRight:
-					return new Point(bounds.Right - size.Width, bounds.Top + (bounds.Height - size.Height) / 2);
+					return new Point(bounds.Right - size.Width, bounds.Y + (bounds.Height - size.Height) / 2);
 				case ContentAlignment.TopCenter:
-					return new Point(bounds.Left + (bounds.Width - size.Width) / 2, bounds.Y);
+					return new Point(bounds.X + (bounds.Width - size.Width) / 2, bounds.Y);
 				case ContentAlignment.TopLeft:
 					return bounds.Location;
 				case ContentAlignment.TopRight:
 					return new Point(bounds.Right - size.Width, bounds.Y);
 				case ContentAlignment.BottomCenter:
-					return new Point(bounds.Left + (bounds.Width - size.Width) / 2, bounds.Bottom - size.Height);
+					return new Point(bounds.X + (bounds.Width - size.Width) / 2, bounds.Bottom - size.Height);
 				case ContentAlignment.BottomLeft:
 					return new Point(bounds.X, bounds.Bottom - size.Height);
 				default:
@@ -1561,19 +1561,19 @@ namespace System.Drawing {
 		public static PointF AlignRectangle(this RectangleF bounds, SizeF size, ContentAlignment alignment) {
 			switch (alignment) {
 				case ContentAlignment.MiddleCenter:
-					return new PointF(bounds.Left + (bounds.Width - size.Width) * 0.5f, bounds.Top + (bounds.Height - size.Height) * 0.5f);
+					return new PointF(bounds.X + (bounds.Width - size.Width) * 0.5f, bounds.Y + (bounds.Height - size.Height) * 0.5f);
 				case ContentAlignment.MiddleLeft:
-					return new PointF(bounds.X, bounds.Top + (bounds.Height - size.Height) * 0.5f);
+					return new PointF(bounds.X, bounds.Y + (bounds.Height - size.Height) * 0.5f);
 				case ContentAlignment.MiddleRight:
-					return new PointF(bounds.Right - size.Width, bounds.Top + (bounds.Height - size.Height) * 0.5f);
+					return new PointF(bounds.Right - size.Width, bounds.Y + (bounds.Height - size.Height) * 0.5f);
 				case ContentAlignment.TopCenter:
-					return new PointF(bounds.Left + (bounds.Width - size.Width) * 0.5f, bounds.Y);
+					return new PointF(bounds.X + (bounds.Width - size.Width) * 0.5f, bounds.Y);
 				case ContentAlignment.TopLeft:
 					return bounds.Location;
 				case ContentAlignment.TopRight:
 					return new PointF(bounds.Right - size.Width, bounds.Y);
 				case ContentAlignment.BottomCenter:
-					return new PointF(bounds.Left + (bounds.Width - size.Width) * 0.5f, bounds.Bottom - size.Height);
+					return new PointF(bounds.X + (bounds.Width - size.Width) * 0.5f, bounds.Bottom - size.Height);
 				case ContentAlignment.BottomLeft:
 					return new PointF(bounds.X, bounds.Bottom - size.Height);
 				default:
@@ -1589,7 +1589,7 @@ namespace System.Drawing {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static PointF CenterOf(this RectangleF rect) {
-			return new PointF(rect.Left + rect.Width * 0.5f, rect.Top + rect.Height * 0.5f);
+			return new PointF(rect.X + rect.Width * 0.5f, rect.Y + rect.Height * 0.5f);
 		}
 
 		/// <summary>
@@ -1912,7 +1912,7 @@ namespace System.Drawing {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static Point[] ToDestPoints(this Rectangle rectangle) {
-			return new Point[3] { new Point(rectangle.X, rectangle.Y), new Point(rectangle.Right, rectangle.Y), new Point(rectangle.Left, rectangle.Bottom) };
+			return new Point[3] { new Point(rectangle.X, rectangle.Y), new Point(rectangle.Right, rectangle.Y), new Point(rectangle.X, rectangle.Bottom) };
 		}
 
 		/// <summary>
@@ -1923,7 +1923,7 @@ namespace System.Drawing {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static PointF[] ToDestPoints(this RectangleF rectangle) {
-			return new PointF[3] { new PointF(rectangle.Left, rectangle.Top), new PointF(rectangle.Right, rectangle.Top), new PointF(rectangle.Left, rectangle.Bottom) };
+			return new PointF[3] { new PointF(rectangle.X, rectangle.Y), new PointF(rectangle.Right, rectangle.Y), new PointF(rectangle.X, rectangle.Bottom) };
 		}
 
 		/// <summary>

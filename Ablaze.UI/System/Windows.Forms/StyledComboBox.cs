@@ -508,6 +508,14 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Calls GetAutoSize()
+		/// </summary>
+		/// <param name="proposedSize">The maximum size of the control</param>
+		public override Size GetPreferredSize(Size proposedSize) {
+			return GetAutoSize(proposedSize, true);
+		}
+
+		/// <summary>
 		/// Adds the specified item to the combo box.
 		/// </summary>
 		/// <param name="item">The item to add to the combo box.</param>

@@ -494,6 +494,14 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Calls GetAutoSize()
+		/// </summary>
+		/// <param name="proposedSize">The maximum size of the control</param>
+		public override Size GetPreferredSize(Size proposedSize) {
+			return GetAutoSize(proposedSize, true);
+		}
+
+		/// <summary>
 		/// Called when the the layout of the item is calculated.
 		/// </summary>
 		/// <param name="e">Ignored.</param>

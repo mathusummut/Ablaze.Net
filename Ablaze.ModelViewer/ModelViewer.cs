@@ -42,7 +42,6 @@ namespace Ablaze.ModelViewer {
 		/// Initializes a ModelViewer instance.
 		/// </summary>
 		public ModelViewer() {
-			StyledMessageBox.Show("A C# application for checking if websites are online or not.\nClick \"Add New...\" to add a website to the list.\nClick on the website to check status and enable/disable ping.\nPinging should only be done when absolutely necessary in order to get more accurate results.\nRight-click the website to remove from list.\nDouble-click the website to open it.", "Help", true, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			UIAnimator.SharedAnimator.UpdateOnThreadPool = false;
 			InitializeComponent();
 			try {

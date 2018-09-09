@@ -172,32 +172,9 @@ namespace System.Windows.Forms {
 				Size maxSize = Screen.GetWorkingArea(this).Size;
 				Size size = label.GetAutoSize(maxSize, false);
 				if (size.Width > size.Height * 3)
-					size = label.GetAutoSize(new Size(Math.Max(size.Height * 3, maxSize.Width), maxSize.Height), false);
-				ClientSize = new Size(Math.Max(Math.Max(size.Width, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 50, size.Height + label.Margin.Vertical + button1.Height + 28);
-				label.Height = size.Height;
-				button1.Top = ClientSize.Height - (button1.Height + 10);
-				button2.Top = button1.Top;
-				button3.Top = button1.Top;
-				int loc;
-				switch (visibleButtonsCount) {
-					case 2:
-						loc = 2 + ClientSize.Width / 2 - (button1.Width + 4);
-						button1.Left = loc;
-						loc += button1.Width + 4;
-						button2.Left = loc;
-						break;
-					case 3:
-						loc = 2 + ClientSize.Width / 2 - ((button1.Width + 4) * 3) / 2;
-						button1.Left = loc;
-						loc += button1.Width + 4;
-						button2.Left = loc;
-						loc += button2.Width + 4;
-						button3.Left = loc;
-						break;
-					default:
-						button1.Left = 2 + ClientSize.Width / 2 - button1.Width / 2;
-						break;
-				}
+					size = label.GetAutoSize(new Size(Math.Max(size.Height * 3, maxSize.Width) + 20, maxSize.Height + 20), true);
+				ClientSize = new Size(Math.Max(Math.Max(size.Width, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 20,
+					size.Height + label.Margin.Vertical + button1.Height + 12);
 				Rectangle screenBounds = Screen.FromControl(this).Bounds;
 				Location = new Point(screenBounds.Width / 2 - Width / 2, screenBounds.Height / 2 - Height / 2);
 			}
@@ -236,6 +213,39 @@ namespace System.Windows.Forms {
 					};
 					timer.Tick += Timer_Tick;
 					timer.Running = true;
+				}
+			}
+
+			protected override void OnClientSizeChanged(EventArgs e) {
+				base.OnClientSizeChanged(e);
+				StyledLabel label = this.label;
+				if (label == null)
+					return;
+				Size clientSize = ClientSize;
+				int textBottom = label.GetAutoSize(new Size(clientSize.Width, 0), true).Height;
+				int top = Math.Min(clientSize.Height - (button1.Height + 6), textBottom + (clientSize.Height - (textBottom + button1.Height)) / 2);
+				button1.Top = top;
+				button2.Top = top;
+				button3.Top = top;
+				int loc;
+				switch (visibleButtonsCount) {
+					case 2:
+						loc = 2 + clientSize.Width / 2 - (button1.Width + 4);
+						button1.Left = loc;
+						loc += button1.Width + 4;
+						button2.Left = loc;
+						break;
+					case 3:
+						loc = 2 + clientSize.Width / 2 - ((button1.Width + 4) * 3) / 2;
+						button1.Left = loc;
+						loc += button1.Width + 4;
+						button2.Left = loc;
+						loc += button2.Width + 4;
+						button3.Left = loc;
+						break;
+					default:
+						button1.Left = 2 + clientSize.Width / 2 - button1.Width / 2;
+						break;
 				}
 			}
 
@@ -309,27 +319,28 @@ namespace System.Windows.Forms {
 				// label
 				// 
 				this.label.AutoSize = false;
-				this.label.BackColor = System.Drawing.Color.White;
+				this.label.BackColor = System.Drawing.Color.WhiteSmoke;
 				this.label.BorderStyle = System.Windows.Forms.BorderStyle.None;
-				this.label.Dock = System.Windows.Forms.DockStyle.Top;
+				this.label.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.label.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 				this.label.Margin = new System.Windows.Forms.Padding(3);
 				this.label.Name = "label";
+				this.label.Padding = new System.Windows.Forms.Padding(0, 1, 1, 7);
 				this.label.Size = new System.Drawing.Size(200, 20);
-				this.label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+				this.label.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 				//this.label.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(label_LinkClicked);
 				// 
 				// MessageBoxForm
 				// 
 				this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 				this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-				this.BackColor = System.Drawing.Color.FromArgb(236, 233, 226);
+				this.BackColor = System.Drawing.Color.WhiteSmoke;
 				this.ClientSize = new System.Drawing.Size(260, 102);
 				this.Controls.Add(this.label);
 				this.Controls.Add(this.button1);
 				this.Controls.Add(this.button2);
 				this.Controls.Add(this.button3);
-				this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+				this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 				this.KeyPreview = true;
 				this.MaximizeBox = false;
 				this.MinimizeBox = false;
@@ -341,6 +352,9 @@ namespace System.Windows.Forms {
 				this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 				this.Text = "MessageBoxForm";
 				this.TopMost = true;
+				this.Controls.SetChildIndex(this.button3, 0);
+				this.Controls.SetChildIndex(this.button2, 0);
+				this.Controls.SetChildIndex(this.button1, 0);
 				this.ResumeLayout(false);
 				this.PerformLayout();
 
@@ -460,35 +474,12 @@ namespace System.Windows.Forms {
 				button1.Font = Font;
 				button2.Font = Font;
 				button3.Font = Font;
-				Size maxSize = Screen.GetWorkingArea(this).Size;
+				Size maxSize = Screen.GetBounds(this).Size;
 				Size size = label.GetAutoSize(maxSize, false);
 				if (size.Width > size.Height * 3)
-					size = label.GetAutoSize(new Size(Math.Max(size.Height * 3, maxSize.Width), maxSize.Height), false);
-				ClientSize = new Size(Math.Max(Math.Max(size.Width, TextRenderer.MeasureText(caption, Font).Width), (button1.Width + 4) * visibleButtonsCount) + 50, size.Height + label.Margin.Vertical + button1.Height + 28);
-				label.Height = size.Height;
-				button1.Top = ClientSize.Height - (button1.Height + 10);
-				button2.Top = button1.Top;
-				button3.Top = button1.Top;
-				int loc;
-				switch (visibleButtonsCount) {
-					case 2:
-						loc = 2 + ClientSize.Width / 2 - (button1.Width + 4);
-						button1.Left = loc;
-						loc += button1.Width + 4;
-						button2.Left = loc;
-						break;
-					case 3:
-						loc = 2 + ClientSize.Width / 2 - ((button1.Width + 4) * 3) / 2;
-						button1.Left = loc;
-						loc += button1.Width + 4;
-						button2.Left = loc;
-						loc += button2.Width + 4;
-						button3.Left = loc;
-						break;
-					default:
-						button1.Left = 2 + ClientSize.Width / 2 - button1.Width / 2;
-						break;
-				}
+					size = label.GetAutoSize(new Size(Math.Max(size.Height * 3, maxSize.Width) + 20, maxSize.Height + 20), true);
+				ViewSize = new Size(Math.Max(Math.Max(size.Width, TitleLabel.GetAutoSize().Width), (button1.Width + 4) * visibleButtonsCount) + 20,
+					size.Height + label.Margin.Vertical + button1.Height + 12);
 			}
 
 			private void Button1_Click(object sender, EventArgs e) {
@@ -522,7 +513,6 @@ namespace System.Windows.Forms {
 						button1.Focus();
 						break;
 				}
-				UIScaler.AddToScaler(this);
 				if (timeOut >= 100) {
 					AsyncTimer timer = new AsyncTimer() {
 						Tag = "MessageBoxTimer",
@@ -530,6 +520,40 @@ namespace System.Windows.Forms {
 					};
 					timer.Tick += Timer_Tick;
 					timer.Running = true;
+				}
+			}
+
+			protected override void OnClientSizeChanged(EventArgs e) {
+				base.OnClientSizeChanged(e);
+				StyledLabel label = this.label;
+				if (label == null)
+					return;
+				Size clientSize = ClientSize;
+				Size viewSize = ViewSize;
+				int textBottom = label.GetAutoSize(new Size(ViewSize.Width, 0), true).Height;
+				int top = ViewPortLocation.Y + Math.Min(viewSize.Height - (button1.Height + 6), textBottom + (viewSize.Height - (textBottom + button1.Height)) / 2);
+				button1.Top = top;
+				button2.Top = top;
+				button3.Top = top;
+				int loc;
+				switch (visibleButtonsCount) {
+					case 2:
+						loc = 2 + clientSize.Width / 2 - (button1.Width + 4);
+						button1.Left = loc;
+						loc += button1.Width + 4;
+						button2.Left = loc;
+						break;
+					case 3:
+						loc = 2 + clientSize.Width / 2 - ((button1.Width + 4) * 3) / 2;
+						button1.Left = loc;
+						loc += button1.Width + 4;
+						button2.Left = loc;
+						loc += button2.Width + 4;
+						button3.Left = loc;
+						break;
+					default:
+						button1.Left = 2 + clientSize.Width / 2 - button1.Width / 2;
+						break;
 				}
 			}
 
@@ -602,21 +626,22 @@ namespace System.Windows.Forms {
 				// label
 				// 
 				this.label.AutoSize = false;
-				this.label.BackColor = System.Drawing.Color.White;
+				this.label.BackColor = System.Drawing.Color.WhiteSmoke;
 				this.label.BorderStyle = System.Windows.Forms.BorderStyle.None;
-				this.label.Dock = System.Windows.Forms.DockStyle.Top;
+				this.label.Dock = System.Windows.Forms.DockStyle.Fill;
 				this.label.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 				this.label.Margin = new System.Windows.Forms.Padding(3);
 				this.label.Name = "label";
+				this.label.Padding = new System.Windows.Forms.Padding(0, 1, 1, 7);
 				this.label.Size = new System.Drawing.Size(200, 20);
-				this.label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+				this.label.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 				//this.label.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(label_LinkClicked);
 				// 
-				// MessageBoxForm
+				// MessageBoxFormWhite
 				// 
 				this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 				this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-				this.BackColor = System.Drawing.Color.FromArgb(236, 233, 226);
+				this.BackColor = System.Drawing.Color.White;
 				this.ClientSize = new System.Drawing.Size(260, 102);
 				this.Controls.Add(this.label);
 				this.Controls.Add(this.button1);
@@ -634,6 +659,9 @@ namespace System.Windows.Forms {
 				this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 				this.Text = "MessageBoxForm";
 				this.TopMost = true;
+				this.Controls.SetChildIndex(this.button3, 0);
+				this.Controls.SetChildIndex(this.button2, 0);
+				this.Controls.SetChildIndex(this.button1, 0);
 				this.ResumeLayout(false);
 				this.PerformLayout();
 

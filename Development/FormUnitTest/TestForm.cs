@@ -50,9 +50,6 @@ namespace FormUnitTest {
 
 		public TestForm() {
 			InitializeComponent();
-			styledButton1.CheckOnClick = true;
-			styledButton1.CheckState = CheckState.Indeterminate;
-			styledButton1.ShowCheckBox = true;
 			styledButton1.Renderer.Border = Color.FromArgb(150, Color.SteelBlue);
 			styledButton1.Renderer.NormalInnerBorderColor = Color.FromArgb(100, Color.SteelBlue);
 			styledButton1.Renderer.HoverInnerBorderColor = Color.FromArgb(150, Color.LightSteelBlue);
@@ -78,7 +75,6 @@ namespace FormUnitTest {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
 			this.styledArrowButton1 = new System.Windows.Forms.StyledArrowButton();
 			this.styledButton1 = new System.Windows.Forms.StyledButton();
 			this.styledContextMenu1 = new System.Windows.Forms.StyledContextMenu(this.components);
@@ -143,11 +139,14 @@ namespace FormUnitTest {
 			// 
 			this.styledButton1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.styledButton1.BackgroundImage = global::FormUnitTest.Properties.Resources.wood;
+			this.styledButton1.CheckOnClick = true;
+			this.styledButton1.CheckState = System.Windows.Forms.CheckState.Indeterminate;
 			this.styledButton1.ContextMenuStrip = this.styledContextMenu1;
 			this.styledButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.styledButton1.Location = new System.Drawing.Point(444, 77);
+			this.styledButton1.Location = new System.Drawing.Point(394, 66);
 			this.styledButton1.Name = "styledButton1";
-			this.styledButton1.Size = new System.Drawing.Size(124, 59);
+			this.styledButton1.ShowCheckBox = true;
+			this.styledButton1.Size = new System.Drawing.Size(100, 37);
 			this.styledButton1.TabIndex = 2;
 			this.styledButton1.Text = "styledButton1";
 			this.styledButton1.UseVisualStyleBackColor = true;
@@ -215,7 +214,7 @@ namespace FormUnitTest {
             this.styledItem4});
 			this.styledMenuStrip1.Location = new System.Drawing.Point(4, 29);
 			this.styledMenuStrip1.Name = "styledMenuStrip1";
-			this.styledMenuStrip1.Size = new System.Drawing.Size(1057, 24);
+			this.styledMenuStrip1.Size = new System.Drawing.Size(650, 24);
 			this.styledMenuStrip1.TabIndex = 4;
 			this.styledMenuStrip1.Text = "styledMenuStrip1";
 			this.styledMenuStrip1.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
@@ -542,7 +541,7 @@ namespace FormUnitTest {
 			this.sliderDialog1.BorderCursor = System.Windows.Forms.Cursors.Default;
 			this.sliderDialog1.BorderWidth = 4;
 			this.sliderDialog1.CausesValidation = false;
-			this.sliderDialog1.ClientSize = new System.Drawing.Size(342, 124);
+			this.sliderDialog1.ClientSize = new System.Drawing.Size(342, 174);
 			this.sliderDialog1.EnableFullscreenOnAltEnter = false;
 			this.sliderDialog1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 			this.sliderDialog1.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -596,13 +595,21 @@ namespace FormUnitTest {
 			// 
 			// styledLabel1
 			// 
+			this.styledLabel1.AutoSize = true;
+			this.styledLabel1.BackColor = System.Drawing.Color.SandyBrown;
 			this.styledLabel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
-			this.styledLabel1.ForeColor = System.Drawing.Color.Black;
-			this.styledLabel1.Location = new System.Drawing.Point(655, 112);
+			this.styledLabel1.Blur = 3;
+			this.styledLabel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.styledLabel1.ForeColor = System.Drawing.Color.White;
+			this.styledLabel1.Location = new System.Drawing.Point(530, 95);
 			this.styledLabel1.Name = "styledLabel1";
-			this.styledLabel1.Size = new System.Drawing.Size(304, 266);
+			this.styledLabel1.RenderShadow = true;
+			this.styledLabel1.ShadowOffsetX = 5F;
+			this.styledLabel1.ShadowOffsetY = 5F;
+			this.styledLabel1.ShadowOpacity = 1.5F;
+			this.styledLabel1.Size = new System.Drawing.Size(91, 77);
 			this.styledLabel1.TabIndex = 9;
-			this.styledLabel1.Text = resources.GetString("styledLabel1.Text");
+			this.styledLabel1.Text = "styledLabel1\ndid\nouei\noeuioe";
 			this.styledLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// TestForm
@@ -611,7 +618,7 @@ namespace FormUnitTest {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::FormUnitTest.Properties.Resources.sunset;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-			this.ClientSize = new System.Drawing.Size(1065, 480);
+			this.ClientSize = new System.Drawing.Size(658, 480);
 			this.Controls.Add(this.styledLabel1);
 			this.Controls.Add(this.styledCheckBox2);
 			this.Controls.Add(this.styledSlider2);
@@ -628,6 +635,7 @@ namespace FormUnitTest {
 			this.styledMenuStrip1.ResumeLayout(false);
 			this.styledMenuStrip1.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 

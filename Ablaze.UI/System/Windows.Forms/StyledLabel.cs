@@ -25,7 +25,7 @@ namespace System.Windows.Forms {
 		public event LinkLabelLinkClickedEventHandler LinkClicked;
 		private SortedList<LinkLabel.Link> links = new SortedList<LinkLabel.Link>(LinkComparer);*/
 		private static string defaultTabReplacement = "    ";
-		private bool vertical, reduceCaching, isLocked, renderShadow = false, wrapping = true, invalidateShadow = true;
+		private bool vertical, reduceCaching, isLocked, renderShadow, wrapping = true, invalidateShadow = true;
 		private float lineSpacingMultiplier = 0.45f, rotation, shadowOffsetX, shadowOffsetY, outlineThickness = 1f, shadowOpacity = 0.8f;
 		private TextRenderingHint hint = TextRenderingHint.AntiAliasGridFit;
 		private object SyncRoot = new object(), ShadowSync = new object();
@@ -809,9 +809,10 @@ namespace System.Windows.Forms {
 			invalidateShadow = true;
 			if (AutoSize) {
 				Size size = GetAutoSize();
-				if (GetAutoSizeMode() != AutoSizeMode.GrowAndShrink)
-					size = new Size(Math.Max(Width, size.Width), Math.Max(Height, size.Height));
-				if (size == Size)
+				Size labelSize = Size;
+				if (GetAutoSizeMode() == AutoSizeMode.GrowOnly)
+					size = new Size(Math.Max(labelSize.Width, size.Width), Math.Max(labelSize.Height, size.Height));
+				if (size == labelSize)
 					Invalidate(false);
 				else
 					Size = size;
@@ -937,67 +938,88 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Gets the resultant size of the label if it were to be auto-sized with both grow and shrink enabled.
 		/// </summary>
-		/// <param name="maxBounds">The maximum size to allow (0 means unlimited).</param>
+		/// <param name="maxBounds">The maximum size to allow (0 or negative means unlimited).</param>
 		/// <param name="includePadding">If true, padding is included within the size.</param>
 		public virtual Size GetAutoSize(Size maxBounds, bool includePadding) {
-			if (Text.Length == 0)
-				return includePadding ? Size.Empty : new Size(Padding.Horizontal, Padding.Vertical);
-			if (maxBounds.Width == 0)
+			string text = Text;
+			Padding padding = Padding;
+			if (text.Length == 0) {
+				if (includePadding)
+					return new Size(Math.Max(padding.Horizontal, 1), Math.Max(padding.Vertical, 1));
+				else
+					return new Size(1, 1);
+			}
+			if (maxBounds.Width <= 0)
 				maxBounds.Width = int.MaxValue;
-			if (maxBounds.Height == 0)
+			if (maxBounds.Height <= 0)
 				maxBounds.Height = int.MaxValue;
 			Size resultant;
-			lock (SyncRoot) {
-				if (!cachedAutoSizes.TryGetValue(maxBounds, out resultant)) {
-					StringBuilder builder = new StringBuilder(Text);
-					int spacingCount = 0;
-					for (int i = 0; i < builder.Length;) {
-						if (builder[i] == '\v') {
-							spacingCount++;
-							if (i != 0 && builder[i - 1] == '\n')
-								builder.Remove(i, 1);
-							else {
-								builder[i] = '\n';
-								i++;
-							}
+			if (!cachedAutoSizes.TryGetValue(maxBounds, out resultant)) {
+				SizeF size = new SizeF();
+				using (Graphics g = CreateGraphics()) {
+					StringBuilder builder = new StringBuilder(text.Length);
+					Font font = Font;
+					float fontHeight = font.Height;
+					StringFormat format = StyleRenderer.GetFormat(TextAlign, RightToLeft, wrapping, vertical, AutoEllipsis);
+					format.LineAlignment = StringAlignment.Near;
+					SizeF lineSize;
+					char c;
+					for (int i = 0; i < text.Length; i++) {
+						c = text[i];
+						if (c == '\n' || c == '\v') {
+							lineSize = g.MeasureString(builder.ToString(), font, maxBounds, format);
+							if (lineSize.Width > size.Width)
+								size.Width = lineSize.Width;
+							if (c == '\n')
+								size.Height += builder.Length < 2 ? fontHeight : lineSize.Height;
+							else
+								size.Height += fontHeight * (lineSpacingMultiplier + (((int) (lineSize.Height / (fontHeight - 0.0001))) - 1));
+							builder.Length = 0;
 						} else
-							i++;
+							builder.Append(c);
 					}
-					SizeF size;
-					using (Graphics canvas = CreateGraphics())
-						size = canvas.MeasureString(builder.ToString(), Font, maxBounds, StyleRenderer.GetFormat(TextAlign, RightToLeft, wrapping, vertical, AutoEllipsis));
-					size.Width += outlineThickness;
-					size.Height += outlineThickness + spacingCount * Font.Height * lineSpacingMultiplier;
-					if (renderShadow) {
-						size.Width += Math.Abs(shadowOffsetX) + blur + Math.Max(size.Width * (shadowScale.Width - 1f), 0f);
-						size.Height += Math.Abs(shadowOffsetY) + blur + Math.Max(size.Height * (shadowScale.Height - 1f), 0f);
+					if (builder.Length != 0) {
+						lineSize = g.MeasureString(builder.ToString(), font, maxBounds, format);
+						if (lineSize.Width > size.Width)
+							size.Width = lineSize.Width;
+						size.Height += builder.Length < 2 ? fontHeight : lineSize.Height;
 					}
-					double rot = rotation * Maths.DegToRadD;
-					float sin = (float) Math.Sin(rot);
-					float cos = (float) Math.Cos(rot);
-					size.Width = Math.Abs(size.Width * cos) + Math.Abs(size.Height * sin);
-					size.Height = Math.Abs(size.Width * sin) + Math.Abs(size.Height * cos);
-					if (includePadding) {
-						size.Width += Padding.Horizontal;
-						size.Height += Padding.Vertical;
-					}
-					size.Width *= dpi.Width * 0.01041666666f;
-					size.Height *= dpi.Height * 0.01041666666f;
-					resultant = Size.Ceiling(size);
-					cachedAutoSizes.TryAdd(maxBounds, resultant);
 				}
+				size.Width += outlineThickness;
+				size.Height += outlineThickness;
+				if (renderShadow) {
+					size.Width += Math.Max(shadowOffsetX, 0) + blur + 4f + Math.Max(size.Width * (shadowScale.Width - 1f), 0f);
+					size.Height += Math.Max(shadowOffsetY, 0) + blur + 4f + Math.Max(size.Height * (shadowScale.Height - 1f), 0f);
+				}
+				double rot = rotation * Maths.DegToRadD;
+				float sin = (float) Math.Sin(rot);
+				float cos = (float) Math.Cos(rot);
+				size.Width = Math.Abs(size.Width * cos) + Math.Abs(size.Height * sin);
+				size.Height = Math.Abs(size.Width * sin) + Math.Abs(size.Height * cos);
+				if (includePadding) {
+					size.Width += padding.Horizontal;
+					size.Height += padding.Vertical;
+				}
+				size.Width *= dpi.Width * 0.01041666666f;
+				size.Height *= dpi.Height * 0.01041666666f;
+				resultant = Size.Ceiling(size);
+				cachedAutoSizes.TryAdd(maxBounds, resultant);
 			}
 			if (maxBounds.Width > 0 && resultant.Width > maxBounds.Width)
 				resultant.Width = maxBounds.Width;
 			if (maxBounds.Height > 0 && resultant.Height > maxBounds.Height)
 				resultant.Height = maxBounds.Height;
+			if (resultant.Width <= 0)
+				resultant.Width = 1;
+			if (resultant.Height <= 0)
+				resultant.Height = 1;
 			return resultant;
 		}
 
 		/// <summary>
-		/// Overrides some Windows messages of the underlying control.
+		/// Overrides some Windows messages of the underlying control
 		/// </summary>
-		/// <param name="m">The message received.</param>
+		/// <param name="m">The message received</param>
 		protected override void WndProc(ref Message m) {
 			if (m.Msg == (int) WindowMessage.NCHITTEST && !StyledForm.DesignMode)
 				m.Result = TransparentControl.HTTRANSPARENT;
@@ -1038,7 +1060,7 @@ namespace System.Windows.Forms {
 							if (c == '\n')
 								area.Height -= height;
 							else
-								area.Height -= height * lineSpacingMultiplier;
+								area.Height -= fontHeight * (lineSpacingMultiplier + (((int) (height / (fontHeight - 0.0001))) - 1));
 							if (area.Height > 0)
 								builder.Length = 0;
 							else
@@ -1054,36 +1076,72 @@ namespace System.Windows.Forms {
 							path.AddString(str, font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
 					}
 				} else {
+					bool centerAlign = format.LineAlignment == StringAlignment.Center;
 					float lineHeight;
-					for (int i = 0; i < text.Length; i++) {
-						c = text[i];
-						if (c == '\n' || c == '\v') {
-							if (builder.Length != 0) {
-								str = builder.ToString();
-								if (path == null)
-									g.DrawString(str, font, textBrush, area, format);
-								else
-									path.AddString(str, font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
+					try {
+						if (centerAlign) {
+							format.LineAlignment = StringAlignment.Near;
+							RectangleF calcArea = area;
+							for (int i = 0; i < text.Length; i++) {
+								c = text[i];
+								if (c == '\n' || c == '\v') {
+									height = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, calcArea.Size, format).Height;
+									if (c == '\n')
+										lineHeight = height;
+									else
+										lineHeight = fontHeight * (lineSpacingMultiplier + (((int) (height / (fontHeight - 0.0001))) - 1));
+									calcArea.Y += lineHeight;
+									calcArea.Height -= lineHeight;
+									if (calcArea.Height > 0)
+										builder.Length = 0;
+									else
+										break;
+								} else
+									builder.Append(c);
 							}
-							height = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height;
-							if (c == '\n')
-								lineHeight = height;
-							else
-								lineHeight = height * lineSpacingMultiplier;
-							area.Y += lineHeight;
-							area.Height -= lineHeight;
-							if (area.Height > 0)
+							if (builder.Length != 0) {
+								height = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, calcArea.Size, format).Height;
+								calcArea.Y += height;
+								calcArea.Height -= height;
 								builder.Length = 0;
+							}
+							float incrementY = calcArea.Height * 0.5f;
+							area.Y += incrementY;
+							area.Height -= incrementY;
+						}
+						for (int i = 0; i < text.Length; i++) {
+							c = text[i];
+							if (c == '\n' || c == '\v') {
+								if (builder.Length != 0) {
+									str = builder.ToString();
+									if (path == null)
+										g.DrawString(str, font, textBrush, area, format);
+									else
+										path.AddString(str, font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
+								}
+								height = builder.Length < 2 ? fontHeight : g.MeasureString(builder.ToString(), font, area.Size, format).Height;
+								if (c == '\n')
+									lineHeight = height;
+								else
+									lineHeight = fontHeight * (lineSpacingMultiplier + (((int) (height / (fontHeight - 0.0001))) - 1));
+								area.Y += lineHeight;
+								area.Height -= lineHeight;
+								if (area.Height > 0)
+									builder.Length = 0;
+								else
+									break;
+							} else
+								builder.Append(c);
+						}
+						if (builder.Length != 0) {
+							if (path == null)
+								g.DrawString(builder.ToString(), font, textBrush, area, format);
 							else
-								break;
-						} else
-							builder.Append(c);
-					}
-					if (builder.Length != 0) {
-						if (path == null)
-							g.DrawString(builder.ToString(), font, textBrush, area, format);
-						else
-							path.AddString(builder.ToString(), font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
+								path.AddString(builder.ToString(), font.FontFamily, (int) font.Style, g.DpiY * font.SizeInPoints * 0.01388888888f, area, format);
+						}
+					} finally {
+						if (centerAlign)
+							format.LineAlignment = StringAlignment.Center;
 					}
 				}
 			}
@@ -1094,6 +1152,14 @@ namespace System.Windows.Forms {
 					g.DrawPath(outline, path);
 			}
 			return path;
+		}
+
+		/// <summary>
+		/// Calls GetAutoSize()
+		/// </summary>
+		/// <param name="proposedSize">The maximum size of the control</param>
+		public override Size GetPreferredSize(Size proposedSize) {
+			return GetAutoSize(proposedSize, true);
 		}
 
 		/// <summary>

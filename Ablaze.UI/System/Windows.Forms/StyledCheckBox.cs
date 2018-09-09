@@ -451,6 +451,14 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Calls GetAutoSize()
+		/// </summary>
+		/// <param name="proposedSize">The maximum size of the control</param>
+		public override Size GetPreferredSize(Size proposedSize) {
+			return GetAutoSize(proposedSize, true);
+		}
+
+		/// <summary>
 		/// Renders the control with its children onto the specified image
 		/// </summary>
 		/// <param name="bitmap">The image to draw onto</param>

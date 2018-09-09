@@ -290,6 +290,14 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Calls GetAutoSize()
+		/// </summary>
+		/// <param name="proposedSize">The maximum size of the control</param>
+		public override Size GetPreferredSize(Size proposedSize) {
+			return GetAutoSize(proposedSize, true);
+		}
+
+		/// <summary>
 		/// Gets the resultant size of the context menu if it were to be auto-sized with both grow and shrink enabled.
 		/// </summary>
 		public Size GetAutoSize() {

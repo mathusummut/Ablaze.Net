@@ -3720,16 +3720,6 @@ namespace System.Platforms.Windows {
 		public Boolean HasHorizontalWheel;
 	}
 
-
-
-
-
-
-
-
-
-
-
 	/// \public
 	/// <summary>
 	/// Defines the coordinates of the upper-left and lower-right corners of a rectangle.
@@ -3873,10 +3863,7 @@ namespace System.Platforms.Windows {
 		public static readonly int SizeInBytes = Marshal.SizeOf(typeof(MonitorInfo));
 	}
 
-
-
-
-
+	//NCCALCSIZE_PARAMS Structure
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct NcCalculateSize {
 		public Win32Rectangle NewBounds;
@@ -3885,9 +3872,6 @@ namespace System.Platforms.Windows {
 		[CLSCompliant(false)]
 		public unsafe WindowPosition* Position;
 	}
-
-
-
 
 
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]

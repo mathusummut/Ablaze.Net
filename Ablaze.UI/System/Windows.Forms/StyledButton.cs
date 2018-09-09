@@ -279,6 +279,8 @@ namespace System.Windows.Forms {
 			}
 			set {
 				CheckBox.CheckOnClick = value;
+				if (value)
+					ShowCheckBox = true;
 			}
 		}
 
@@ -509,6 +511,14 @@ namespace System.Windows.Forms {
 		/// </summary>
 		public Size GetAutoSize() {
 			return GetAutoSize(MaximumSize, true);
+		}
+
+		/// <summary>
+		/// Calls GetAutoSize()
+		/// </summary>
+		/// <param name="proposedSize">The maximum size of the control</param>
+		public override Size GetPreferredSize(Size proposedSize) {
+			return GetAutoSize(proposedSize, true);
 		}
 
 		/// <summary>
