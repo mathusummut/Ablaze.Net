@@ -3726,6 +3726,22 @@ namespace System.Windows.Forms {
 		/// <param name="height">The new height of the form.</param>
 		/// <param name="specified">Which bounds are specified.</param>
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			Size minimum = MinimumSize;
+			Size maximum = MaximumSize;
+			bool widthSpecified = (specified & BoundsSpecified.Width) == BoundsSpecified.Width;
+			if (widthSpecified) {
+				if (minimum.Width > 0 && width < minimum.Width)
+					width = minimum.Width;
+				if (maximum.Width > 0 && width > maximum.Width)
+					width = maximum.Width;
+			}
+			bool heightSpecified = (specified & BoundsSpecified.Height) == BoundsSpecified.Height;
+			if (heightSpecified) {
+				if (minimum.Height > 0 && height < minimum.Height)
+					height = minimum.Height;
+				if (maximum.Height > 0 && height > maximum.Height)
+					height = maximum.Height;
+			}
 			Rectangle screenBounds;
 			if (MdiParent == null)
 				screenBounds = SystemInformation.VirtualScreen;
@@ -3733,7 +3749,7 @@ namespace System.Windows.Forms {
 				screenBounds = new Rectangle(Point.Empty, MdiParent.ClientSize);
 			Rectangle bounds = Bounds;
 			int borderSize = CurrentBorderWidth / 2;
-			int minX = screenBounds.X + borderSize - width;
+			int minX = screenBounds.X + borderSize - (widthSpecified ? width : bounds.Width);
 			if (x < minX)
 				x = minX;
 			else {
@@ -3750,7 +3766,7 @@ namespace System.Windows.Forms {
 				if (y > maxY)
 					y = maxY;
 			}
-			if (fullscreenGdiGLWorkaround && x == 0 && y == 0) {
+			if (widthSpecified && fullscreenGdiGLWorkaround && x == 0 && y == 0) {
 				Size targetBounds = screen.Bounds.Size;
 				if (width == targetBounds.Width && height == targetBounds.Height)
 					width++;
@@ -3758,7 +3774,7 @@ namespace System.Windows.Forms {
 			base.SetBoundsCore(x, y, width, height, specified);
 			if (!(x == bounds.X && y == bounds.Y)) {
 				screen = Screen.FromControl(this);
-				if (width == bounds.Width && height == bounds.Height)
+				if ((widthSpecified && width == bounds.Width) && (heightSpecified && height == bounds.Height) || !(widthSpecified || heightSpecified))
 					RefreshBorder();
 			}
 		}

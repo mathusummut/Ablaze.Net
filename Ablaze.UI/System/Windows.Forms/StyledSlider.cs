@@ -27,7 +27,7 @@ namespace System.Windows.Forms {
 		private float increment = 0f, knobSize = 14f, trackerValue = 50f, barMinimum = 1f, barMaximum = 100f, smallChange = 1f, largeChange = 5f;
 		private StyledLabel label = new StyledLabel();
 		private int labelPadding = 2, mouseWheelBarPartitions = 10;
-		private bool wasPressed, horizontal = true;
+		private bool wasPressed;
 		/// <summary>
 		/// Fired when the slider position has changed.
 		/// </summary>
@@ -55,9 +55,9 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets the label that renders the text.
+		/// Gets the label that renders the text
 		/// </summary>
-		[Description("Gets the label that renders the text.")]
+		[Description("Gets the label that renders the text")]
 		public StyledLabel Label {
 			get {
 				return label;
@@ -65,9 +65,9 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets or sets the padding that is added between the label and the slider.
+		/// Gets or sets the padding that is added between the label and the slider
 		/// </summary>
-		[Description("Gets or sets the padding that is added between the label and the slider.")]
+		[Description("Gets or sets the padding that is added between the label and the slider")]
 		public int LabelPadding {
 			get {
 				return labelPadding;
@@ -76,11 +76,11 @@ namespace System.Windows.Forms {
 				if (labelPadding == value)
 					return;
 				labelPadding = value;
-				Padding padding = Label.Padding;
-				if (horizontal)
-					Label.Padding = new Padding(padding.Left, padding.Top, labelPadding, padding.Bottom);
+				Padding padding = label.Padding;
+				if (Vertical)
+					label.Padding = new Padding(padding.Left, padding.Top, padding.Right, labelPadding);
 				else
-					Label.Padding = new Padding(padding.Left, padding.Top, padding.Right, labelPadding);
+					label.Padding = new Padding(padding.Left, padding.Top, labelPadding, padding.Bottom);
 				Invalidate(false);
 			}
 		}
@@ -97,22 +97,29 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets or sets whether the label should be fixed to the current/specified size.
+		/// Gets or sets whether the label should resize to fit its content
 		/// </summary>
-		[Description("Gets or sets whether the label should be fixed to the current/specified size.")]
-		[DefaultValue(false)]
-		public bool FixedLabelSize {
-			get;
-			set;
+		[Description("Gets or sets whether the label should resize to fit its content")]
+		[DefaultValue(true)]
+		public bool LabelAutoSize {
+			get {
+				return label.AutoSize;
+			}
+			set {
+				if (value == label.AutoSize)
+					return;
+				label.AutoSize = value;
+				Invalidate(false);
+			}
 		}
 
 		private RectangleF KnobBoundsInner {
 			get {
 				Size clientSize = ClientSize;
-				Size label = Label.Size;
+				Size labelSize = label.Size;
 				Padding padding = Padding;
-				return horizontal ? new RectangleF(((trackerValue - barMinimum) * (clientSize.Width - (label.Width + knobSize + Label.Padding.Horizontal + Padding.Right))) / (barMaximum - barMinimum), padding.Top + 1, knobSize, clientSize.Height - (padding.Vertical + 2)) :
-					new RectangleF(padding.Left + 1, ((trackerValue - barMinimum) * (clientSize.Height - (label.Height + knobSize + Label.Padding.Vertical + Padding.Bottom))) / (barMaximum - barMinimum), clientSize.Width - (padding.Horizontal + 2), knobSize);
+				return Vertical ? new RectangleF(padding.Left + 1, ((trackerValue - barMinimum) * (clientSize.Height - (labelSize.Height + knobSize + label.Padding.Vertical + Padding.Bottom))) / (barMaximum - barMinimum), clientSize.Width - (padding.Horizontal + 2), knobSize) :
+					new RectangleF(((trackerValue - barMinimum) * (clientSize.Width - (labelSize.Width + knobSize + label.Padding.Horizontal + Padding.Right))) / (barMaximum - barMinimum), padding.Top + 1, knobSize, clientSize.Height - (padding.Vertical + 2));
 			}
 		}
 
@@ -123,10 +130,10 @@ namespace System.Windows.Forms {
 		public RectangleF KnobBounds {
 			get {
 				RectangleF knobBoundsInner = KnobBoundsInner;
-				if (horizontal)
-					knobBoundsInner.X += Label.Width + Label.Padding.Horizontal;
+				if (Vertical)
+					knobBoundsInner.Y += label.Height + label.Padding.Vertical;
 				else
-					knobBoundsInner.Y += Label.Height + Label.Padding.Vertical;
+					knobBoundsInner.X += label.Width + label.Padding.Horizontal;
 				return knobBoundsInner;
 			}
 		}
@@ -141,7 +148,7 @@ namespace System.Windows.Forms {
 				return knobSize;
 			}
 			set {
-				value = Math.Max(1f, Math.Min(value, horizontal ? ClientSize.Width - Label.Padding.Horizontal : ClientSize.Height - Label.Padding.Vertical));
+				value = Math.Max(1f, Math.Min(value, Vertical ? ClientSize.Height - label.Padding.Vertical : ClientSize.Width - label.Padding.Horizontal));
 				if (value == knobSize)
 					return;
 				knobSize = value;
@@ -150,24 +157,30 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets or sets the orientation of the slider.
+		/// Gets or sets whether the orientation of the slider is vertical
 		/// </summary>
-		[Description("Gets or sets the orientation of the slider.")]
+		[Description("Gets or sets whether the orientation of the slider is vertical")]
 		[DefaultValue(true)]
-		public bool Horizontal {
+		public bool Vertical {
 			get {
-				return horizontal;
+				return label.Vertical;
 			}
 			set {
-				if (value == horizontal)
+				if (value == label.Vertical)
 					return;
-				horizontal = value;
-				Label.Vertical = !value;
 				Padding padding = Padding;
-				if (horizontal)
-					Label.Padding = new Padding(padding.Left, padding.Top, labelPadding, padding.Bottom);
-				else
-					Label.Padding = new Padding(padding.Left, padding.Top, padding.Right, labelPadding);
+				if (value) {
+					int width = ClientSize.Width;
+					label.MaximumSize = new Size(width, 0);
+					label.MinimumSize = new Size(width, 0);
+					label.Padding = new Padding(padding.Left, padding.Top, padding.Right, labelPadding);
+				} else {
+					int height = ClientSize.Height;
+					label.MaximumSize = new Size(0, height);
+					label.MinimumSize = new Size(0, height);
+					label.Padding = new Padding(padding.Left, padding.Top, labelPadding, padding.Bottom);
+				}
+				label.Vertical = value;
 				Size size = Size;
 				int temp = size.Width;
 				size.Width = size.Height;
@@ -315,17 +328,17 @@ namespace System.Windows.Forms {
 		[Description("Gets or sets the text to show in the slider label.")]
 		public override string Text {
 			get {
-				return Label.Text;
+				return label.Text;
 			}
 			set {
 				if (value == null)
 					value = string.Empty;
-				string text = Label.Text;
-				Label.Text = Label.ReplaceTabs(value.Replace("\r", string.Empty));
-				if (text == Label.Text)
+				string text = label.Text;
+				label.Text = label.ReplaceTabs(value.Replace("\r", string.Empty));
+				if (text == label.Text)
 					return;
 				OnTextChanged(EventArgs.Empty);
-				UpdateLabel();
+				Invalidate(false);
 			}
 		}
 
@@ -336,7 +349,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(typeof(SizeF), "96, 96")]
 		public SizeF Dpi {
 			get {
-				return Label.Dpi;
+				return label.Dpi;
 			}
 			set {
 				if (value.Width <= 0f)
@@ -345,8 +358,8 @@ namespace System.Windows.Forms {
 					value.Height = 96f;
 				if (value == Dpi)
 					return;
-				Label.Dpi = value;
-				UpdateLabel();
+				label.Dpi = value;
+				Invalidate(false);
 			}
 		}
 
@@ -357,10 +370,10 @@ namespace System.Windows.Forms {
 		[DefaultValue(3)]
 		public TextRenderingHint TextRenderingStyle {
 			get {
-				return Label.TextRenderingStyle;
+				return label.TextRenderingStyle;
 			}
 			set {
-				Label.TextRenderingStyle = value;
+				label.TextRenderingStyle = value;
 				Invalidate(false);
 			}
 		}
@@ -381,12 +394,12 @@ namespace System.Windows.Forms {
 		[DefaultValue(typeof(Color), "0x000000")]
 		public override Color ForeColor {
 			get {
-				return Label.ForeColor;
+				return label.ForeColor;
 			}
 			set {
-				if (value == Label.ForeColor)
+				if (value == label.ForeColor)
 					return;
-				Label.ForeColor = value;
+				label.ForeColor = value;
 				Invalidate(false);
 			}
 		}
@@ -398,13 +411,13 @@ namespace System.Windows.Forms {
 		[DefaultValue(null)]
 		public override Font Font {
 			get {
-				return Label.Font;
+				return label.Font;
 			}
 			set {
-				if (value == Label.Font)
+				if (value == label.Font)
 					return;
-				Label.Font = value;
-				UpdateLabel();
+				label.Font = value;
+				Invalidate(false);
 			}
 		}
 
@@ -429,12 +442,12 @@ namespace System.Windows.Forms {
 			Name = nameof(StyledSlider);
 			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.Selectable | ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint | ControlStyles.UserMouse | ControlStyles.CacheText, true);
 			SetStyle(ControlStyles.ResizeRedraw, false);
-			label.AutoSize = false;
 			label.BackColor = Color.Transparent;
 			label.Padding = new Padding(1, 1, labelPadding, 1);
 			label.RenderShadow = false;
 			label.TextAlign = ContentAlignment.MiddleLeft;
 			label.Text = nameof(StyledSlider);
+			label.AutoSize = true;
 			UIAnimationHandler function = UIAnimator.GetFunctionToInvalidateControlOnUpdate(this);
 			KnobRenderer = new StyleRenderer(function);
 			KnobRenderer.Border = Color.FromArgb(65, 65, 65);
@@ -468,17 +481,6 @@ namespace System.Windows.Forms {
 			Minimum = min;
 			Maximum = max;
 			Value = value;
-		}
-
-		private void UpdateLabel() {
-			if (!FixedLabelSize) {
-				Size label = Label.GetAutoSize(ClientSize, true);
-				if (horizontal)
-					Label.Width = label.Width;
-				else
-					Label.Height = label.Height;
-			}
-			Invalidate(false);
 		}
 
 		/// <summary>
@@ -545,17 +547,17 @@ namespace System.Windows.Forms {
 			g.CompositingQuality = CompositingQuality.HighQuality;
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 			g.SmoothingMode = SmoothingMode.HighQuality;
-			Size labelTotalPadding = Label.Padding.Size;
+			Size labelTotalPadding = label.Padding.Size;
 			Size clientSize = ClientSize;
 			Size sliderBounds = clientSize;
-			Size label = Label.Size;
+			Size labelSize = label.Size;
 			Padding padding = Padding;
-			if (horizontal) {
-				sliderBounds.Width -= label.Width + labelTotalPadding.Width + padding.Right;
-				sliderBounds.Height -= padding.Vertical;
-			} else {
+			if (Vertical) {
 				sliderBounds.Width -= padding.Horizontal;
-				sliderBounds.Height -= label.Height + labelTotalPadding.Height + padding.Bottom;
+				sliderBounds.Height -= labelSize.Height + labelTotalPadding.Height + padding.Bottom;
+			} else {
+				sliderBounds.Width -= labelSize.Width + labelTotalPadding.Width + padding.Right;
+				sliderBounds.Height -= padding.Vertical;
 			}
 			Region oldClipRegion = g.Clip;
 			RectangleF barRect;
@@ -565,14 +567,14 @@ namespace System.Windows.Forms {
 				using (SolidBrush brush = new SolidBrush(BackColor))
 					g.FillRectangle(brush, new Rectangle(Point.Empty, clientSize));
 			}
-			Label.DrawGdi(g, location);
+			label.DrawGdi(g, location);
 			float div3;
-			if (horizontal) {
-				div3 = sliderBounds.Height * 0.3333333333333333f;
-				barRect = new RectangleF(location.X + label.Width + labelTotalPadding.Width, location.Y + padding.Top + div3, sliderBounds.Width, div3);
-			} else {
+			if (Vertical) {
 				div3 = sliderBounds.Width * 0.3333333333333333f;
-				barRect = new RectangleF(location.X + padding.Left + div3, location.Y + label.Height + labelTotalPadding.Height, div3, sliderBounds.Height);
+				barRect = new RectangleF(location.X + padding.Left + div3, location.Y + labelSize.Height + labelTotalPadding.Height, div3, sliderBounds.Height);
+			} else {
+				div3 = sliderBounds.Height * 0.3333333333333333f;
+				barRect = new RectangleF(location.X + labelSize.Width + labelTotalPadding.Width, location.Y + padding.Top + div3, sliderBounds.Width, div3);
 			}
 			BarRenderer.RenderBackground(g, barRect);
 			RectangleF knobBounds = KnobBounds;
@@ -684,11 +686,11 @@ namespace System.Windows.Forms {
 		protected override void OnPaddingChanged(EventArgs e) {
 			base.OnPaddingChanged(e);
 			Padding padding = Padding;
-			if (horizontal)
-				Label.Padding = new Padding(padding.Left, padding.Top, labelPadding, padding.Bottom);
+			if (Vertical)
+				label.Padding = new Padding(padding.Left, padding.Top, padding.Right, labelPadding);
 			else
-				Label.Padding = new Padding(padding.Left, padding.Top, padding.Right, labelPadding);
-			UpdateLabel();
+				label.Padding = new Padding(padding.Left, padding.Top, labelPadding, padding.Bottom);
+			Invalidate(false);
 		}
 
 		/// <summary>
@@ -712,16 +714,16 @@ namespace System.Windows.Forms {
 				Focus();
 				BarRenderer.MarkMouseHasLeft();
 				Point loc = e.Location;
-				Size padding = Label.Size;
+				Size padding = label.Size;
 				Rectangle bounds = ClientRectangle;
-				if (horizontal) {
-					padding.Width += Label.Padding.Horizontal;
-					bounds.Width -= padding.Width + Padding.Right;
-					loc.X -= padding.Width;
-				} else {
-					padding.Height += Label.Padding.Vertical;
+				if (Vertical) {
+					padding.Height += label.Padding.Vertical;
 					bounds.Height -= padding.Height + Padding.Bottom;
 					loc.Y -= padding.Height;
+				} else {
+					padding.Width += label.Padding.Horizontal;
+					bounds.Width -= padding.Width + Padding.Right;
+					loc.X -= padding.Width;
 				}
 				if (bounds.Contains(loc)) {
 					KnobRenderer.Pressed = true;
@@ -739,16 +741,16 @@ namespace System.Windows.Forms {
 		protected override void OnMouseMove(MouseEventArgs e) {
 			base.OnMouseMove(e);
 			Point loc = e.Location;
-			Size padding = Label.Size;
+			Size padding = label.Size;
 			Rectangle bounds = ClientRectangle;
-			if (horizontal) {
-				padding.Width += Label.Padding.Horizontal;
-				bounds.Width -= padding.Width + Padding.Right;
-				loc.X -= padding.Width;
-			} else {
-				padding.Height += Label.Padding.Vertical;
+			if (Vertical) {
+				padding.Height += label.Padding.Vertical;
 				bounds.Height -= padding.Height + Padding.Bottom;
 				loc.Y -= padding.Height;
+			} else {
+				padding.Width += label.Padding.Horizontal;
+				bounds.Width -= padding.Width + Padding.Right;
+				loc.X -= padding.Width;
 			}
 			if (bounds.Contains(loc)) {
 				if (KnobBoundsInner.Contains(loc)) {
@@ -771,14 +773,13 @@ namespace System.Windows.Forms {
 		}
 
 		private void SetValueRelativeTo(Point loc, Rectangle bounds) {
-			float margin = knobSize * 0.5f;
-			Value = ((horizontal ? loc.X : loc.Y) - margin) * (barMaximum - barMinimum) / ((horizontal ? bounds.Width : bounds.Height) - knobSize) + barMinimum;
+			Value = ((Vertical ? loc.Y : loc.X) - knobSize * 0.5f) * (barMaximum - barMinimum) / ((Vertical ? bounds.Height : bounds.Width) - knobSize) + barMinimum;
 		}
 
 		/// <summary>
-		/// Called when a mouse button is released.
+		/// Called when a mouse button is released
 		/// </summary>
-		/// <param name="e">The mouse event data.</param>
+		/// <param name="e">The mouse event data</param>
 		protected override void OnMouseUp(MouseEventArgs e) {
 			base.OnMouseUp(e);
 			wasPressed = false;
@@ -787,16 +788,21 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Called when the window size is changed.
+		/// Called when the slider size is changed
 		/// </summary>
-		/// <param name="e">Ignored.</param>
-		protected override void OnSizeChanged(EventArgs e) {
-			base.OnSizeChanged(e);
+		/// <param name="e">Ignored</param>
+		protected override void OnClientSizeChanged(EventArgs e) {
+			base.OnClientSizeChanged(e);
 			Size clientSize = ClientSize;
-			if (horizontal)
-				Label.Height = clientSize.Height;
-			else
-				Label.Width = clientSize.Width;
+			if (Vertical) {
+				int width = ClientSize.Width;
+				label.MaximumSize = new Size(width, 0);
+				label.MinimumSize = new Size(width, 0);
+			} else {
+				int height = ClientSize.Height;
+				label.MaximumSize = new Size(0, height);
+				label.MinimumSize = new Size(0, height);
+			}
 			Invalidate(false);
 		}
 
@@ -872,7 +878,7 @@ namespace System.Windows.Forms {
 		protected override void Dispose(bool disposing) {
 			KnobRenderer.Dispose();
 			BarRenderer.Dispose();
-			Label.Dispose();
+			label.Dispose();
 			base.Dispose(disposing);
 		}
 	}

@@ -44,7 +44,6 @@ namespace ImageClarifier {
 		public ImageClarifier() {
 			CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
-			EnableAeroBlur = false;
             filePrompt.Filter = "Image Files|" + Extensions.ImageFileExtensions;
             beforeLabel = new StyledLabel() {
                 ForeColor = Color.White,
@@ -87,31 +86,31 @@ namespace ImageClarifier {
             scaleSlider.Label.Font = Font;
             scaleSlider.Label.RenderShadow = true;
             scaleSlider.Label.ShadowOpacity = 1.35F;
-            scaleSlider.FixedLabelSize = true;
+            scaleSlider.LabelAutoSize = false;
             smoothnessSlider.Label.Blur = 4;
             smoothnessSlider.Label.ForeColor = Color.White;
             smoothnessSlider.Label.Font = Font;
             smoothnessSlider.Label.RenderShadow = true;
             smoothnessSlider.Label.ShadowOpacity = 1.35F;
-            smoothnessSlider.FixedLabelSize = true;
+            smoothnessSlider.LabelAutoSize = true;
             claritySlider.Label.Blur = 4;
             claritySlider.Label.ForeColor = Color.White;
             claritySlider.Label.Font = Font;
             claritySlider.Label.RenderShadow = true;
             claritySlider.Label.ShadowOpacity = 1.35F;
-            claritySlider.FixedLabelSize = true;
+            claritySlider.LabelAutoSize = false;
             filterSlider.Label.Blur = 4;
             filterSlider.Label.ForeColor = Color.White;
             filterSlider.Label.Font = Font;
             filterSlider.Label.RenderShadow = true;
             filterSlider.Label.ShadowOpacity = 1.35F;
-            filterSlider.FixedLabelSize = true;
+            filterSlider.LabelAutoSize = false;
             contrastSlider.Label.Blur = 4;
             contrastSlider.Label.ForeColor = Color.White;
             contrastSlider.Label.Font = Font;
             contrastSlider.Label.RenderShadow = true;
             contrastSlider.Label.ShadowOpacity = 1.35F;
-            contrastSlider.FixedLabelSize = true;
+            contrastSlider.LabelAutoSize = false;
             scaleSlider.Label.Width = smoothnessSlider.Label.Width;
             claritySlider.Label.Width = smoothnessSlider.Label.Width;
             filterSlider.Label.Width = smoothnessSlider.Label.Width;
@@ -728,30 +727,69 @@ namespace ImageClarifier {
 			// 
 			// filePrompt
 			// 
+			this.filePrompt.ActiveBorderOpacity = 0.75F;
 			this.filePrompt.AllFilesString = "All Standard Images";
+			this.filePrompt.AllowDrop = true;
+			this.filePrompt.BackColorOpacity = ((byte)(255));
+			this.filePrompt.BorderCursor = System.Windows.Forms.Cursors.Default;
+			this.filePrompt.BorderWidth = 4;
+			this.filePrompt.ButtonText = "Open";
+			this.filePrompt.CausesValidation = false;
+			this.filePrompt.ClientSize = new System.Drawing.Size(539, 518);
+			this.filePrompt.EnableFullscreenOnAltEnter = false;
 			this.filePrompt.FileName = "Image.png";
-			this.filePrompt.Title = "Select an image to stretch and clarify...";
+			this.filePrompt.FileNames = new string[] {
+        "Image.png"};
+			this.filePrompt.Filter = "";
+			this.filePrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.filePrompt.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.filePrompt.InactiveBorderOpacity = 0.5F;
+			this.filePrompt.InlineColor = System.Drawing.Color.Black;
+			this.filePrompt.KeyPreview = true;
+			this.filePrompt.Location = new System.Drawing.Point(0, 0);
+			this.filePrompt.MinimizeBox = false;
+			this.filePrompt.MinimizeEnabled = false;
+			this.filePrompt.MinimumSize = new System.Drawing.Size(200, 50);
+			this.filePrompt.Name = "filePrompt";
+			this.filePrompt.OutlineColor = System.Drawing.Color.Black;
+			this.filePrompt.Padding = new System.Windows.Forms.Padding(4, 29, 4, 4);
+			this.filePrompt.SelectDirectory = false;
+			this.filePrompt.ShowIcon = false;
+			this.filePrompt.ShowInTaskbar = false;
+			this.filePrompt.ShowShadow = true;
+			this.filePrompt.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.filePrompt.SystemMenu = null;
+			this.filePrompt.SystemMenuStrip = null;
+			this.filePrompt.Text = "Select an image to stretch and clarify...";
+			this.filePrompt.TitleBarBadding = new System.Drawing.Size(0, 1);
+			this.filePrompt.TitleBarHeight = 29;
+			this.filePrompt.Visible = false;
+			this.filePrompt.WarnOverwrite = false;
+			this.filePrompt.WindowCursor = System.Windows.Forms.Cursors.Default;
 			// 
 			// menuStrip
 			// 
 			this.menuStrip.AutoSize = false;
 			this.menuStrip.BackgroundImage = global::ImageClarifier.Properties.Resources.Cover;
+			this.menuStrip.ForeColor = System.Drawing.Color.Black;
 			this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.smoothStretchingToolStripMenuItem,
             this.restoreDefaultValuesToolStripMenuItem,
             this.modeToolStripMenuItem});
-			this.menuStrip.Location = new System.Drawing.Point(8, 33);
+			this.menuStrip.Location = new System.Drawing.Point(4, 29);
 			this.menuStrip.Name = "menuStrip";
-			this.menuStrip.Size = new System.Drawing.Size(709, 24);
+			this.menuStrip.Size = new System.Drawing.Size(717, 24);
 			this.menuStrip.TabIndex = 4;
+			this.menuStrip.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			// 
 			// openToolStripMenuItem
 			// 
 			this.openToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
-			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(52, 19);
+			this.openToolStripMenuItem.Name = "StyledItem";
+			this.openToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(46, 25);
 			this.openToolStripMenuItem.Text = "Open";
 			this.openToolStripMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
@@ -759,8 +797,9 @@ namespace ImageClarifier {
 			// saveAsToolStripMenuItem
 			// 
 			this.saveAsToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
-			this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(63, 19);
+			this.saveAsToolStripMenuItem.Name = "StyledItem";
+			this.saveAsToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
+			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(57, 25);
 			this.saveAsToolStripMenuItem.Text = "Save As";
 			this.saveAsToolStripMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
@@ -771,9 +810,10 @@ namespace ImageClarifier {
 			this.smoothStretchingToolStripMenuItem.CheckOnClick = true;
 			this.smoothStretchingToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.smoothStretchingToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
-			this.smoothStretchingToolStripMenuItem.Name = "smoothStretchingToolStripMenuItem";
+			this.smoothStretchingToolStripMenuItem.Name = "StyledItem";
+			this.smoothStretchingToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
 			this.smoothStretchingToolStripMenuItem.ShowCheckBox = true;
-			this.smoothStretchingToolStripMenuItem.Size = new System.Drawing.Size(143, 19);
+			this.smoothStretchingToolStripMenuItem.Size = new System.Drawing.Size(139, 25);
 			this.smoothStretchingToolStripMenuItem.Text = "Smooth Stretching";
 			this.smoothStretchingToolStripMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.smoothStretchingToolStripMenuItem.Click += new System.EventHandler(this.smoothStretchingToolStripMenuItem_Click);
@@ -781,8 +821,9 @@ namespace ImageClarifier {
 			// restoreDefaultValuesToolStripMenuItem
 			// 
 			this.restoreDefaultValuesToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
-			this.restoreDefaultValuesToolStripMenuItem.Name = "restoreDefaultValuesToolStripMenuItem";
-			this.restoreDefaultValuesToolStripMenuItem.Size = new System.Drawing.Size(145, 19);
+			this.restoreDefaultValuesToolStripMenuItem.Name = "StyledItem";
+			this.restoreDefaultValuesToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
+			this.restoreDefaultValuesToolStripMenuItem.Size = new System.Drawing.Size(139, 25);
 			this.restoreDefaultValuesToolStripMenuItem.Text = "Restore Default Values";
 			this.restoreDefaultValuesToolStripMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.restoreDefaultValuesToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultValuesToolStripMenuItem_Click);
@@ -797,8 +838,9 @@ namespace ImageClarifier {
             this.toolStripMenuItem5});
 			this.modeToolStripMenuItem.IsComboBoxItem = true;
 			this.modeToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
-			this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-			this.modeToolStripMenuItem.Size = new System.Drawing.Size(200, 19);
+			this.modeToolStripMenuItem.Name = "StyledItem";
+			this.modeToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
+			this.modeToolStripMenuItem.Size = new System.Drawing.Size(194, 25);
 			this.modeToolStripMenuItem.Text = "Crop if smaller stretch if larger";
 			this.modeToolStripMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			// 
@@ -835,7 +877,7 @@ namespace ImageClarifier {
 			// splitContainer
 			// 
 			this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainer.Location = new System.Drawing.Point(8, 57);
+			this.splitContainer.Location = new System.Drawing.Point(4, 53);
 			this.splitContainer.Name = "splitContainer";
 			this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
@@ -853,8 +895,8 @@ namespace ImageClarifier {
 			this.splitContainer.Panel2.Controls.Add(this.filterSlider);
 			this.splitContainer.Panel2.Controls.Add(this.smoothnessSlider);
 			this.splitContainer.Panel2MinSize = 0;
-			this.splitContainer.Size = new System.Drawing.Size(709, 547);
-			this.splitContainer.SplitterDistance = 380;
+			this.splitContainer.Size = new System.Drawing.Size(717, 555);
+			this.splitContainer.SplitterDistance = 385;
 			this.splitContainer.TabIndex = 12;
 			// 
 			// aboutLabel
@@ -867,19 +909,17 @@ namespace ImageClarifier {
 			this.aboutLabel.Location = new System.Drawing.Point(0, -255);
 			this.aboutLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.aboutLabel.Name = "aboutLabel";
-			this.aboutLabel.Outline = System.Drawing.Color.Transparent;
-			this.aboutLabel.OutlinePen = null;
 			this.aboutLabel.RenderShadow = true;
 			this.aboutLabel.ShadowOpacity = 1.35F;
 			this.aboutLabel.Size = new System.Drawing.Size(695, 255);
 			this.aboutLabel.TabIndex = 14;
 			this.aboutLabel.Text = resources.GetString("aboutLabel.Text");
 			this.aboutLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			this.aboutLabel.TextBrush = null;
 			// 
 			// contrastSlider
 			// 
 			this.contrastSlider.BackColor = System.Drawing.Color.Transparent;
+			this.contrastSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.contrastSlider.Increment = 0F;
 			this.contrastSlider.LabelPadding = 2;
 			this.contrastSlider.LargeChange = 0.25F;
@@ -900,6 +940,7 @@ namespace ImageClarifier {
 			// claritySlider
 			// 
 			this.claritySlider.BackColor = System.Drawing.Color.Transparent;
+			this.claritySlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.claritySlider.Increment = 0F;
 			this.claritySlider.LabelPadding = 2;
 			this.claritySlider.LargeChange = 2F;
@@ -918,6 +959,7 @@ namespace ImageClarifier {
 			// scaleSlider
 			// 
 			this.scaleSlider.BackColor = System.Drawing.Color.Transparent;
+			this.scaleSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.scaleSlider.Increment = 0F;
 			this.scaleSlider.LabelPadding = 2;
 			this.scaleSlider.LargeChange = 2F;
@@ -938,6 +980,7 @@ namespace ImageClarifier {
 			// filterSlider
 			// 
 			this.filterSlider.BackColor = System.Drawing.Color.Transparent;
+			this.filterSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.filterSlider.Increment = 0F;
 			this.filterSlider.LabelPadding = 2;
 			this.filterSlider.LargeChange = 0.2F;
@@ -956,6 +999,7 @@ namespace ImageClarifier {
 			// smoothnessSlider
 			// 
 			this.smoothnessSlider.BackColor = System.Drawing.Color.Transparent;
+			this.smoothnessSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.smoothnessSlider.Increment = 0F;
 			this.smoothnessSlider.LabelPadding = 2;
 			this.smoothnessSlider.LargeChange = 0.5F;
@@ -973,12 +1017,14 @@ namespace ImageClarifier {
 			// 
 			// ImageClarifier
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Black;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(725, 612);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.menuStrip);
+			this.EnableAeroBlur = false;
 			this.Font = new System.Drawing.Font("Calibri Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.menuStrip;
@@ -987,8 +1033,6 @@ namespace ImageClarifier {
 			this.Name = "ImageClarifier";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Image Clarifier";
-			this.Controls.SetChildIndex(this.menuStrip, 0);
-			this.Controls.SetChildIndex(this.splitContainer, 0);
 			this.menuStrip.ResumeLayout(false);
 			this.menuStrip.PerformLayout();
 			this.splitContainer.Panel1.ResumeLayout(false);

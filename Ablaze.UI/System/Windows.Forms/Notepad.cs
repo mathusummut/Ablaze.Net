@@ -418,17 +418,47 @@ namespace System.Windows.Forms {
 			this.mainMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// openFileDialog
-			// 
-			this.fileDialog.FileName = "Text.txt";
-			this.fileDialog.Filter = "All Files|*.*";
-			this.fileDialog.Title = "Open...";
-			// 
 			// fileDialog
 			// 
+			this.fileDialog.ActiveBorderOpacity = 0.75F;
+			this.fileDialog.AllFilesString = "All Files";
+			this.fileDialog.AllowDrop = true;
+			this.fileDialog.BackColorOpacity = ((byte)(255));
+			this.fileDialog.BorderCursor = System.Windows.Forms.Cursors.Default;
+			this.fileDialog.BorderWidth = 4;
+			this.fileDialog.ButtonText = "Open";
+			this.fileDialog.CausesValidation = false;
+			this.fileDialog.ClientSize = new System.Drawing.Size(539, 518);
+			this.fileDialog.EnableFullscreenOnAltEnter = false;
 			this.fileDialog.FileName = "Text.txt";
+			this.fileDialog.FileNames = new string[] {
+        "Text.txt"};
 			this.fileDialog.Filter = "Text Files|*.txt|Rich Text Files|*.rtf";
-			this.fileDialog.Title = "Save As...";
+			this.fileDialog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.fileDialog.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.fileDialog.InactiveBorderOpacity = 0.5F;
+			this.fileDialog.InlineColor = System.Drawing.Color.Black;
+			this.fileDialog.KeyPreview = true;
+			this.fileDialog.Location = new System.Drawing.Point(0, 0);
+			this.fileDialog.MinimizeBox = false;
+			this.fileDialog.MinimizeEnabled = false;
+			this.fileDialog.MinimumSize = new System.Drawing.Size(200, 50);
+			this.fileDialog.Name = "fileDialog";
+			this.fileDialog.OutlineColor = System.Drawing.Color.Black;
+			this.fileDialog.Padding = new System.Windows.Forms.Padding(4, 29, 4, 4);
+			this.fileDialog.SelectDirectory = false;
+			this.fileDialog.ShowIcon = false;
+			this.fileDialog.ShowInTaskbar = false;
+			this.fileDialog.ShowShadow = true;
+			this.fileDialog.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.fileDialog.SystemMenu = null;
+			this.fileDialog.SystemMenuStrip = null;
+			this.fileDialog.Text = "Save As...";
+			this.fileDialog.TitleBarBadding = new System.Drawing.Size(0, 1);
+			this.fileDialog.TitleBarHeight = 29;
+			this.fileDialog.Visible = false;
+			this.fileDialog.WarnOverwrite = false;
+			this.fileDialog.WindowCursor = System.Windows.Forms.Cursors.Default;
 			// 
 			// fontDialog
 			// 
@@ -444,10 +474,10 @@ namespace System.Windows.Forms {
 			this.textBox.ContextMenuStrip = this.rightClickContextMenu;
 			this.textBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.textBox.HideSelection = false;
-			this.textBox.Location = new System.Drawing.Point(4, 56);
+			this.textBox.Location = new System.Drawing.Point(4, 54);
 			this.textBox.MinimumSize = new System.Drawing.Size(20, 20);
 			this.textBox.Name = "textBox";
-			this.textBox.Size = new System.Drawing.Size(650, 441);
+			this.textBox.Size = new System.Drawing.Size(650, 443);
 			this.textBox.TabIndex = 1;
 			this.textBox.Text = "";
 			// 
@@ -455,12 +485,12 @@ namespace System.Windows.Forms {
 			// 
 			this.rightClickContextMenu.Alignment = System.Drawing.ContentAlignment.MiddleLeft;
 			this.rightClickContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.cutToolStripMenuItem1,
-			this.copyToolStripMenuItem1,
-			this.pasteToolStripMenuItem1,
-			this.selectAllToolStripMenuItem1});
+            this.cutToolStripMenuItem1,
+            this.copyToolStripMenuItem1,
+            this.pasteToolStripMenuItem1,
+            this.selectAllToolStripMenuItem1});
 			this.rightClickContextMenu.Name = "rightClickContextMenu";
-			this.rightClickContextMenu.Size = new System.Drawing.Size(63, 101);
+			this.rightClickContextMenu.Size = new System.Drawing.Size(67, 100);
 			// 
 			// cutToolStripMenuItem1
 			// 
@@ -468,7 +498,7 @@ namespace System.Windows.Forms {
 			this.cutToolStripMenuItem1.MaximumSize = new System.Drawing.Size(0, 0);
 			this.cutToolStripMenuItem1.Name = "StyledItem";
 			this.cutToolStripMenuItem1.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.cutToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+			this.cutToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
 			this.cutToolStripMenuItem1.Size = new System.Drawing.Size(35, 25);
 			this.cutToolStripMenuItem1.Text = "Cut";
 			this.cutToolStripMenuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -481,7 +511,7 @@ namespace System.Windows.Forms {
 			this.copyToolStripMenuItem1.MaximumSize = new System.Drawing.Size(0, 0);
 			this.copyToolStripMenuItem1.Name = "StyledItem";
 			this.copyToolStripMenuItem1.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.copyToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+			this.copyToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
 			this.copyToolStripMenuItem1.Size = new System.Drawing.Size(45, 25);
 			this.copyToolStripMenuItem1.Text = "Copy";
 			this.copyToolStripMenuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -494,7 +524,7 @@ namespace System.Windows.Forms {
 			this.pasteToolStripMenuItem1.MaximumSize = new System.Drawing.Size(0, 0);
 			this.pasteToolStripMenuItem1.Name = "StyledItem";
 			this.pasteToolStripMenuItem1.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.pasteToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+			this.pasteToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
 			this.pasteToolStripMenuItem1.Size = new System.Drawing.Size(46, 25);
 			this.pasteToolStripMenuItem1.Text = "Paste";
 			this.pasteToolStripMenuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -507,7 +537,8 @@ namespace System.Windows.Forms {
 			this.selectAllToolStripMenuItem1.MaximumSize = new System.Drawing.Size(0, 0);
 			this.selectAllToolStripMenuItem1.Name = "StyledItem";
 			this.selectAllToolStripMenuItem1.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.selectAllToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+			this.selectAllToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+			this.selectAllToolStripMenuItem1.Size = new System.Drawing.Size(67, 25);
 			this.selectAllToolStripMenuItem1.Text = "Select All";
 			this.selectAllToolStripMenuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.selectAllToolStripMenuItem1.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
@@ -515,13 +546,15 @@ namespace System.Windows.Forms {
 			// 
 			// mainMenu
 			// 
+			this.mainMenu.AlignGradientWorkaround = true;
 			this.mainMenu.AutoSize = false;
 			this.mainMenu.BackColor = System.Drawing.Color.SteelBlue;
+			this.mainMenu.ForeColor = System.Drawing.Color.Black;
 			this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.fileToolStripMenuItem,
-			this.editToolStripMenuItem,
-			this.formatToolStripMenuItem});
-			this.mainMenu.Location = new System.Drawing.Point(4, 31);
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.formatToolStripMenuItem});
+			this.mainMenu.Location = new System.Drawing.Point(4, 29);
 			this.mainMenu.Name = "mainMenu";
 			this.mainMenu.Size = new System.Drawing.Size(650, 25);
 			this.mainMenu.TabIndex = 0;
@@ -552,7 +585,7 @@ namespace System.Windows.Forms {
 			this.newToolStripMenuItem.Name = "StyledItem";
 			this.newToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
 			this.newToolStripMenuItem.ShortcutKeyDisplayString = "";
-			this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+			this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
 			this.newToolStripMenuItem.Size = new System.Drawing.Size(41, 25);
 			this.newToolStripMenuItem.Text = "New";
 			this.newToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -567,7 +600,7 @@ namespace System.Windows.Forms {
 			this.openToolStripMenuItem.Name = "StyledItem";
 			this.openToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
 			this.openToolStripMenuItem.ShortcutKeyDisplayString = "";
-			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
 			this.openToolStripMenuItem.Size = new System.Drawing.Size(55, 25);
 			this.openToolStripMenuItem.Text = "Open...";
 			this.openToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -582,7 +615,7 @@ namespace System.Windows.Forms {
 			this.saveToolStripMenuItem.Name = "StyledItem";
 			this.saveToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
 			this.saveToolStripMenuItem.ShortcutKeyDisplayString = "";
-			this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+			this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
 			this.saveToolStripMenuItem.Size = new System.Drawing.Size(42, 25);
 			this.saveToolStripMenuItem.Text = "Save";
 			this.saveToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -596,7 +629,7 @@ namespace System.Windows.Forms {
 			this.saveAsToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.saveAsToolStripMenuItem.Name = "StyledItem";
 			this.saveAsToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+			this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
 			this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(67, 25);
 			this.saveAsToolStripMenuItem.Text = "Save As...";
 			this.saveAsToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -630,7 +663,7 @@ namespace System.Windows.Forms {
 			this.cutToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.cutToolStripMenuItem.Name = "StyledItem";
 			this.cutToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
 			this.cutToolStripMenuItem.Size = new System.Drawing.Size(35, 25);
 			this.cutToolStripMenuItem.Text = "Cut";
 			this.cutToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -644,7 +677,7 @@ namespace System.Windows.Forms {
 			this.copyToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.copyToolStripMenuItem.Name = "StyledItem";
 			this.copyToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
 			this.copyToolStripMenuItem.Size = new System.Drawing.Size(45, 25);
 			this.copyToolStripMenuItem.Text = "Copy";
 			this.copyToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -658,7 +691,7 @@ namespace System.Windows.Forms {
 			this.pasteToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.pasteToolStripMenuItem.Name = "StyledItem";
 			this.pasteToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
 			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(46, 25);
 			this.pasteToolStripMenuItem.Text = "Paste";
 			this.pasteToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -672,7 +705,7 @@ namespace System.Windows.Forms {
 			this.selectAllToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.selectAllToolStripMenuItem.Name = "StyledItem";
 			this.selectAllToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+			this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
 			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(67, 25);
 			this.selectAllToolStripMenuItem.Text = "Select All";
 			this.selectAllToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -686,7 +719,7 @@ namespace System.Windows.Forms {
 			this.findToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.findToolStripMenuItem.Name = "StyledItem";
 			this.findToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+			this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
 			this.findToolStripMenuItem.Size = new System.Drawing.Size(109, 25);
 			this.findToolStripMenuItem.Text = "Find & Replace...";
 			this.findToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -700,7 +733,7 @@ namespace System.Windows.Forms {
 			this.goToLineToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.goToLineToolStripMenuItem.Name = "StyledItem";
 			this.goToLineToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.goToLineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+			this.goToLineToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
 			this.goToLineToolStripMenuItem.Size = new System.Drawing.Size(84, 25);
 			this.goToLineToolStripMenuItem.Text = "Go To Line...";
 			this.goToLineToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -714,7 +747,7 @@ namespace System.Windows.Forms {
 			this.goToCharacterToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.goToCharacterToolStripMenuItem.Name = "StyledItem";
 			this.goToCharacterToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.goToCharacterToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+			this.goToCharacterToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
 			this.goToCharacterToolStripMenuItem.Size = new System.Drawing.Size(115, 25);
 			this.goToCharacterToolStripMenuItem.Text = "Go To Character...";
 			this.goToCharacterToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -748,7 +781,7 @@ namespace System.Windows.Forms {
 			this.wordWrapToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.wordWrapToolStripMenuItem.Name = "StyledItem";
 			this.wordWrapToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.wordWrapToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+			this.wordWrapToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
 			this.wordWrapToolStripMenuItem.ShowCheckBox = true;
 			this.wordWrapToolStripMenuItem.Size = new System.Drawing.Size(102, 25);
 			this.wordWrapToolStripMenuItem.Text = "Word Wrap";
@@ -763,7 +796,7 @@ namespace System.Windows.Forms {
 			this.fontToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.fontToolStripMenuItem.Name = "StyledItem";
 			this.fontToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.fontToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+			this.fontToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
 			this.fontToolStripMenuItem.Size = new System.Drawing.Size(71, 25);
 			this.fontToolStripMenuItem.Text = "Font...";
 			this.fontToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -777,7 +810,7 @@ namespace System.Windows.Forms {
 			this.backgroundToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.backgroundToolStripMenuItem.Name = "StyledItem";
 			this.backgroundToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.backgroundToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+			this.backgroundToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
 			this.backgroundToolStripMenuItem.Size = new System.Drawing.Size(113, 25);
 			this.backgroundToolStripMenuItem.Text = "Background...";
 			this.backgroundToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -792,7 +825,7 @@ namespace System.Windows.Forms {
 			this.rightAlignedToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.rightAlignedToolStripMenuItem.Name = "StyledItem";
 			this.rightAlignedToolStripMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
-			this.rightAlignedToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys) ((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+			this.rightAlignedToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
 			this.rightAlignedToolStripMenuItem.ShowCheckBox = true;
 			this.rightAlignedToolStripMenuItem.Size = new System.Drawing.Size(115, 25);
 			this.rightAlignedToolStripMenuItem.Text = "Right-Aligned";
@@ -804,16 +837,15 @@ namespace System.Windows.Forms {
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			this.BackColor = System.Drawing.Color.Black;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.ClientSize = new System.Drawing.Size(658, 501);
 			this.Controls.Add(this.textBox);
 			this.Controls.Add(this.mainMenu);
-			this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.mainMenu;
 			this.Name = "Notepad";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Notepad";
-			this.Controls.SetChildIndex(this.mainMenu, 0);
-			this.Controls.SetChildIndex(this.textBox, 0);
 			this.rightClickContextMenu.ResumeLayout(false);
 			this.mainMenu.ResumeLayout(false);
 			this.mainMenu.PerformLayout();

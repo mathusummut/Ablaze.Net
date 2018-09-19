@@ -272,20 +272,36 @@ namespace System.Windows.Forms {
 		/// <param name="height">The new height of the control.</param>
 		/// <param name="specified">Which bounds are specified.</param>
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			Size oldSize = Size;
 			if (AutoSize) {
 				Size size = GetAutoSize();
 				if (GetAutoSizeMode() == AutoSizeMode.GrowAndShrink) {
 					width = size.Width;
 					height = size.Height;
 				} else {
-					width = Math.Max(width, size.Width);
-					height = Math.Max(height, size.Height);
+					width = Math.Max(oldSize.Width, size.Width);
+					height = Math.Max(oldSize.Height, size.Height);
 				}
 				specified |= BoundsSpecified.Size;
 			}
-			Size oldSize = Size;
+			Size minimum = MinimumSize;
+			Size maximum = MaximumSize;
+			bool widthSpecified = (specified & BoundsSpecified.Width) == BoundsSpecified.Width;
+			if (widthSpecified) {
+				if (minimum.Width > 0 && width < minimum.Width)
+					width = minimum.Width;
+				if (maximum.Width > 0 && width > maximum.Width)
+					width = maximum.Width;
+			}
+			bool heightSpecified = (specified & BoundsSpecified.Height) == BoundsSpecified.Height;
+			if (heightSpecified) {
+				if (minimum.Height > 0 && height < minimum.Height)
+					height = minimum.Height;
+				if (maximum.Height > 0 && height > maximum.Height)
+					height = maximum.Height;
+			}
 			base.SetBoundsCore(x, y, width, height, specified);
-			if (!(width == oldSize.Width && height == oldSize.Height))
+			if ((widthSpecified && width != oldSize.Width) || (heightSpecified && height != oldSize.Height))
 				Invalidate(false);
 		}
 
