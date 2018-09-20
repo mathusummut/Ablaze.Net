@@ -110,8 +110,8 @@ namespace System.Windows.Forms {
 		private Bitmap border;
 		private Color borderOverlay = Color.FromArgb(100, 0, 0, 0), currentBorderOverlay = Color.Empty;
 		private Control lastDoubleClickControl, CaptureControl, MouseInsideControl /*, hasFocus*/;
-		private Size closeSize, maximizeButtonSize;
-		private float inactiveBorderOpacity = 0.5f, activeBorderOpacity = 0.75f, currentBorderOpacity = 0.75f;
+		private Size closeSize, maximizeButtonSize, minimumSize, maximumSize;
+		private float inactiveBorderOpacity = 0.5f, activeBorderOpacity = 0.75f, currentBorderOpacity = 0.5f;
 		private byte opacity = 255, targetOpacity = 255, backcolorOpacity = 255;
 		private int borderChanged, topBeforeMinimize, topInner, originalTopInner, borderWidth = 4, titleBarHeight = 29;
 		private bool isFullScreen, wasMaximized, showBorder, wasSystemMenuShown, fullscreenGdiGLWorkaround, minimizing, wereBordersShown,
@@ -158,6 +158,36 @@ namespace System.Windows.Forms {
 		public virtual bool SupportsGL {
 			get {
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the minimum size of the form. 0 means unlimited
+		/// </summary>
+		[Description("Gets or sets the minimum size of the form. 0 means unlimited")]
+		public override Size MinimumSize {
+			get {
+				return minimumSize;
+			}
+			set {
+				minimumSize = value;
+				Rectangle bounds = Bounds;
+				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.Size);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the maximum size of the form. 0 means unlimited
+		/// </summary>
+		[Description("Gets or sets the maximum size of the form. 0 means unlimited")]
+		public override Size MaximumSize {
+			get {
+				return maximumSize;
+			}
+			set {
+				maximumSize = value;
+				Rectangle bounds = Bounds;
+				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.Size);
 			}
 		}
 
@@ -1418,6 +1448,7 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.StandardClick | ControlStyles.UserMouse | ControlStyles.ResizeRedraw, false);
 			SetStyle(ControlStyles.CacheText | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			Cursor = DefaultCursor;
+			MinimumSize = new Size(200, 50);
 			EnableBorderAnimation = true;
 			EnableResizeAnimation = true;
 			EnableOpacityAnimation = true;
@@ -1491,7 +1522,6 @@ namespace System.Windows.Forms {
 			closeButtonRenderer.FunctionToCallOnRefresh = CloseButtonFunc;
 			maximizeButtonRenderer.FunctionToCallOnRefresh = MaximizeButtonFunc;
 			minimizeButtonRenderer.FunctionToCallOnRefresh = MinimizeButtonFunc;
-			MinimumSize = new Size(200, 50);
 			FormBorderStyle = FormBorderStyle.None;
 			ShowBorder = true;
 			InitializeComponent();
@@ -1544,7 +1574,7 @@ namespace System.Windows.Forms {
 			}
 			typeof(Control).GetField("UseCompatibleTextRenderingDefault", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, false); //Application.SetCompatibleTextRenderingDefault(false);
 			typeof(NativeWindow).GetField("userSetProcFlagsForApp", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, (byte) 1); //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-																																			//Disable SystemEvents due to buggy behaviour.
+																																			//Disable SystemEvents due to buggy behaviour
 			Type systemEvents = typeof(Stack<>).Assembly.GetType("Microsoft.Win32.SystemEvents");
 			if (systemEvents == null)
 				return true;
@@ -1882,7 +1912,6 @@ namespace System.Windows.Forms {
 			base.OnControlAdded(e);
 			if (!(DpiScale.Width == 1f && DpiScale.Height == 1f))
 				e.Control.Scale(new SizeF(DpiScale.Width, DpiScale.Height));
-			//Control.
 		}
 
 		/// <summary>
@@ -1893,16 +1922,8 @@ namespace System.Windows.Forms {
 			base.OnControlRemoved(e);
 			if (!(DpiScale.Width == 1f && DpiScale.Height == 1f))
 				e.Control.Scale(new SizeF(1f / DpiScale.Width, 1f / DpiScale.Height));
+			//UIScaler.RemoveFromScaler(e.Control);
 		}
-
-		/*/// <summary>
-		/// Called whenever a child control is removed from the form.
-		/// </summary>
-		/// <param name="e">The control that was removed.</param>
-		protected override void OnControlRemoved(ControlEventArgs e) {
-			base.OnControlRemoved(e);
-			UIScaler.RemoveFromScaler(e.Control);
-		}*/
 
 		private void border_MouseLeave(object sender, EventArgs e) {
 			wasInsideClose = false;
@@ -2786,7 +2807,8 @@ namespace System.Windows.Forms {
 				OnShown(EventArgs.Empty);
 				opacity = 255;
 				OnFadeInCompleted();
-				Activate();
+				if (!ShowWithoutActivation)
+					Activate();
 			}
 		}
 
@@ -3255,8 +3277,10 @@ namespace System.Windows.Forms {
 				FadeState fadeState = (FadeState) state.Tag;
 				if (fadeState == FadeState.FadingIn) {
 					FadeState = FadeState.Normal;
-					Activate();
-					ActivateBorder();
+					if (!ShowWithoutActivation) {
+						Activate();
+						ActivateBorder();
+					}
 					OnFadeInCompleted();
 				} else if (fadeState == FadeState.FadingOut) {
 					if (Thread.CurrentThread == residentThread)
@@ -3376,10 +3400,12 @@ namespace System.Windows.Forms {
 				}
 				wasShadowEnabled = false;
 				UpdateShadow();
-				Activate();
-				Control defaultButton = AcceptButton as Control;
-				if (defaultButton != null)
-					defaultButton.Focus();
+				if (!ShowWithoutActivation) {
+					Activate();
+					Control defaultButton = AcceptButton as Control;
+					if (defaultButton != null)
+						defaultButton.Focus();
+				}
 				RefreshBorder();
 			} else {
 				if (!(DesignMode || FadeState == FadeState.FadingOut || WindowState == FormWindowState.Minimized) && EnableOpacityAnimation && AllowTransparency) {
@@ -4146,13 +4172,11 @@ namespace System.Windows.Forms {
 			Control.ControlCollection obj = Controls;
 			for (int i = 0; i < obj.Count; i++)
 				ParentEnabledInvoke(obj[i], e);
-			if (IsHandleCreated) {
-				if (!isFullScreen && showBorder && ActiveForm == this) {
-					if (Enabled)
-						ActivateBorder();
-					else
-						DeactivateBorder();
-				}
+			if (IsHandleCreated && !isFullScreen && showBorder && ActiveForm == this) {
+				if (Enabled)
+					ActivateBorder();
+				else
+					DeactivateBorder();
 			}
 		}
 
@@ -4370,7 +4394,7 @@ namespace System.Windows.Forms {
 		/// <param name="disposing">Whether to dispose of managed resources as well.</param>
 		protected override sealed void Dispose(bool disposing) {
 			if (disposing) {
-				StackTrace stackTrace = new StackTrace();
+				StackTrace stackTrace = new StackTrace(); //an ugly workaround
 				MethodBase caller;
 				StackFrame frame;
 				for (int i = 1; i <= 3; i++) {
