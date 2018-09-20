@@ -1380,12 +1380,22 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// Gets the default window size.
+		/// Gets the default window size
 		/// </summary>
 		[Browsable(false)]
 		protected override Size DefaultSize {
 			get {
 				return new Size(640, 480);
+			}
+		}
+
+		/// <summary>
+		/// Gets the default minimum window size
+		/// </summary>
+		[Browsable(false)]
+		protected override Size DefaultMinimumSize {
+			get {
+				return new Size(200, 50);
 			}
 		}
 
@@ -1448,7 +1458,8 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.StandardClick | ControlStyles.UserMouse | ControlStyles.ResizeRedraw, false);
 			SetStyle(ControlStyles.CacheText | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			Cursor = DefaultCursor;
-			MinimumSize = new Size(200, 50);
+			minimumSize = DefaultMinimumSize;
+			maximumSize = DefaultMaximumSize;
 			EnableBorderAnimation = true;
 			EnableResizeAnimation = true;
 			EnableOpacityAnimation = true;
@@ -1687,7 +1698,7 @@ namespace System.Windows.Forms {
 					disposed = DisposeOptions.None;
 					this.SetState(2048, false);
 					base.CreateHandle();
-					if (!DesignMode)
+					if (!(DesignMode || updateLayered == null))
 						updateLayered();
 					UpdateAeroBlur();
 					if (Platform.IsWindows7OrNewer)
