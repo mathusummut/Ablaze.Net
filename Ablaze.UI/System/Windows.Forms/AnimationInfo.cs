@@ -346,7 +346,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetNextValue() {
-			double multiplier = Elapsed.RestartGet() * 0.0333333333333333333333333;
+			double multiplier = PreciseStopwatch.ConvertToMilliseconds(Elapsed.RestartGet()) * 0.0333333333333333333333333;
 			if (currentValue == null) {
 				state = AnimationState.Completed;
 				return false;

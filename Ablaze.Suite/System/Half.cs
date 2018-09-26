@@ -32,18 +32,14 @@ namespace System {
 		public static readonly Half MinusOne = new Half(-1f);
 		/// <summary>Smallest positive half</summary>
 		public const float MinValue = 5.96046448e-08f;
-
 		/// <summary>Smallest positive normalized half</summary>
 		public const float MinNormalizedValue = 6.10351562e-05f;
-
 		/// <summary>Largest positive half</summary>
 		public const float MaxValue = 65504f;
-
 		/// <summary>Smallest positive e for which half (1.0 + e) != half (1.0)</summary>
 		public const float Epsilon = 0.00097656f;
-
 		/// <summary>
-		/// The bits used to represent this instance.
+		/// Gets or sets the bits used to represent this instance.
 		/// </summary>
 		[CLSCompliant(false)]
 		public ushort Bits;
@@ -95,83 +91,61 @@ namespace System {
 		public Half(float f) {
 			unsafe
 			{
-				Int32 si32 = *(int*) &f;
+				int si32 = *(int*) &f;
 				// Our floating point number, F, is represented by the bit pattern in integer i.
 				// Disassemble that bit pattern into the sign, S, the exponent, E, and the significand, M.
 				// Shift S into the position where it will go in in the resulting half number.
 				// Adjust E, accounting for the different exponent bias of float and half (127 versus 15).
-
-				Int32 sign = (si32 >> 16) & 0x00008000;
-				Int32 exponent = ((si32 >> 23) & 0x000000ff) - (127 - 15);
-				Int32 mantissa = si32 & 0x007fffff;
-
+				int sign = (si32 >> 16) & 0x00008000;
+				int exponent = ((si32 >> 23) & 0x000000ff) - (127 - 15);
+				int mantissa = si32 & 0x007fffff;
 				// Now reassemble S, E and M into a half:
-
 				if (exponent <= 0) {
 					if (exponent < -10) {
 						// E is less than -10. The absolute value of F is less than Half.MinValue
 						// (F may be a small normalized float, a denormalized float or a zero).
-						//
 						// We convert F to a half zero with the same sign as F.
-
-						Bits = (UInt16) sign;
+						Bits = (ushort) sign;
 					} else {
-
 						// E is between -10 and 0. F is a normalized float whose magnitude is less than Half.MinNormalizedValue.
-						//
 						// We convert F to a denormalized half.
-
 						// Add an explicit leading 1 to the significand.
-
 						mantissa = mantissa | 0x00800000;
-
 						// Round to M to the nearest (10+E)-bit value (with E between -10 and 0); in case of a tie, round to the nearest even value.
 						//
 						// Rounding may cause the significand to overflow and make our number normalized. Because of the way a half's bits
 						// are laid out, we don't have to treat this case separately; the code below will handle it correctly.
-
-						Int32 t = 14 - exponent;
-						Int32 a = (1 << (t - 1)) - 1;
-						Int32 b = (mantissa >> t) & 1;
-
+						int t = 14 - exponent;
+						int a = (1 << (t - 1)) - 1;
+						int b = (mantissa >> t) & 1;
 						mantissa = (mantissa + a + b) >> t;
-
 						// Assemble the half from S, E (==zero) and M.
-
-						Bits = (UInt16) (sign | mantissa);
+						Bits = (ushort) (sign | mantissa);
 					}
 				} else if (exponent == 0xff - (127 - 15)) {
 					if (mantissa == 0) {
 						// F is an infinity; convert F to a half infinity with the same sign as F.
-
-						Bits = (UInt16) (sign | 0x7c00);
+						Bits = (ushort) (sign | 0x7c00);
 					} else {
 						// F is a NAN; we produce a half NAN that preserves the sign bit and the 10 leftmost bits of the
 						// significand of F, with one exception: If the 10 leftmost bits are all zero, the NAN would turn 
 						// into an infinity, so we have to set at least one bit in the significand.
-
 						mantissa >>= 13;
-						Bits = (UInt16) (sign | 0x7c00 | mantissa | ((mantissa == 0) ? 1 : 0));
+						Bits = (ushort) (sign | 0x7c00 | mantissa | ((mantissa == 0) ? 1 : 0));
 					}
 				} else {
 					// E is greater than zero.  F is a normalized float. We try to convert F to a normalized half.
-
 					// Round to M to the nearest 10-bit value. In case of a tie, round to the nearest even value.
-
 					mantissa = mantissa + 0x00000fff + ((mantissa >> 13) & 1);
-
 					if ((mantissa & 0x00800000) == 1) {
 						mantissa = 0;        // overflow in significand,
-						exponent += 1;        // adjust exponent
+						exponent += 1;       // adjust exponent
 					}
-
 					// exponent overflow
 					//if (exponent > 30)
 					//	throw new ArithmeticException("Half: Hardware floating-point overflow.");
-
 					// Assemble the half from S, E and M.
-
-					Bits = (UInt16) (sign | (exponent << 10) | (mantissa >> 13));
+					Bits = (ushort) (sign | (exponent << 10) | (mantissa >> 13));
 				}
 			}
 		}
@@ -197,47 +171,32 @@ namespace System {
 		}
 
 		/// <summary>Ported from OpenEXR's IlmBase 1.0.1</summary>
-		private static Int32 HalfToFloat(UInt16 ui16) {
-
-			Int32 sign = (ui16 >> 15) & 0x00000001;
-			Int32 exponent = (ui16 >> 10) & 0x0000001f;
-			Int32 mantissa = ui16 & 0x000003ff;
-
+		private static int HalfToFloat(ushort ui16) {
+			int sign = (ui16 >> 15) & 0x00000001;
+			int exponent = (ui16 >> 10) & 0x0000001f;
+			int mantissa = ui16 & 0x000003ff;
 			if (exponent == 0) {
-				if (mantissa == 0) {
-					// Plus or minus zero
-
+				if (mantissa == 0) // Plus or minus zero
 					return sign << 31;
-				} else {
+				else {
 					// Denormalized number -- renormalize it
-
 					while ((mantissa & 0x00000400) == 0) {
 						mantissa <<= 1;
 						exponent -= 1;
 					}
-
 					exponent += 1;
 					mantissa &= ~0x00000400;
 				}
 			} else if (exponent == 31) {
-				if (mantissa == 0) {
-					// Positive or negative infinity
-
+				if (mantissa == 0) // Positive or negative infinity
 					return (sign << 31) | 0x7f800000;
-				} else {
-					// Nan -- preserve sign and significand bits
-
+				else // Nan -- preserve sign and significand bits
 					return (sign << 31) | 0x7f800000 | (mantissa << 13);
-				}
 			}
-
 			// Normalized number
-
 			exponent = exponent + (127 - 15);
 			mantissa = mantissa << 13;
-
 			// Assemble S, E and M.
-
 			return (sign << 31) | (exponent << 23) | mantissa;
 		}
 
@@ -676,21 +635,13 @@ namespace System {
 				aInt = (short) other.Bits;
 				bInt = (short) Bits;
 			}
-
 			// Make aInt lexicographically ordered as a twos-complement int
 			if (aInt < 0)
 				aInt = (short) (0x8000 - aInt);
-
 			// Make bInt lexicographically ordered as a twos-complement int
 			if (bInt < 0)
 				bInt = (short) (0x8000 - bInt);
-
-			short intDiff = Math.Abs((short) (aInt - bInt));
-
-			if (intDiff <= 1)
-				return true;
-
-			return false;
+			return Math.Abs((short) (aInt - bInt)) <= 1;
 		}
 
 		/// <summary>

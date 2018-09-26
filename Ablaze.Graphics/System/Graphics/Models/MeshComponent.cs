@@ -953,7 +953,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Renders the mesh (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded).
+		/// Renders the mesh (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -963,10 +963,27 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Renders the mesh with the specified texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded).
+		/// Renders the mesh with the specified texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// </summary>
-		/// <param name="texture">The texture to bind instead of the default.</param>
-		public virtual void Render(ITexture texture) {
+		/// <param name="texture">The texture to bind instead of the default (can be null)</param>
+		public void Render(ITexture texture) {
+			Render(texture, null);
+		}
+
+		/// <summary>
+		/// Renders the mesh with the specified texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
+		/// </summary>
+		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
+		public void Render(IModel nextModel) {
+			Render(null, (MeshComponent) nextModel);
+		}
+
+		/// <summary>
+		/// Renders the mesh with the specified texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
+		/// </summary>
+		/// <param name="texture">The texture to bind instead of the default</param>
+		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
+		public virtual void Render(ITexture texture, MeshComponent nextModel) {
 			if (!IsVisible || vertices == 0 || DataBuffer == null)
 				return;
 			float alpha = MaterialHue.A;
@@ -1013,8 +1030,47 @@ namespace System.Graphics.Models {
 			shader.SetUniformValue(GlobalShaderParams.AmbientHue.ToString(), AmbientHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.ShineHue.ToString(), ShineHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.Shininess.ToString(), Shininess, ShaderSetMode.SetImmediately);
-			if (VertexArrayBuffer != null)
-				VertexArrayBuffer.Bind();
+			VertexArrayBuffer vab = VertexArrayBuffer;
+			if (vab != null)
+				vab.Bind();
+			bool hasBufferUpdated = BindAndUpdateDataBuffer();
+			if (vab == null || hasBufferUpdated) {
+				GL.EnableVertexAttribArray(0);
+				GL.EnableVertexAttribArray(1);
+				GL.EnableVertexAttribArray(2);
+				GL.EnableVertexAttribArray(3);
+				GL.EnableVertexAttribArray(4);
+				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Position.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, IntPtr.Zero);
+				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.TexCoord.ToString(), true), 2, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, new IntPtr(Vector3Size));
+				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Normal.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, new IntPtr(Vector3Size + Vector2Size));
+				if (nextModel != null)
+					nextModel.BindAndUpdateDataBuffer();
+				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Position2.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, IntPtr.Zero);
+				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Normal2.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, new IntPtr(Vector3Size + Vector2Size));
+			}
+			if (FlushBufferOnNextRender && !KeepBuffer)
+				FlushBuffer();
+			indexBuffer.Bind();
+			GL.DrawElements(BeginMode.Triangles, indexBuffer.Count, indexBuffer.Format, IntPtr.Zero);
+			if (vab == null) {
+				GL.DisableVertexAttribArray(0);
+				GL.DisableVertexAttribArray(1);
+				GL.DisableVertexAttribArray(2);
+				GL.DisableVertexAttribArray(3);
+				GL.DisableVertexAttribArray(4);
+			} else
+				VertexArrayBuffer.Unbind();
+			if (premultiplied)
+				GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+			if (lowOpacity)
+				GL.DepthMask(true);
+			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+			if (nextModel != null)
+				shader.SetUniformValue(GlobalShaderParams.Interpolate.ToString(), 0f, ShaderSetMode.SetImmediately);
+			RaiseRenderEnd();
+		}
+
+		private bool BindAndUpdateDataBuffer() {
 			DataBuffer.Bind(BufferTarget.ArrayBuffer);
 			bool hasBufferUpdated = false;
 			if (updateBuffer) {
@@ -1026,30 +1082,7 @@ namespace System.Graphics.Models {
 					GL.BufferData(BufferTarget.ArrayBuffer, BufferSize, newBuffer, Optimization);
 				}
 			}
-			if (VertexArrayBuffer == null || hasBufferUpdated) {
-				GL.EnableVertexAttribArray(0);
-				GL.EnableVertexAttribArray(1);
-				GL.EnableVertexAttribArray(2);
-				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Position.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, IntPtr.Zero);
-				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.TexCoord.ToString(), true), 2, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, new IntPtr(Vector3Size));
-				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Normal.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, new IntPtr(Vector3Size + Vector2Size));
-			}
-			if (FlushBufferOnNextRender && !KeepBuffer)
-				FlushBuffer();
-			indexBuffer.Bind();
-			GL.DrawElements(BeginMode.Triangles, indexBuffer.Count, indexBuffer.Format, IntPtr.Zero);
-			if (VertexArrayBuffer == null) {
-				GL.DisableVertexAttribArray(0);
-				GL.DisableVertexAttribArray(1);
-				GL.DisableVertexAttribArray(2);
-			} else
-				VertexArrayBuffer.Unbind();
-			if (premultiplied)
-				GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-			if (lowOpacity)
-				GL.DepthMask(true);
-			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-			RaiseRenderEnd();
+			return hasBufferUpdated;
 		}
 
 		/// <summary>

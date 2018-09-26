@@ -3,23 +3,23 @@ using System.Runtime.CompilerServices;
 
 namespace System.Diagnostics {
 	/// <summary>
-	/// A flexible stopwatch for measuring elapsed time very precisely.
+	/// A flexible stopwatch for measuring elapsed time very precisely
 	/// </summary>
 	public sealed class PreciseStopwatch : IEquatable<PreciseStopwatch> {
 		private bool isRunning;
 		private long startTimeStamp;
 		private double elapsedTicks, speedMultiplier = 1.0;
 		/// <summary>
-		/// Gets whether high resolution timing is supported on the current platform.
+		/// Gets whether high resolution timing is supported on the current platform
 		/// </summary>
 		public static readonly bool IsHighResolutionTimingSupported;
 		/// <summary>
-		/// Gets the amount of nanoseconds every platform-specific tick represents.
+		/// Gets the amount of nanoseconds every platform-specific tick represents
 		/// </summary>
 		public static readonly double NanosecondsPerTick;
 
 		/// <summary>
-		/// Gets or sets the stopwatch speed multiplier (1 means time speed is normal).
+		/// Gets or sets the stopwatch speed multiplier (1 means time speed is normal)
 		/// </summary>
 		public double SpeedMultiplier {
 #if NET45
@@ -43,7 +43,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets or sets whether the stopwatch is started.
+		/// Gets or sets whether the stopwatch is started
 		/// </summary>
 		public bool Running {
 #if NET45
@@ -67,7 +67,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time.
+		/// Gets the elapsed time
 		/// </summary>
 		public TimeSpan Elapsed {
 #if NET45
@@ -85,7 +85,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in platform-specific ticks.
+		/// Gets the elapsed time in platform-specific ticks
 		/// </summary>
 		public double ElapsedTicks {
 #if NET45
@@ -104,7 +104,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in fortnights.
+		/// Gets the elapsed time in fortnights
 		/// </summary>
 		public double ElapsedFortnights {
 #if NET45
@@ -122,7 +122,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in weeks.
+		/// Gets the elapsed time in weeks
 		/// </summary>
 		public double ElapsedWeeks {
 #if NET45
@@ -140,7 +140,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in days.
+		/// Gets the elapsed time in days
 		/// </summary>
 		public double ElapsedDays {
 #if NET45
@@ -158,7 +158,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in hours.
+		/// Gets the elapsed time in hours
 		/// </summary>
 		public double ElapsedHours {
 #if NET45
@@ -176,7 +176,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in minutes.
+		/// Gets the elapsed time in minutes
 		/// </summary>
 		public double ElapsedMinutes {
 #if NET45
@@ -194,7 +194,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in seconds.
+		/// Gets the elapsed time in seconds
 		/// </summary>
 		public double ElapsedSeconds {
 #if NET45
@@ -212,7 +212,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in milliseconds.
+		/// Gets the elapsed time in milliseconds
 		/// </summary>
 		public double ElapsedMilliseconds {
 #if NET45
@@ -230,7 +230,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in microseconds.
+		/// Gets the elapsed time in microseconds
 		/// </summary>
 		public double ElapsedMicroseconds {
 #if NET45
@@ -248,7 +248,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in standard ticks (not platform-specific).
+		/// Gets the elapsed time in standard ticks (not platform-specific)
 		/// </summary>
 		public double Elapsed100NanosecondTicks {
 #if NET45
@@ -266,7 +266,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the elapsed time in nanoseconds.
+		/// Gets the elapsed time in nanoseconds
 		/// </summary>
 		public double ElapsedNanoseconds {
 #if NET45
@@ -284,7 +284,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Gets the current time in platform-specific ticks.
+		/// Gets the current time in platform-specific ticks
 		/// </summary>
 		public static long TimeStamp {
 #if NET45
@@ -310,37 +310,37 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Initializes a new high-resolution stopwatch.
+		/// Initializes a new high-resolution stopwatch
 		/// </summary>
 		public PreciseStopwatch() {
 		}
 
 		/// <summary>
-		/// Initializes a new high-resolution stopwatch with pre-elapsed ticks.
+		/// Initializes a new high-resolution stopwatch with pre-elapsed ticks
 		/// </summary>
-		/// <param name="preElapsedTicks">The starting elapsed ticks.</param>
+		/// <param name="preElapsedTicks">The starting elapsed ticks</param>
 		public PreciseStopwatch(double preElapsedTicks) {
 			elapsedTicks = preElapsedTicks;
 		}
 
 		/// <summary>
-		/// Initializes a new high-resolution stopwatch with pre-elapsed ticks.
+		/// Initializes a new high-resolution stopwatch with pre-elapsed ticks
 		/// </summary>
-		/// <param name="stopwatch">The stopwatch to clone.</param>
+		/// <param name="stopwatch">The stopwatch to clone</param>
 		public PreciseStopwatch(PreciseStopwatch stopwatch) {
 			elapsedTicks = stopwatch.ElapsedTicks;
 		}
 
 		/// <summary>
-		/// Initializes a new high-resolution stopwatch with pre-elapsed ticks.
+		/// Initializes a new high-resolution stopwatch with pre-elapsed ticks
 		/// </summary>
-		/// <param name="stopwatch">The stopwatch to clone.</param>
+		/// <param name="stopwatch">The stopwatch to clone</param>
 		public PreciseStopwatch(Stopwatch stopwatch) {
 			elapsedTicks = stopwatch.ElapsedTicks;
 		}
 
 		/// <summary>
-		/// Resets and starts stopwatch.
+		/// Resets and starts stopwatch
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -351,7 +351,7 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Resets and starts stopwatch and returns the elapsed milliseconds before Restarting.
+		/// Resets and starts stopwatch and returns the elapsed ticks before restarting
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -362,22 +362,87 @@ namespace System.Diagnostics {
 			elapsedTicks = 0.0;
 			startTimeStamp = timeStamp;
 			isRunning = true;
-			return (NanosecondsPerTick * 0.000001) * oldElapsed;
+			return oldElapsed;
 		}
 
 		/// <summary>
-		/// Resets and stops the stopwatch.
+		/// Resets and stops stopwatch and returns the elapsed ticks before resetting
+		/// </summary>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public double ResetStopGet() {
+			long timeStamp = TimeStamp;
+			double oldElapsed = isRunning ? elapsedTicks + (timeStamp - startTimeStamp) * speedMultiplier : elapsedTicks;
+			elapsedTicks = 0.0;
+			isRunning = false;
+			return oldElapsed;
+		}
+
+		/// <summary>
+		/// Resets and stops the stopwatch
+		/// </summary>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public void ResetStop() {
+			ElapsedTicks = 0.0;
+			isRunning = false;
+		}
+
+		/// <summary>
+		/// Resets the stopwatch without affecting whether it's running and returns the elapsed ticks before resetting
+		/// </summary>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public double ResetGet() {
+			long timeStamp = TimeStamp;
+			double oldElapsed = isRunning ? elapsedTicks + (timeStamp - startTimeStamp) * speedMultiplier : elapsedTicks;
+			elapsedTicks = 0.0;
+			startTimeStamp = timeStamp;
+			return oldElapsed;
+		}
+
+		/// <summary>
+		/// Resets the stopwatch without affecting whether it's running (same as setting ElapsedTicks to 0)
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void Reset() {
 			ElapsedTicks = 0.0;
-			isRunning = false;
 		}
 
 		/// <summary>
-		/// Initializes a new stopwatch and starts it at one go.
+		/// Starts the stopwatch and returns the elapsed ticks before starting
+		/// </summary>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public double Start() {
+			if (isRunning)
+				return elapsedTicks + (TimeStamp - startTimeStamp) * speedMultiplier;
+			else {
+				startTimeStamp = TimeStamp;
+				isRunning = true;
+				return elapsedTicks;
+			}
+		}
+
+		/// <summary>
+		/// Stops the stopwatch and returns the elapsed ticks upon stopping
+		/// </summary>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public double Stop() {
+			Running = false;
+			return elapsedTicks;
+		}
+
+		/// <summary>
+		/// Initializes a new stopwatch and starts it at one go
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -390,10 +455,10 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Converts nanoseconds to platform-specific ticks.
+		/// Converts nanoseconds to platform-specific ticks
 		/// </summary>
-		/// <param name="nanoseconds">The value of nanoseconds to convert to platform-specific ticks.</param>
-		/// <returns>The equivalent of the nanoseconds in platform-specific ticks.</returns>
+		/// <param name="nanoseconds">The value of nanoseconds to convert to platform-specific ticks</param>
+		/// <returns>The equivalent of the nanoseconds in platform-specific ticks</returns>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -402,10 +467,10 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Converts platform-specific ticks to nanoseconds.
+		/// Converts platform-specific ticks to nanoseconds
 		/// </summary>
-		/// <param name="ticks">The value of platform-specific ticks to convert to nanoseconds.</param>
-		/// <returns>The equivalent of the platform-specific ticks in nanoseconds.</returns>
+		/// <param name="ticks">The value of platform-specific ticks to convert to nanoseconds</param>
+		/// <returns>The equivalent of the platform-specific ticks in nanoseconds</returns>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -414,33 +479,69 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Calculates the hash code for this PreciseStopwatch.
+		/// Converts platform-specific ticks to microseconds
 		/// </summary>
-		/// <returns>A System.Int32 containing the hashcode of this PreciseStopwatch.</returns>
+		/// <param name="ticks">The value of platform-specific ticks to convert to microseconds</param>
+		/// <returns>The equivalent of the platform-specific ticks in microseconds</returns>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public static double ConvertToMicroseconds(double ticks) {
+			return ticks * (NanosecondsPerTick * 0.001);
+		}
+
+		/// <summary>
+		/// Converts platform-specific ticks to milliseconds
+		/// </summary>
+		/// <param name="ticks">The value of platform-specific ticks to convert to milliseconds</param>
+		/// <returns>The equivalent of the platform-specific ticks in milliseconds</returns>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public static double ConvertToMilliseconds(double ticks) {
+			return ticks * (NanosecondsPerTick * 0.000001);
+		}
+
+		/// <summary>
+		/// Converts platform-specific ticks to seconds
+		/// </summary>
+		/// <param name="ticks">The value of platform-specific ticks to convert to seconds</param>
+		/// <returns>The equivalent of the platform-specific ticks in seconds</returns>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public static double ConvertToSeconds(double ticks) {
+			return ticks * (NanosecondsPerTick * 0.000000001);
+		}
+
+		/// <summary>
+		/// Calculates the hash code for this PreciseStopwatch
+		/// </summary>
+		/// <returns>A System.Int32 containing the hashcode of this PreciseStopwatch</returns>
 		public override int GetHashCode() {
 			return unchecked(speedMultiplier.GetHashCode() << 17 ^ elapsedTicks.GetHashCode() << 13 ^ startTimeStamp.GetHashCode() << 7 ^ isRunning.GetHashCode());
 		}
 
 		/// <summary>
-		/// Creates a System.String that describes this PreciseStopwatch.
+		/// Creates a System.String that describes this PreciseStopwatch
 		/// </summary>
-		/// <returns>A System.String that describes this PreciseStopwatch.</returns>
+		/// <returns>A System.String that describes this PreciseStopwatch</returns>
 		public override string ToString() {
 			return "{ " + ElapsedMilliseconds + "ms elapsed }";
 		}
 
 		/// <summary>
-		/// Compares whether this PreciseStopwatch is equal to the specified object.
+		/// Compares whether this PreciseStopwatch is equal to the specified object
 		/// </summary>
-		/// <param name="obj">An object to compare to.</param>
+		/// <param name="obj">An object to compare to</param>
 		public override bool Equals(object obj) {
 			return Equals(obj as PreciseStopwatch);
 		}
 
 		/// <summary>
-		/// Compares whether this PreciseStopwatch is equal to the specified object.
+		/// Compares whether this PreciseStopwatch is equal to the specified object
 		/// </summary>
-		/// <param name="other">The object to compare to.</param>
+		/// <param name="other">The object to compare to</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif

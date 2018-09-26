@@ -144,10 +144,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Renders the scene (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded).
-		/// Bind the global shader calling Render().
+		/// Renders the scene (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
+		/// Bind the global shader calling Render()
 		/// </summary>
-		public override void Render() {
+		/// <param name="nextModel">Ignored</param>
+		public override void Render(IModel nextModel) {
 			GlobalShader shader = (GlobalShader) Shader.CurrentShader;
 			bool light = LightingEnabled;
 			shader.ConfigureLighting(light, ShaderSetMode.SetImmediately);
@@ -156,7 +157,7 @@ namespace System.Graphics.Models {
 				shader.SetUniformValue(GlobalShaderParams.LightPosition.ToString(), Light.Position, ShaderSetMode.SetImmediately);
 				shader.SetUniformValue(GlobalShaderParams.PointLight.ToString(), Light.PointLight ? 1f : 0f, ShaderSetMode.SetImmediately);
 			}
-			base.Render();
+			Render(null);
 		}
 
 		/// <summary>

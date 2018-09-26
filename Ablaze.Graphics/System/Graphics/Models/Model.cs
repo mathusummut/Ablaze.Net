@@ -7,34 +7,37 @@ using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Offers methods to manage 3D model structures collectively.
+	/// Offers methods to manage 3D model structures collectively
 	/// </summary>
 	public class Model : IModel, IEnumerable<IModel>, IEnumerable {
 		/// <summary>
-		/// Called when a model is about to be rendered.
+		/// Called when a model is about to be rendered
 		/// </summary>
 		public event Action RenderBegin;
 		/// <summary>
-		/// Called when a model has been rendered.
+		/// Called when a model has been rendered
 		/// </summary>
 		public event Action RenderEnd;
 		/// <summary>
-		/// Called when the location of the model has changed.
+		/// Called when the location of the model has changed
 		/// </summary>
 		public event Action LocationChanged;
 		/// <summary>
-		/// Called when the scale of the model has changed.
+		/// Called when the scale of the model has changed
 		/// </summary>
 		public event Action ScaleChanged;
 		/// <summary>
-		/// Called when the rotation of the model has changed.
+		/// Called when the rotation of the model has changed
 		/// </summary>
 		public event Action RotationChanged;
 		private IModel parent;
 		private Vector3 currentLoc, currentRot, currentScale = Vector3.One;
 		private float alpha = 1f;
 		private int vertices, triangles;
-		private object SyncRoot = new object();
+		/// <summary>
+		/// Used to safely iterate or modify the components in this model
+		/// </summary>
+		protected readonly object SyncRoot = new object();
 		/// <summary>
 		/// A list of the component structures managed by the model
 		/// </summary>
@@ -50,7 +53,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the parent model (can be null).
+		/// Gets or sets the parent model (can be null)
 		/// </summary>
 		public IModel Parent {
 			get {
@@ -68,7 +71,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the component.
+		/// Gets or sets the name of the component
 		/// </summary>
 		public string Name {
 			get;
@@ -76,7 +79,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets an object that contains properties relevant to this mesh.
+		/// Gets or sets an object that contains properties relevant to this mesh
 		/// </summary>
 		public object Tag {
 			get;
@@ -84,7 +87,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of components in the model.
+		/// Gets the number of components in the model
 		/// </summary>
 		public int Count {
 			get {
@@ -93,9 +96,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the mesh at the specified index.
+		/// Gets the mesh at the specified index
 		/// </summary>
-		/// <param name="index">The index of the mesh to return.</param>
+		/// <param name="index">The index of the mesh to return</param>
 		public IModel this[int index] {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -123,7 +126,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of points in the model.
+		/// Gets the number of points in the model
 		/// </summary>
 		public int Vertices {
 			get {
@@ -132,7 +135,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of triangles in the model.
+		/// Gets the number of triangles in the model
 		/// </summary>
 		public int Triangles {
 			get {
@@ -141,7 +144,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Whether the model components are visible (rendered) or not.
+		/// Whether the model components are visible (rendered) or not
 		/// </summary>
 		public bool IsVisible {
 			get {
@@ -156,7 +159,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// If true, the backs of mesh components are not rendered.
+		/// If true, the backs of mesh components are not rendered
 		/// </summary>
 		public bool Cull {
 			get {
@@ -171,7 +174,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the rendering mode of the polygons of the mesh.
+		/// Gets or sets the rendering mode of the polygons of the mesh
 		/// </summary>
 		public MeshMode MeshMode {
 			get {
@@ -186,7 +189,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the transparency multiplier of the mesh material (1 is opaque, 0 is transparent).
+		/// Gets or sets the transparency multiplier of the mesh material (1 is opaque, 0 is transparent)
 		/// </summary>
 		public float Alpha {
 			get {
@@ -198,7 +201,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the default textures of the model components when none is specified.
+		/// Gets or sets the default textures of the model components when none is specified
 		/// </summary>
 		public ITexture[] DefaultTextures {
 			get {
@@ -234,7 +237,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the textures of all components.
+		/// Sets the textures of all components
 		/// </summary>
 		public ITexture[] Textures {
 			get {
@@ -270,7 +273,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets whether the model is disposed.
+		/// Gets whether the model is disposed
 		/// </summary>
 		public bool IsDisposed {
 			get {
@@ -279,7 +282,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Set to true if you want the vertex buffer to be flushed on next render.
+		/// Set to true if you want the vertex buffer to be flushed on next render
 		/// </summary>
 		public bool FlushBufferOnNextRender {
 			get {
@@ -294,7 +297,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the type of the model for optimization.
+		/// Gets or sets the type of the model for optimization
 		/// </summary>
 		public BufferUsageHint Optimization {
 			get {
@@ -309,7 +312,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the location of the centre of the model.
+		/// Gets the location of the centre of the model
 		/// </summary>
 		public Vector3 Center {
 			get {
@@ -325,7 +328,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the relative location of the model.
+		/// Gets or sets the relative location of the model
 		/// </summary>
 		public Vector3 Location {
 			get {
@@ -345,7 +348,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the relative scale of the model.
+		/// Gets or sets the relative scale of the model
 		/// </summary>
 		public Vector3 Scale {
 			get {
@@ -371,7 +374,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the relative rotation of the model.
+		/// Gets or sets the relative rotation of the model
 		/// </summary>
 		public Vector3 Rotation {
 			get {
@@ -391,7 +394,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the smallest X coordinate.
+		/// Gets the smallest X coordinate
 		/// </summary>
 		public float MinX {
 			get {
@@ -409,7 +412,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the smallest Y coordinate.
+		/// Gets the smallest Y coordinate
 		/// </summary>
 		public float MinY {
 			get {
@@ -427,7 +430,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the smallest Z coordinate.
+		/// Gets the smallest Z coordinate
 		/// </summary>
 		public float MinZ {
 			get {
@@ -445,7 +448,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the largest X coordinate.
+		/// Gets the largest X coordinate
 		/// </summary>
 		public float MaxX {
 			get {
@@ -463,7 +466,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the largest Y coordinate.
+		/// Gets the largest Y coordinate
 		/// </summary>
 		public float MaxY {
 			get {
@@ -481,7 +484,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the largest Z coordinate.
+		/// Gets the largest Z coordinate
 		/// </summary>
 		public float MaxZ {
 			get {
@@ -499,7 +502,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the width of the bounding box of the model.
+		/// Gets the width of the bounding box of the model
 		/// </summary>
 		public float Width {
 			get {
@@ -508,7 +511,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the height of the bounding box of the model.
+		/// Gets the height of the bounding box of the model
 		/// </summary>
 		public float Height {
 			get {
@@ -517,7 +520,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the depth of the bounding box of the model.
+		/// Gets the depth of the bounding box of the model
 		/// </summary>
 		public float Depth {
 			get {
@@ -526,7 +529,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the bounding box sizes of the model.
+		/// Gets the bounding box sizes of the model
 		/// </summary>
 		public Vector3 Bounds {
 			get {
@@ -535,47 +538,47 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates a new empty model structure.
+		/// Creates a new empty model structure
 		/// </summary>
 		public Model() {
 		}
 
 		/// <summary>
-		/// Creates a new model structure from the specified components.
+		/// Creates a new model structure from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(IEnumerable<IModel> components) {
 			AddRange(components);
 		}
 
 		/// <summary>
-		/// Creates a new model structure from the specified components.
+		/// Creates a new model structure from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(IEnumerable<Model> components) {
 			AddRange(components);
 		}
 
 		/// <summary>
-		/// Creates a new model structure from the specified components.
+		/// Creates a new model structure from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(IEnumerable<MeshComponent> components) {
 			AddRange(components);
 		}
 
 		/// <summary>
-		/// Creates a new model structure from the specified components.
+		/// Creates a new model structure from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(params IModel[] components) {
 			AddRange(components);
 		}
 
 		/// <summary>
-		/// Creates a new model structure from the specified components.
+		/// Creates a new model structure from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(params Model[] components) {
 			AddRange(components);
 		}
@@ -583,15 +586,15 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Creates a new model structure from the specified components.
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(params MeshComponent[] components) {
 			AddRange(components);
 		}
 
 		/// <summary>
-		/// Clones the specified model structure.
+		/// Clones the specified model structure
 		/// </summary>
-		/// <param name="model">The model structure to clone.</param>
+		/// <param name="model">The model structure to clone</param>
 		public Model(Model model) : this(model, model == null ? null : model.components) {
 		}
 
@@ -607,9 +610,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified component to the model.
+		/// Adds the specified component to the model
 		/// </summary>
-		/// <param name="model">The component to add.</param>
+		/// <param name="model">The component to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -633,9 +636,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model.
+		/// Adds the specified components to the model
 		/// </summary>
-		/// <param name="models">The components to add.</param>
+		/// <param name="models">The components to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -647,9 +650,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model.
+		/// Adds the specified components to the model
 		/// </summary>
-		/// <param name="models">The components to add.</param>
+		/// <param name="models">The components to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -661,9 +664,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model.
+		/// Adds the specified components to the model
 		/// </summary>
-		/// <param name="models">The components to add.</param>
+		/// <param name="models">The components to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -675,9 +678,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model.
+		/// Adds the specified components to the model
 		/// </summary>
-		/// <param name="models">The components to add.</param>
+		/// <param name="models">The components to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -689,9 +692,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model.
+		/// Adds the specified components to the model
 		/// </summary>
-		/// <param name="models">The components to add.</param>
+		/// <param name="models">The components to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -703,9 +706,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model.
+		/// Adds the specified components to the model
 		/// </summary>
-		/// <param name="models">The components to add.</param>
+		/// <param name="models">The components to add</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -717,9 +720,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Removes the specified component from the model.
+		/// Removes the specified component from the model
 		/// </summary>
-		/// <param name="model">The components to remove.</param>
+		/// <param name="model">The components to remove</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -738,7 +741,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Removes all components from the model.
+		/// Removes all components from the model
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -755,19 +758,37 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Renders the model (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded).
+		/// Renders the model (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// </summary>
-		public virtual void Render() {
+		public void Render() {
+			Render(null);
+		}
+
+		/// <summary>
+		/// Renders the model (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
+		/// </summary>
+		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
+		public virtual void Render(IModel nextModel) {
 			RaiseRenderBegin();
-			lock (SyncRoot) {
-				for (int i = 0; i < components.Count; i++)
-					components[i].Render();
+			if (nextModel == null) {
+				lock (SyncRoot) {
+					for (int i = 0; i < components.Count; i++)
+						components[i].Render();
+				}
+			} else {
+				Model model = (Model) nextModel;
+				lock (SyncRoot) {
+					lock (model.SyncRoot) {
+						for (int i = 0; i < components.Count; i++)
+							components[i].Render(model.components[i]);
+					}
+				}
 			}
 			RaiseRenderEnd();
 		}
 
 		/// <summary>
-		/// Raises the RenderBegin event.
+		/// Raises the RenderBegin event
 		/// </summary>
 		protected void RaiseRenderBegin() {
 			Action handler = RenderBegin;
@@ -776,7 +797,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Raises the RenderEnd event.
+		/// Raises the RenderEnd event
 		/// </summary>
 		protected void RaiseRenderEnd() {
 			Action handler = RenderEnd;
@@ -785,7 +806,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Raises the LocationChanged event.
+		/// Raises the LocationChanged event
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -797,7 +818,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Raises the ScaleChanged event.
+		/// Raises the ScaleChanged event
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -809,7 +830,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Raises the RotationChanged event.
+		/// Raises the RotationChanged event
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -821,9 +842,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Translate the model by the specified vector.
+		/// Translate the model by the specified vector
 		/// </summary>
-		/// <param name="vector">The vector to translate at.</param>
+		/// <param name="vector">The vector to translate at</param>
 		public void TranslateMesh(Vector3 vector) {
 			lock (SyncRoot) {
 				for (int i = 0; i < components.Count; i++)
@@ -832,10 +853,10 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Enlarges the model to the specified scale.
+		/// Enlarges the model to the specified scale
 		/// </summary>
-		/// <param name="scale">The scale to enlarge by.</param>
-		/// <param name="centre">The centre to enlarge against.</param>
+		/// <param name="scale">The scale to enlarge by</param>
+		/// <param name="centre">The centre to enlarge against</param>
 		public void ScaleMesh(float scale, Vector3 centre) {
 			lock (SyncRoot) {
 				for (int i = 0; i < components.Count; i++)
@@ -844,10 +865,10 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Enlarges the model to the specified scale.
+		/// Enlarges the model to the specified scale
 		/// </summary>
-		/// <param name="scale">Contains the scale of the X, Y and Z dimension individually.</param>
-		/// <param name="centre">The centre to enlarge against.</param>
+		/// <param name="scale">Contains the scale of the X, Y and Z dimension individually</param>
+		/// <param name="centre">The centre to enlarge against</param>
 		public void ScaleMesh(Vector3 scale, Vector3 centre) {
 			lock (SyncRoot) {
 				for (int i = 0; i < components.Count; i++)
@@ -856,9 +877,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Transforms the model using the specified matrix.
+		/// Transforms the model using the specified matrix
 		/// </summary>
-		/// <param name="matrix">The matrix to multiply transform vertices with.</param>
+		/// <param name="matrix">The matrix to multiply transform vertices with</param>
 		public void ApplyMatrixTransformation(ref Matrix4 matrix) {
 			lock (SyncRoot) {
 				for (int i = 0; i < components.Count; i++)
@@ -867,9 +888,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Rotates the model.
+		/// Rotates the model
 		/// </summary>
-		/// <param name="rotation">The matrix to multiply transform vertices with.</param>
+		/// <param name="rotation">The matrix to multiply transform vertices with</param>
 		public void RotateMesh(Vector3 rotation) {
 			if (rotation == Vector3.Zero)
 				return;
@@ -878,7 +899,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Returns an enumerator that iterates through the models.
+		/// Returns an enumerator that iterates through the models
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -888,7 +909,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Returns an enumerator that iterates through the models.
+		/// Returns an enumerator that iterates through the models
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -898,17 +919,17 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates a copy of the model.
+		/// Creates a copy of the model
 		/// </summary>
-		/// <returns>A copy of the model.</returns>
+		/// <returns>A copy of the model</returns>
 		public virtual object Clone() {
 			return new Model(this);
 		}
 
 		/// <summary>
-		/// Creates a copy of the model.
+		/// Creates a copy of the model
 		/// </summary>
-		/// <param name="cloneComponents">Whether to clone the integrated components as well.</param>
+		/// <param name="cloneComponents">Whether to clone the integrated components as well</param>
 		/// <returns>A copy of the model.</returns>
 		public virtual IModel Clone(bool cloneComponents = true) {
 			if (cloneComponents) {
@@ -923,7 +944,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets a string that describes some aspects of the model.
+		/// Gets a string that describes some aspects of the model
 		/// </summary>
 		public override string ToString() {
 			string name = Name == null ? null : Name.Trim();
@@ -934,7 +955,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Called every time Dispose() is called. It is not recommended to dispose if finalizer is true.
+		/// Called every time Dispose() is called. It is not recommended to dispose if finalizer is true
 		/// </summary>
 		/// <param name="finalizer">Whether the model is being disposed automatically by the garbage collector</param>
 		protected virtual void OnDisposing(bool finalizer) {
@@ -957,7 +978,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Disposes of the resources used by the model
 		/// </summary>
-		/// <param name="disposeChildren">Whether to dispose of the child components of the model.</param>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
 		public void Dispose(bool disposeChildren) {
 			Dispose(disposeChildren, true, false);
 		}
@@ -965,8 +986,8 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Disposes of the resources used by the model
 		/// </summary>
-		/// <param name="disposeChildren">Whether to dispose of the child components of the model.</param>
-		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically.</param>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
+		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically</param>
 		public void Dispose(bool disposeChildren, bool removeFromParent) {
 			Dispose(disposeChildren, removeFromParent, false);
 		}

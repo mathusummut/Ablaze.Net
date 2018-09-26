@@ -27,11 +27,14 @@ namespace System.Graphics.Models {
 @"uniform mat4 ProjectionMatrix;
 uniform mat4 ModelViewMatrix;
 uniform mat4 WorldViewMatrix;
+uniform float Interpolate;
 #if __VERSION__ >= 130
 	precision mediump float;
 	layout(location=0) in vec3 Position;
 	layout(location=1) in vec2 TexCoord;
 	layout(location=2) in vec3 Normal;
+	layout(location=3) in vec3 Position2;
+	layout(location=4) in vec3 Normal2;
 	out vec3 worldPos;
 	out vec2 textureCoord;
 	out vec3 vertNormal;
@@ -39,6 +42,8 @@ uniform mat4 WorldViewMatrix;
 	attribute vec3 Position;
 	attribute vec2 TexCoord;
 	attribute vec3 Normal;
+	attribute vec3 Position2;
+	attribute vec3 Normal2;
 	varying vec3 worldPos;
 	varying vec2 textureCoord;
 	varying vec3 vertNormal;
@@ -82,13 +87,13 @@ uniform mat4 WorldViewMatrix;
 void main() {
 	textureCoord = TexCoord;
 	mat4 worldModelViewMatrix = ModelViewMatrix * WorldViewMatrix;
-	vec4 pos4 = vec4(Position, 1);
+	vec4 pos4 = vec4(mix(Position, Position2, Interpolate), 1);
 	vec4 worldPos4 = worldModelViewMatrix * pos4;
 	worldPos = worldPos4.xyz / worldPos4.w;
 #if __VERSION__ >= 120
-	vertNormal = transpose(inverse(mat3(worldModelViewMatrix))) * Normal;
+	vertNormal = transpose(inverse(mat3(worldModelViewMatrix))) * mix(Normal, Normal2, Interpolate);
 #else
-	vertNormal = transpose(inverse(m3(worldModelViewMatrix))) * Normal;
+	vertNormal = transpose(inverse(m3(worldModelViewMatrix))) * mix(Normal, Normal2, Interpolate);
 #endif
     gl_Position = ProjectionMatrix * worldPos4;
 }";
@@ -227,7 +232,7 @@ void main() {
 									case ShaderState.Bound:
 										return ShaderState.Bound;
 									case ShaderState.LinkingFailed:
-										throw new InvalidProgramException("The global shader failed to link.");
+										throw new InvalidProgramException("The global shader failed to link");
 									default:
 										if (i == 0)
 											goto Failed;
@@ -278,11 +283,12 @@ void main() {
 			SetUniformValue(GlobalShaderParams.LightPosition.ToString(), Vector3.Zero, mode);
 			SetUniformValue(GlobalShaderParams.LightingEnabled.ToString(), 1f, mode);
 			SetUniformValue(GlobalShaderParams.UseTexture.ToString(), 1f, mode);
+			SetUniformValue(GlobalShaderParams.Interpolate.ToString(), 0f, mode);
 		}
 	}
 
 	/// <summary>
-	/// A list of configurable parameters (uniforms) in the global shader.
+	/// A list of configurable parameters (uniforms) in the global shader
 	/// </summary>
 	public enum GlobalShaderParams {
 		/// <summary>
@@ -330,9 +336,13 @@ void main() {
 		/// </summary>
 		LightingEnabled,
 		/// <summary>
-		/// If 1, the texture is used, otherwise 0 (float).
+		/// If 1, the texture is used, otherwise 0 (float)
 		/// </summary>
-		UseTexture
+		UseTexture,
+		/// <summary>
+		/// How much to interpolate with the secondary position and normal buffers between 0 and 1 (0 means no interpolation, 1 means only the second buffer is used)
+		/// </summary>
+		Interpolate
 	}
 
 	/// <summary>
@@ -350,6 +360,14 @@ void main() {
 		/// <summary>
 		/// The normal of the vertex for lighting (vec3)
 		/// </summary>
-		Normal
+		Normal,
+		/// <summary>
+		/// The position of the vertex to interpolate with (if enabled) (vec3)
+		/// </summary>
+		Position2,
+		/// <summary>
+		/// The normal of the vertex for lighting to interpolate with (if enabled) (vec3)
+		/// </summary>
+		Normal2,
 	}
 }

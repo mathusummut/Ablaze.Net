@@ -275,7 +275,7 @@ namespace Ablaze.ModelViewer {
 			filePrompt.Open = true;
 			filePrompt.Multiselect = true;
 			filePrompt.AllFilesString = "All Files";
-			filePrompt.Filter = "3D Model|*.m3d;*.obj";
+			filePrompt.Filter = "3D Model|*.g3d;*.obj";
 			filePrompt.Title = "Choose file(s) to open...";
 			if (MessageLoop.ShowDialog(filePrompt, false) == DialogResult.OK)
 				filenames = filePrompt.FileNames;
@@ -344,8 +344,8 @@ namespace Ablaze.ModelViewer {
 			filePrompt.Open = false;
 			filePrompt.Multiselect = true;
 			filePrompt.AllFilesString = "All Files";
-			filePrompt.Filter = "Mesh 3D Model|*.m3d|WaveFront Obj 3D Mesh|*.obj";
-			filePrompt.FileName = "Model.m3d";
+			filePrompt.Filter = "Glest 3D Model|*.g3d|WaveFront Obj 3D Mesh|*.obj";
+			filePrompt.FileName = "Model.g3d";
 			filePrompt.Title = "Choose where to save mesh...";
 			if (MessageLoop.ShowDialog(filePrompt, false) == DialogResult.OK) {
 				saving = true;

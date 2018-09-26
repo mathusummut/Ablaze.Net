@@ -19,7 +19,6 @@ namespace Ablaze.Physics.System {
 
 		//Momentum Values
 		private double angularMomentum;
-		
 
 		public RigidBody2D(Vector3D c, List<Particle2D> b) : base() {
 			center = new Vector3D(0, 0, 0);

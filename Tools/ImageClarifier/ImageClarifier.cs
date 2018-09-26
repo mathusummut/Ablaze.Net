@@ -40,84 +40,84 @@ namespace ImageClarifier {
 			Args = args;
 			MessageLoop.Run(new ImageClarifier());
 		}
-	
+
 		public ImageClarifier() {
 			CheckForIllegalCrossThreadCalls = false;
-            InitializeComponent();
-            filePrompt.Filter = "Image Files|" + Extensions.ImageFileExtensions;
-            beforeLabel = new StyledLabel() {
-                ForeColor = Color.White,
-                BackColor = Color.Transparent,
-                Blur = 4,
-                Font = new Font("Calibri Light", 12F),
-                ShadowOpacity = 5f,
-                RenderShadow = true,
-                Text = "Before"
-            };
-            afterLabel = new StyledLabel() {
-                ForeColor = Color.White,
-                BackColor = Color.Transparent,
-                Blur = 4,
-                Font = new Font("Calibri Light", 12F),
-                ShadowOpacity = 1.35f,
-                RenderShadow = true,
-                Text = "After"
-            };
-            reprocess = new InvocationData(ReProcess);
-            sharpen = new InvocationData(Sharpen);
-            applycontrast = new InvocationData(ApplyContrast);
-            splitContainer.Panel1.Paint += Panel1_Paint;
-            splitContainer.Resize += SplitContainer_Resize;
-            splitContainer.Panel1.MouseDown += Panel1_MouseDown;
-            splitContainer.Panel1.MouseMove += Panel1_MouseMove;
-            splitContainer.Panel1.MouseUp += Panel1_MouseUp;
-            scaleSlider.MouseDown += ScaleSlider_MouseDown;
-            filterSlider.MouseDown += FilterSlider_MouseDown;
-            smoothnessSlider.MouseDown += SmoothnessSlider_MouseDown;
-            claritySlider.MouseDown += ClaritySlider_MouseDown;
-            contrastSlider.MouseDown += ContrastSlider_MouseDown;
-            menuStrip.MouseUp += MenuStrip_MouseUp;
-            modeToolStripMenuItem.TextChanged += ModeToolStripMenuItem_TextChanged;
-            dispatcher = new DispatcherSlim("ImageProcessor", true) {
-                QueueCap = 2
-            };
-            scaleSlider.Label.Blur = 4;
-            scaleSlider.Label.ForeColor = Color.White;
-            scaleSlider.Label.Font = Font;
-            scaleSlider.Label.RenderShadow = true;
-            scaleSlider.Label.ShadowOpacity = 1.35F;
-            scaleSlider.LabelAutoSize = false;
-            smoothnessSlider.Label.Blur = 4;
-            smoothnessSlider.Label.ForeColor = Color.White;
-            smoothnessSlider.Label.Font = Font;
-            smoothnessSlider.Label.RenderShadow = true;
-            smoothnessSlider.Label.ShadowOpacity = 1.35F;
-            smoothnessSlider.LabelAutoSize = true;
-            claritySlider.Label.Blur = 4;
-            claritySlider.Label.ForeColor = Color.White;
-            claritySlider.Label.Font = Font;
-            claritySlider.Label.RenderShadow = true;
-            claritySlider.Label.ShadowOpacity = 1.35F;
-            claritySlider.LabelAutoSize = false;
-            filterSlider.Label.Blur = 4;
-            filterSlider.Label.ForeColor = Color.White;
-            filterSlider.Label.Font = Font;
-            filterSlider.Label.RenderShadow = true;
-            filterSlider.Label.ShadowOpacity = 1.35F;
-            filterSlider.LabelAutoSize = false;
-            contrastSlider.Label.Blur = 4;
-            contrastSlider.Label.ForeColor = Color.White;
-            contrastSlider.Label.Font = Font;
-            contrastSlider.Label.RenderShadow = true;
-            contrastSlider.Label.ShadowOpacity = 1.35F;
-            contrastSlider.LabelAutoSize = false;
-            scaleSlider.Label.Width = smoothnessSlider.Label.Width;
-            claritySlider.Label.Width = smoothnessSlider.Label.Width;
-            filterSlider.Label.Width = smoothnessSlider.Label.Width;
-            contrastSlider.Label.Width = smoothnessSlider.Label.Width;
-            splitContainer.SplitterMoved += SplitContainer_SplitterMoved;
+			InitializeComponent();
+			filePrompt.Filter = "Image Files|" + Extensions.ImageFileExtensions;
+			beforeLabel = new StyledLabel() {
+				ForeColor = Color.White,
+				BackColor = Color.Transparent,
+				Blur = 4,
+				Font = new Font("Calibri Light", 12F),
+				ShadowOpacity = 5f,
+				RenderShadow = true,
+				Text = "Before"
+			};
+			afterLabel = new StyledLabel() {
+				ForeColor = Color.White,
+				BackColor = Color.Transparent,
+				Blur = 4,
+				Font = new Font("Calibri Light", 12F),
+				ShadowOpacity = 1.35f,
+				RenderShadow = true,
+				Text = "After"
+			};
+			reprocess = new InvocationData(ReProcess);
+			sharpen = new InvocationData(Sharpen);
+			applycontrast = new InvocationData(ApplyContrast);
+			splitContainer.Panel1.Paint += Panel1_Paint;
+			splitContainer.Resize += SplitContainer_Resize;
+			splitContainer.Panel1.MouseDown += Panel1_MouseDown;
+			splitContainer.Panel1.MouseMove += Panel1_MouseMove;
+			splitContainer.Panel1.MouseUp += Panel1_MouseUp;
+			scaleSlider.MouseDown += ScaleSlider_MouseDown;
+			filterSlider.MouseDown += FilterSlider_MouseDown;
+			smoothnessSlider.MouseDown += SmoothnessSlider_MouseDown;
+			claritySlider.MouseDown += ClaritySlider_MouseDown;
+			contrastSlider.MouseDown += ContrastSlider_MouseDown;
+			menuStrip.MouseUp += MenuStrip_MouseUp;
+			modeToolStripMenuItem.TextChanged += ModeToolStripMenuItem_TextChanged;
+			dispatcher = new DispatcherSlim("ImageProcessor", true) {
+				QueueCap = 2
+			};
+			scaleSlider.Label.Blur = 4;
+			scaleSlider.Label.ForeColor = Color.White;
+			scaleSlider.Label.Font = Font;
+			scaleSlider.Label.RenderShadow = true;
+			scaleSlider.Label.ShadowOpacity = 1.35F;
+			scaleSlider.LabelAutoSize = false;
+			smoothnessSlider.Label.Blur = 4;
+			smoothnessSlider.Label.ForeColor = Color.White;
+			smoothnessSlider.Label.Font = Font;
+			smoothnessSlider.Label.RenderShadow = true;
+			smoothnessSlider.Label.ShadowOpacity = 1.35F;
+			smoothnessSlider.LabelAutoSize = true;
+			claritySlider.Label.Blur = 4;
+			claritySlider.Label.ForeColor = Color.White;
+			claritySlider.Label.Font = Font;
+			claritySlider.Label.RenderShadow = true;
+			claritySlider.Label.ShadowOpacity = 1.35F;
+			claritySlider.LabelAutoSize = false;
+			filterSlider.Label.Blur = 4;
+			filterSlider.Label.ForeColor = Color.White;
+			filterSlider.Label.Font = Font;
+			filterSlider.Label.RenderShadow = true;
+			filterSlider.Label.ShadowOpacity = 1.35F;
+			filterSlider.LabelAutoSize = false;
+			contrastSlider.Label.Blur = 4;
+			contrastSlider.Label.ForeColor = Color.White;
+			contrastSlider.Label.Font = Font;
+			contrastSlider.Label.RenderShadow = true;
+			contrastSlider.Label.ShadowOpacity = 1.35F;
+			contrastSlider.LabelAutoSize = false;
+			scaleSlider.Label.Width = smoothnessSlider.Label.Width;
+			claritySlider.Label.Width = smoothnessSlider.Label.Width;
+			filterSlider.Label.Width = smoothnessSlider.Label.Width;
+			contrastSlider.Label.Width = smoothnessSlider.Label.Width;
+			splitContainer.SplitterMoved += SplitContainer_SplitterMoved;
 			EnableResizeAnimation = false;
-        }
+		}
 
 		private void SplitContainer_SplitterMoved(object sender, SplitterEventArgs e) {
 			int dist = splitContainer.SplitterDistance;
@@ -155,7 +155,7 @@ namespace ImageClarifier {
 			Args = null;
 			if (filename == string.Empty)
 				return;
-            LoadImage(filename);
+			LoadImage(filename);
 		}
 
 		private void AboutTimer_Elapsed(object sender, ElapsedEventArgs e) {
@@ -719,7 +719,7 @@ namespace ImageClarifier {
 			this.filterSlider = new System.Windows.Forms.StyledSlider();
 			this.smoothnessSlider = new System.Windows.Forms.StyledSlider();
 			this.menuStrip.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+			((System.ComponentModel.ISupportInitialize) (this.splitContainer)).BeginInit();
 			this.splitContainer.Panel1.SuspendLayout();
 			this.splitContainer.Panel2.SuspendLayout();
 			this.splitContainer.SuspendLayout();
@@ -730,7 +730,7 @@ namespace ImageClarifier {
 			this.filePrompt.ActiveBorderOpacity = 0.75F;
 			this.filePrompt.AllFilesString = "All Standard Images";
 			this.filePrompt.AllowDrop = true;
-			this.filePrompt.BackColorOpacity = ((byte)(255));
+			this.filePrompt.BackColorOpacity = ((byte) (255));
 			this.filePrompt.BorderCursor = System.Windows.Forms.Cursors.Default;
 			this.filePrompt.BorderWidth = 4;
 			this.filePrompt.ButtonText = "Open";
@@ -739,7 +739,7 @@ namespace ImageClarifier {
 			this.filePrompt.EnableFullscreenOnAltEnter = false;
 			this.filePrompt.FileName = "Image.png";
 			this.filePrompt.FileNames = new string[] {
-        "Image.png"};
+		"Image.png"};
 			this.filePrompt.Filter = "";
 			this.filePrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
 			this.filePrompt.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -773,11 +773,11 @@ namespace ImageClarifier {
 			this.menuStrip.BackgroundImage = global::ImageClarifier.Properties.Resources.Cover;
 			this.menuStrip.ForeColor = System.Drawing.Color.Black;
 			this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
-            this.smoothStretchingToolStripMenuItem,
-            this.restoreDefaultValuesToolStripMenuItem,
-            this.modeToolStripMenuItem});
+			this.openToolStripMenuItem,
+			this.saveAsToolStripMenuItem,
+			this.smoothStretchingToolStripMenuItem,
+			this.restoreDefaultValuesToolStripMenuItem,
+			this.modeToolStripMenuItem});
 			this.menuStrip.Location = new System.Drawing.Point(4, 29);
 			this.menuStrip.Name = "menuStrip";
 			this.menuStrip.Size = new System.Drawing.Size(717, 24);
@@ -831,11 +831,11 @@ namespace ImageClarifier {
 			// modeToolStripMenuItem
 			// 
 			this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.toolStripMenuItem2,
-            this.toolStripMenuItem3,
-            this.toolStripMenuItem4,
-            this.toolStripMenuItem5});
+			this.toolStripMenuItem1,
+			this.toolStripMenuItem2,
+			this.toolStripMenuItem3,
+			this.toolStripMenuItem4,
+			this.toolStripMenuItem5});
 			this.modeToolStripMenuItem.IsComboBoxItem = true;
 			this.modeToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
 			this.modeToolStripMenuItem.Name = "StyledItem";
@@ -904,7 +904,7 @@ namespace ImageClarifier {
 			this.aboutLabel.BackColor = System.Drawing.Color.Transparent;
 			this.aboutLabel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Tile;
 			this.aboutLabel.Blur = 4;
-			this.aboutLabel.Font = new System.Drawing.Font("Calibri Light", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.aboutLabel.Font = new System.Drawing.Font("Calibri Light", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.aboutLabel.ForeColor = System.Drawing.Color.White;
 			this.aboutLabel.Location = new System.Drawing.Point(0, -255);
 			this.aboutLabel.Margin = new System.Windows.Forms.Padding(0);
@@ -919,7 +919,7 @@ namespace ImageClarifier {
 			// contrastSlider
 			// 
 			this.contrastSlider.BackColor = System.Drawing.Color.Transparent;
-			this.contrastSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.contrastSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.contrastSlider.Increment = 0F;
 			this.contrastSlider.LabelPadding = 2;
 			this.contrastSlider.LargeChange = 0.25F;
@@ -940,7 +940,7 @@ namespace ImageClarifier {
 			// claritySlider
 			// 
 			this.claritySlider.BackColor = System.Drawing.Color.Transparent;
-			this.claritySlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.claritySlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.claritySlider.Increment = 0F;
 			this.claritySlider.LabelPadding = 2;
 			this.claritySlider.LargeChange = 2F;
@@ -959,7 +959,7 @@ namespace ImageClarifier {
 			// scaleSlider
 			// 
 			this.scaleSlider.BackColor = System.Drawing.Color.Transparent;
-			this.scaleSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.scaleSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.scaleSlider.Increment = 0F;
 			this.scaleSlider.LabelPadding = 2;
 			this.scaleSlider.LargeChange = 2F;
@@ -980,7 +980,7 @@ namespace ImageClarifier {
 			// filterSlider
 			// 
 			this.filterSlider.BackColor = System.Drawing.Color.Transparent;
-			this.filterSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.filterSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.filterSlider.Increment = 0F;
 			this.filterSlider.LabelPadding = 2;
 			this.filterSlider.LargeChange = 0.2F;
@@ -999,7 +999,7 @@ namespace ImageClarifier {
 			// smoothnessSlider
 			// 
 			this.smoothnessSlider.BackColor = System.Drawing.Color.Transparent;
-			this.smoothnessSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.smoothnessSlider.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
 			this.smoothnessSlider.Increment = 0F;
 			this.smoothnessSlider.LabelPadding = 2;
 			this.smoothnessSlider.LargeChange = 0.5F;
@@ -1025,8 +1025,8 @@ namespace ImageClarifier {
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.menuStrip);
 			this.EnableAeroBlur = false;
-			this.Font = new System.Drawing.Font("Calibri Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Font = new System.Drawing.Font("Calibri Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+			this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.menuStrip;
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.MinimumSize = new System.Drawing.Size(350, 350);
@@ -1037,7 +1037,7 @@ namespace ImageClarifier {
 			this.menuStrip.PerformLayout();
 			this.splitContainer.Panel1.ResumeLayout(false);
 			this.splitContainer.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+			((System.ComponentModel.ISupportInitialize) (this.splitContainer)).EndInit();
 			this.splitContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -1066,4 +1066,3 @@ namespace ImageClarifier {
 		}
 	}
 }
- 

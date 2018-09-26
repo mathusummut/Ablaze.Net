@@ -7,23 +7,23 @@ using System.Numerics;
 
 namespace System.Graphics.Models.Parsers {
 	/// <summary>
-	/// Contains methods for parsing WaveFront Obj 3D models.
+	/// Contains methods for parsing WaveFront Obj 3D models
 	/// </summary>
 	[ModelParser("obj,Parse,Save")]
 	public static class ObjParser {
 		/// <summary>
-		/// Whether to optimize the obj vertices on load. The obj will takes less memory space, but optimization can take very long.
+		/// Whether to optimize the obj vertices on load. The obj will takes less memory space, but optimization can take very long
 		/// </summary>
 		public static bool OptimizeVertexDuplicates;
 		internal static char[] SplitChar = new char[] { ' ' };
 		private static char[] FaceSplitChar = new char[] { '/' };
 
 		/// <summary>
-		/// Parses a WaveFront Obj model.
+		/// Parses a WaveFront Obj model
 		/// </summary>
-		/// <param name="mesh">The stream containing the obj data.</param>
-		/// <param name="textures">The textures for the model to use (can be null or empty).</param>
-		/// <returns>A list of models with all the parsed components.</returns>
+		/// <param name="mesh">The stream containing the obj data</param>
+		/// <param name="textures">The textures for the model to use (can be null or empty)</param>
+		/// <returns>A list of models with all the parsed components</returns>
 		public static Model Parse(Stream mesh, ITexture[] textures) {
 			if (textures == null || textures.Length == 0)
 				textures = new Texture2D[0];
@@ -313,10 +313,10 @@ namespace System.Graphics.Models.Parsers {
 
 
 		/// <summary>
-		/// Serializes the model structure into the specified stream.
+		/// Serializes the model structure into the specified stream
 		/// </summary>
-		/// <param name="structure">The structure to serialize.</param>
-		/// <param name="stream">The stream to serialize into.</param>
+		/// <param name="structure">The structure to serialize</param>
+		/// <param name="stream">The stream to serialize into</param>
 		public static void Save(IModel structure, Stream stream) {
 			List<object> vertices = new List<object>();
 			Save(structure, vertices, new int[] { 0 });

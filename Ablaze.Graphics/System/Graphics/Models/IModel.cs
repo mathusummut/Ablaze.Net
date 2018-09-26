@@ -294,6 +294,12 @@ namespace System.Graphics.Models {
 		void Render();
 
 		/// <summary>
+		/// Renders the model (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded).
+		/// </summary>
+		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
+		void Render(IModel nextModel);
+
+		/// <summary>
 		/// Creates a copy of the model.
 		/// </summary>
 		/// <param name="components">Whether to clone the internal components too.</param>

@@ -586,7 +586,7 @@ namespace System.Windows.Forms {
 		/// Called when the update is finished.
 		/// </summary>
 		private void CallOnUpdate(AsyncTimer sender) {
-			double elapsedMs = upsStopwatch.RestartGet();
+			double elapsedMs = PreciseStopwatch.ConvertToMilliseconds(upsStopwatch.RestartGet());
 			cumulativeUpdate += elapsedMs;
 			if (cumulativeUpdate >= sampleIntervalInMs) {
 				cumulativeUpdate -= sampleIntervalInMs;

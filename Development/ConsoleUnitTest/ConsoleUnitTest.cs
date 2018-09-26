@@ -10,18 +10,20 @@ namespace ConsoleUnitTest {
 
 		[STAThread]
 		public static void Main() {
-			System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-			form.Controls.Add(new Button());
-			System.Windows.Forms.MessageLoop.ShowDialog(form, false);
-			System.Windows.Forms.MessageLoop.ShowDialog(form);
-			AsyncTimer timer = new AsyncTimer(6);
-			timer.Tick += Timer_Tick;
-			timer.Running = true;
-			Console.ReadLine();
-		}
-
-		private static void Timer_Tick(AsyncTimer obj) {
-			Console.WriteLine(watch.RestartGet());
+			PreciseStopwatch watch = new PreciseStopwatch();
+			Console.WriteLine(watch.Running);
+			do {
+				char character = Console.ReadKey().KeyChar;
+				if (character == '1') {
+					Console.WriteLine();
+					Console.WriteLine(PreciseStopwatch.ConvertToSeconds(watch.Start()));
+					Console.WriteLine();
+				} else if (character == '2') {
+					Console.WriteLine();
+					Console.WriteLine(PreciseStopwatch.ConvertToSeconds(watch.Stop()));
+					Console.WriteLine();
+				}
+			} while (true);
 		}
 
 		/*private static int errorCount;

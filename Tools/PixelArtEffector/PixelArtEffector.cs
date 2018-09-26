@@ -265,6 +265,7 @@ namespace PixelArtEffector {
 			base.OnResize(e);
 			if (aboutLabel != null)
 				aboutLabel.Width = ViewSize.Width;
+			ClampOffset();
 		}
 
 		/// <summary>

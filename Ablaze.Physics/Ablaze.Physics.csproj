@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3A94CF27-E44E-4F14-BEE2-FB5DA5D6D90A}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ablaze.Physics</RootNamespace>
     <AssemblyName>Ablaze.Physics</AssemblyName>
@@ -39,7 +39,8 @@
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Ablaze.Physics.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -62,7 +63,6 @@
     <Compile Include="Physics2D\System2D.cs" />
     <Compile Include="Physics2D\Forces\Force2D.cs" />
     <Compile Include="PhysicsHandler\SystemSimulator.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

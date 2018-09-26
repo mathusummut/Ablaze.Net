@@ -119,6 +119,7 @@
     <Compile Include="System\Display.cs" />
     <Compile Include="System\Graphics\AGL\Enums.cs" />
     <Compile Include="System\Graphics\EGL\Enums.cs" />
+    <Compile Include="System\Graphics\Models\AnimatedModel.cs" />
     <Compile Include="System\Graphics\Models\GlobalShader.cs" />
     <Compile Include="System\Graphics\Models\Light.cs" />
     <Compile Include="System\Graphics\Models\VertexArrayBuffer.cs" />
@@ -136,8 +137,7 @@
     <Compile Include="System\Graphics\Models\Parsers\ModelParserAttribute.cs" />
     <Compile Include="System\Graphics\Models\Parsers\TextureParserAttribute.cs" />
     <Compile Include="System\Graphics\Models\Parsers\TextureParsers\DdsParser.cs" />
-    <Compile Include="System\Graphics\Models\Parsers\M3dParser.cs" />
-    <Compile Include="System\Graphics\Models\Parsers\MeshParsers\MshParser.cs" />
+    <Compile Include="System\Graphics\Models\Parsers\G3dParser.cs" />
     <Compile Include="System\Graphics\Models\Parsers\ModelParser.cs" />
     <Compile Include="System\Graphics\Models\Parsers\ObjParser.cs" />
     <Compile Include="System\Graphics\Models\Parsers\TextureParser.cs" />

@@ -83,10 +83,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Ablaze.Graphics\Ablaze.Graphics.csproj">
-      <Project>{a37a7e14-0000-0000-0000-000000000000}</Project>
-      <Name>Ablaze.Graphics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Ablaze.Suite\Ablaze.Suite.csproj">
       <Project>{5bd51c83-9ec8-41a2-8552-cd68798eeb21}</Project>
       <Name>Ablaze.Suite</Name>
