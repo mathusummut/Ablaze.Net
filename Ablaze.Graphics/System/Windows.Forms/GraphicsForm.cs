@@ -527,7 +527,7 @@ namespace System.Windows.Forms {
 							lock (GdiSyncRoot) {
 								if (GdiTexture != null)
 									GdiTexture.Dispose();
-								GdiTexture = new Texture2D(gdiMask, NPotTextureScaleMode.None, false, true, false);
+								GdiTexture = new Texture2D(gdiMask, NPotTextureScaleMode.None, ImageParameterAction.RemoveReference, true, false);
 								GdiTexture.Bind();
 								invalidatedRect = Rectangle.Empty;
 							}

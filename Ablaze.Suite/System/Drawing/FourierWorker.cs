@@ -136,7 +136,7 @@ namespace System.Drawing {
 		/// <param name="disposeImage">Whether to dispose the image after use.</param>
 		/// <param name="targetWidth">The height to resize the kernel to, or -1 to leave kernel same width. Can only be larger than the kernel width.</param>
 		/// <param name="targetHeight">The height to resize the kernel to, or -1 to leave kernel same height. Can only be larger than the kernel height.</param>
-		public FourierWorker(Bitmap image, bool shiftAxes = true, bool ignoreAlpha = false, bool disposeImage = false, int targetWidth = -1, int targetHeight = -1) : this(PixelWorker.FromImage(image, false, false, disposeImage), shiftAxes, ignoreAlpha, true, targetWidth, targetHeight) {
+		public FourierWorker(Bitmap image, bool shiftAxes = true, bool ignoreAlpha = false, bool disposeImage = false, int targetWidth = -1, int targetHeight = -1) : this(PixelWorker.FromImage(image, false, false, disposeImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference), shiftAxes, ignoreAlpha, true, targetWidth, targetHeight) {
 		}
 
 		/// <summary>

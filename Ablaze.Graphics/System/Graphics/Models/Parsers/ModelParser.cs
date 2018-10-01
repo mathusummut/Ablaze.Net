@@ -127,16 +127,17 @@ namespace System.Graphics.Models.Parsers {
 		}
 
 		/// <summary>
-		/// Parses a 3D model.
+		/// Parses a 3D model
 		/// </summary>
-		/// <param name="mesh">The location of the file to parse the mesh from.</param>
-		/// <param name="textures">The images to use as textures (can be null or empty).</param>
-		/// <returns>A list of models with all the parsed components.</returns>
-		public static Model Parse(string mesh, params Bitmap[] textures) {
+		/// <param name="mesh">The location of the file to parse the mesh from</param>
+		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
+		/// <param name="textures">The images to use as textures (can be null or empty)</param>
+		/// <returns>A list of models with all the parsed components</returns>
+		public static Model Parse(string mesh, ImageParameterAction bindAction, params Bitmap[] textures) {
 			if (mesh == null)
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-				return Parse(file, Path.GetExtension(mesh), Texture2D.ToTextures(textures));
+				return Parse(file, Path.GetExtension(mesh), Texture2D.ToTextures(bindAction, textures));
 		}
 
 		/// <summary>
@@ -164,14 +165,15 @@ namespace System.Graphics.Models.Parsers {
 		}
 
 		/// <summary>
-		/// Parses a 3D model.
+		/// Parses a 3D model
 		/// </summary>
-		/// <param name="mesh">The stream containing the mesh data.</param>
-		/// <param name="encoding">The file extension representing the mesh encoding.</param>
-		/// <param name="textures">The bitmap images to use as textures (can be null).</param>
-		/// <returns>A list of models with all the parsed components.</returns>
-		public static Model Parse(Stream mesh, string encoding, params Bitmap[] textures) {
-			return Parse(mesh, encoding, Texture2D.ToTextures(textures));
+		/// <param name="mesh">The stream containing the mesh data</param>
+		/// <param name="encoding">The file extension representing the mesh encoding</param>
+		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
+		/// <param name="textures">The bitmap images to use as textures (can be null)</param>
+		/// <returns>A list of models with all the parsed components</returns>
+		public static Model Parse(Stream mesh, string encoding, ImageParameterAction bindAction, params Bitmap[] textures) {
+			return Parse(mesh, encoding, Texture2D.ToTextures(bindAction, textures));
 		}
 
 		/// <summary>
@@ -182,7 +184,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="textures">The textures for the model to use (can be null or empty).</param>
 		/// <returns>A list of models with all the parsed components.</returns>
 		public static Model Parse(Stream mesh, string encoding, params ITexture[] textures) {
-			if (mesh == null || encoding == null)
+			if (mesh == null || encoding == null || mesh.Position == mesh.Length)
 				return null;
 			encoding = encoding.Trim().ToLower();
 			if (encoding.Length != 0 && encoding[0] == '.')

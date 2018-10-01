@@ -396,6 +396,17 @@ namespace System {
 		}
 
 		/// <summary>
+		/// Removes all characters from the string after and including the first '\0' null character
+		/// </summary>
+		/// <param name="str">The string whose duplicate consecutive characters to remove</param>
+		public static string TruncateAtNull(this string str) {
+			if (str == null)
+				return null;
+			int index = str.IndexOf('\0');
+			return index == -1 ? str : str.Substring(0, index);
+		}
+
+		/// <summary>
 		/// Checks whether the specified string is considered a valid email.
 		/// </summary>
 		/// <param name="email">The string to check for validity as an email.</param>

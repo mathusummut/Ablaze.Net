@@ -8,7 +8,7 @@ namespace System.Graphics.Models {
 	/// </summary>
 	public class AnimatedModel : Model {
 		private PreciseStopwatch stopwatch = new PreciseStopwatch();
-		private bool restartOnNextRender = true;
+		private bool firstRunning = true, restartOnNextRender = true;
 		private float frameInterval, frameOffset;
 
 		/// <summary>
@@ -103,6 +103,10 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
 		public override void Render(IModel nextModel) {
+			if (firstRunning) {
+				firstRunning = false;
+				stopwatch.Running = true;
+			}
 			RaiseRenderBegin();
 			IModel thisFrame = null;
 			float interpolate = 0f;
@@ -183,6 +187,28 @@ namespace System.Graphics.Models {
 #endif
 		public void RestartOnNextRender() {
 			restartOnNextRender = true;
+		}
+
+		/// <summary>
+		/// Combines the frames of the specified animated model into the current animated model
+		/// </summary>
+		/// <param name="model">The animated model whoso frames to combine. The number of frames in the model must the same as in this one</param>
+		public void CombineWith(AnimatedModel model) {
+			if (model == null)
+				return;
+			lock (SyncRoot) {
+				lock (model.SyncRoot) {
+					if (model.Count == 0)
+						return;
+					else if (Count == 0) {
+						for (int i = 0; i < model.Count; i++)
+							componentList.Add(model.componentList[i]);
+					} else {
+						for (int i = 0; i < Count; i++)
+							componentList[i] = new Model(componentList[i], model.componentList[i]);
+					}
+				}
+			}
 		}
 	}
 }

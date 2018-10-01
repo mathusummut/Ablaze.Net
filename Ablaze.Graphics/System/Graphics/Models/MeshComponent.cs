@@ -44,10 +44,6 @@ namespace System.Graphics.Models {
 		/// Called when the rotation of the model has changed.
 		/// </summary>
 		public event Action RotationChanged;
-		/// <summary>
-		/// Whether to keep a managed copy of the indices in the buffer for quick retrieval.
-		/// </summary>
-		public static bool KeepBuffer;
 		private ITexture defaultTexture = Texture2D.Empty;
 		/// <summary>
 		/// The vertex data of the mesh.
@@ -67,6 +63,18 @@ namespace System.Graphics.Models {
 		/// The transformation matrix that is used if 'UseCustomTransformation' is set to true. The same as TransformationMatrix.
 		/// </summary>
 		public Matrix4 Transformation = Matrix4.Identity;
+
+		/// <summary>
+		/// Gets or sets whether to keep a copy of the vertices in memory even after loading the vertices into GPU memory (allows faster and multithreaded vertex retrieval)
+		/// </summary>
+		public bool KeepCopyInMemory {
+			get {
+				return indexBuffer.KeepCopyInMemory;
+			}
+			set {
+				indexBuffer.KeepCopyInMemory = value;
+			}
+		}
 
 		/// <summary>
 		/// The buffer that contains the index order of the vertices of the mesh.
@@ -96,7 +104,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets the component's hue and opacity.
 		/// </summary>
-		public Color4 MaterialHue {
+		public ColorF MaterialHue {
 			get;
 			set;
 		}
@@ -104,7 +112,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets the hue of the ambient light that hits the object.
 		/// </summary>
-		public Color4 AmbientHue {
+		public ColorF AmbientHue {
 			get;
 			set;
 		}
@@ -112,7 +120,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets the hue of the reflective shine of the object.
 		/// </summary>
-		public Color4 ShineHue {
+		public ColorF ShineHue {
 			get;
 			set;
 		}
@@ -248,7 +256,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets whether the model is visible (rendered) or not.
 		/// </summary>
-		public bool IsVisible {
+		public bool Visible {
 			get;
 			set;
 		}
@@ -277,7 +285,7 @@ namespace System.Graphics.Models {
 				return MaterialHue.A;
 			}
 			set {
-				Color4 materialHue = MaterialHue;
+				ColorF materialHue = MaterialHue;
 				materialHue.A = value;
 				MaterialHue = materialHue;
 			}
@@ -650,7 +658,7 @@ namespace System.Graphics.Models {
 			currentRot = modelComponent.currentRot;
 			currentScale = modelComponent.currentScale;
 			BufferSize = modelComponent.BufferSize;
-			IsVisible = modelComponent.IsVisible;
+			Visible = modelComponent.Visible;
 			triangles = modelComponent.triangles;
 			vertices = modelComponent.vertices;
 			defaultTexture = modelComponent.defaultTexture;
@@ -719,13 +727,13 @@ namespace System.Graphics.Models {
 				texture.AddReference();
 			}
 			Optimization = optimization;
-			IsVisible = true;
+			Visible = true;
 			Cull = true;
 			DataBuffer = new DataBuffer();
 			if (GL.Delegates.glGenVertexArrays != null)
 				VertexArrayBuffer = new VertexArrayBuffer();
 			triangles = indices.Length / 3;
-			indexBuffer = new IndexBuffer(indices);
+			indexBuffer = IndexBuffer.FromArray(indices);
 			this.vertices = bufferData.Length;
 			BufferSize = new IntPtr(bufferData.Length * Vertex.SizeOfVertex);
 			updateBuffer = true;
@@ -984,7 +992,7 @@ namespace System.Graphics.Models {
 		/// <param name="texture">The texture to bind instead of the default</param>
 		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
 		public virtual void Render(ITexture texture, MeshComponent nextModel) {
-			if (!IsVisible || vertices == 0 || DataBuffer == null)
+			if (!Visible || vertices == 0 || DataBuffer == null)
 				return;
 			float alpha = MaterialHue.A;
 			IModel parent = this.parent;
@@ -1006,7 +1014,7 @@ namespace System.Graphics.Models {
 			MeshMode meshMode = MeshMode;
 			if (meshMode == MeshMode.WireFrame)
 				GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-			Color4 materialHue = MaterialHue;
+			ColorF materialHue = MaterialHue;
 			materialHue.A = alpha;
 			GlobalShader shader = (GlobalShader) Shader.CurrentShader;
 			if (UseCustomTransformation)
@@ -1031,7 +1039,12 @@ namespace System.Graphics.Models {
 			shader.SetUniformValue(GlobalShaderParams.ShineHue.ToString(), ShineHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.Shininess.ToString(), Shininess, ShaderSetMode.SetImmediately);
 			VertexArrayBuffer vab = VertexArrayBuffer;
-			if (vab != null)
+			if (vab == null) {
+				if (GL.Delegates.glGenVertexArrays != null) {
+					vab = new VertexArrayBuffer();
+					VertexArrayBuffer = vab;
+				}
+			} else
 				vab.Bind();
 			bool hasBufferUpdated = BindAndUpdateDataBuffer();
 			if (vab == null || hasBufferUpdated) {
@@ -1048,7 +1061,7 @@ namespace System.Graphics.Models {
 				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Position2.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, IntPtr.Zero);
 				GL.VertexAttribPointer(shader.GetAttributeIndex(GlobalShaderAttribs.Normal2.ToString(), true), 3, VertexAttribPointerType.Float, false, Vertex.SizeOfVertex, new IntPtr(Vector3Size + Vector2Size));
 			}
-			if (FlushBufferOnNextRender && !KeepBuffer)
+			if (FlushBufferOnNextRender && !KeepCopyInMemory)
 				FlushBuffer();
 			indexBuffer.Bind();
 			GL.DrawElements(BeginMode.Triangles, indexBuffer.Count, indexBuffer.Format, IntPtr.Zero);
@@ -1098,8 +1111,9 @@ namespace System.Graphics.Models {
 				if (DataBuffer != null)
 					DataBuffer.Dispose();
 				DataBuffer = new DataBuffer();
-				if (VertexArrayBuffer != null)
-					VertexArrayBuffer.Dispose();
+				VertexArrayBuffer vab = VertexArrayBuffer;
+				if (vab != null)
+					vab.Dispose();
 				if (GL.Delegates.glGenVertexArrays != null)
 					VertexArrayBuffer = new VertexArrayBuffer();
 				updateBuffer = true;

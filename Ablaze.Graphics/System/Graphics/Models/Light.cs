@@ -11,19 +11,19 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// The default color of the light emitted by the source.
 		/// </summary>
-		public static readonly Color4 DefaultLightHue = Color4.White;
+		public static readonly ColorF DefaultLightHue = ColorF.White;
 		/// <summary>
 		/// The default material hue and opacity.
 		/// </summary>
-		public static readonly Color4 DefaultMaterialHue = Color4.White;
+		public static readonly ColorF DefaultMaterialHue = ColorF.White;
 		/// <summary>
 		/// The default hue of the ambient light that hits the object.
 		/// </summary>
-		public static readonly Color4 DefaultAmbientHue = new Color4(1f, 0.15f, 0.15f, 0.15f);
+		public static readonly ColorF DefaultAmbientHue = new ColorF(1f, 0.15f, 0.15f, 0.15f);
 		/// <summary>
 		/// The default hue of the reflective shine of the object.
 		/// </summary>
-		public static readonly Color4 DefaultShineHue = new Color4(1f, 0.15f, 0.15f, 0.15f);
+		public static readonly ColorF DefaultShineHue = new ColorF(1f, 0.15f, 0.15f, 0.15f);
 		/// <summary>
 		/// The default shininess exponent of the material.
 		/// </summary>
@@ -40,7 +40,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets the color of the light emitted by the source.
 		/// </summary>
-		public Color4 Hue {
+		public ColorF Hue {
 			get;
 			set;
 		}
@@ -65,7 +65,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="position">The position of the point light source.</param>
 		/// <param name="hue">The hue of the light emitted by the source.</param>
-		public Light(Vector3 position, Color4 hue) : this(position, hue, false) {
+		public Light(Vector3 position, ColorF hue) : this(position, hue, false) {
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace System.Graphics.Models {
 		/// <param name="position">The position of the point light source.</param>
 		/// <param name="hue">The hue of the light emitted by the source.</param>
 		/// <param name="pointLight">Whether the light source is a point light source, otherwise it is ambient.</param>
-		public Light(Vector3 position, Color4 hue, bool pointLight) {
+		public Light(Vector3 position, ColorF hue, bool pointLight) {
 			Position = position;
 			Hue = hue;
 			PointLight = pointLight;

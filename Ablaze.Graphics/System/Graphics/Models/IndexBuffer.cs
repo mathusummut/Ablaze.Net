@@ -1,26 +1,28 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	using OGL;
 
 	/// <summary>
-	/// A managed wrapper for an index buffer.
+	/// A managed wrapper for an index buffer
 	/// </summary>
 	public sealed class IndexBuffer : IEquatable<IndexBuffer>, IDisposable {
 		/// <summary>
-		/// Whether to keep a managed copy of the indices in the buffer for quick retrieval.
+		/// An empty index buffer
 		/// </summary>
-		public static bool KeepBuffer;
+		public static readonly IndexBuffer Empty = new IndexBuffer(0, 0, DrawElementsType.UnsignedByte);
+		/// <summary>
+		/// Whether to keep a copy of the indices in memory even after loading the indices into GPU memory (allows faster and multithreaded index retrieval)
+		/// </summary>
+		public bool KeepCopyInMemory;
+		private static ConcurrentDictionary<Array, IndexBuffer> buffers = new ConcurrentDictionary<Array, IndexBuffer>();
 		private int name, count, references = 1;
 		private Array indices, copy;
 		private DrawElementsType format;
-		/// <summary>
-		/// An empty index buffer.
-		/// </summary>
-		public static readonly IndexBuffer Empty = new IndexBuffer(0, 0, DrawElementsType.UnsignedByte);
 
 		/// <summary>
-		/// Gets the native OpenGL name of the buffer.
+		/// Gets the native OpenGL name of the buffer
 		/// </summary>
 		public int Name {
 #if NET45
@@ -32,7 +34,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of indices in the buffer.
+		/// Gets the number of indices in the buffer
 		/// </summary>
 		public int Count {
 #if NET45
@@ -44,7 +46,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Whether the index buffer sports a byte, ushort or uint array.
+		/// Whether the index buffer sports a byte, ushort or uint array
 		/// </summary>
 		public DrawElementsType Format {
 #if NET45
@@ -56,7 +58,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the indices that are represented by this buffer. The returned value can be byte[], ushort[] or uint[].
+		/// Gets the indices that are represented by this buffer. The returned value can be byte[], ushort[] or uint[]
 		/// </summary>
 		public Array Indices {
 			get {
@@ -90,7 +92,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets whether the index buffer is disposed.
+		/// Gets whether the index buffer is disposed
 		/// </summary>
 		public bool IsDisposed {
 #if NET45
@@ -102,11 +104,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates an index buffer wrapper for an already existing buffer.
+		/// Creates an index buffer wrapper for an already existing buffer
 		/// </summary>
-		/// <param name="name">The index buffer unique name.</param>
-		/// <param name="count">The number of indices.</param>
-		/// <param name="format">The format of the index buffer.</param>
+		/// <param name="name">The index buffer unique name</param>
+		/// <param name="count">The number of indices</param>
+		/// <param name="format">The format of the index buffer</param>
 		public IndexBuffer(int name, int count, DrawElementsType format) {
 			this.count = count;
 			this.name = name;
@@ -117,26 +119,43 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Generates an index buffer from an array of indices.
+		/// Generates an index buffer from an array of indices
 		/// </summary>
-		/// <param name="array">The array to generate an index buffer from. Has to be byte[], ushort[] or uint[].</param>
-		public IndexBuffer(Array array) {
+		/// <param name="array">The array to generate an index buffer from. Has to be byte[], ushort[] or uint[]</param>
+		private IndexBuffer(Array array) {
 			if (array == null || array.Length == 0)
 				return;
 			indices = array;
-			if (KeepBuffer)
-				copy = array;
+			buffers.TryAdd(array, this);
+			copy = array;
 			count = array.Length;
-			if (indices is byte[])
+			if (array is byte[])
 				format = DrawElementsType.UnsignedByte;
-			else if (indices is ushort[])
+			else if (array is ushort[])
 				format = DrawElementsType.UnsignedShort;
-			else
+			else if (array is uint[])
 				format = DrawElementsType.UnsignedInt;
+			else
+				throw new ArgumentException("The index array must be byte[], ushort[] or uint[]", nameof(array));
 		}
 
 		/// <summary>
-		/// Binds the index buffer for use with OpenGL operations.
+		/// Generates an index buffer from an array of indices
+		/// </summary>
+		/// <param name="array">The array to generate an index buffer from. Has to be byte[], ushort[] or uint[]</param>
+		public static IndexBuffer FromArray(Array array) {
+			if (!(array == null || array.Length == 0)) {
+				IndexBuffer buffer;
+				if (buffers.TryGetValue(array, out buffer)) {
+					buffer.AddReference();
+					return buffer;
+				}
+			}
+			return new IndexBuffer(array);
+		}
+
+		/// <summary>
+		/// Binds the index buffer for use with OpenGL operations
 		/// </summary>
 		public void Bind() {
 			if (indices == null)
@@ -151,36 +170,51 @@ namespace System.Graphics.Models {
 					GL.BufferData<ushort>(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(ushort)), (ushort[]) indices, BufferUsageHint.StaticDraw);
 				else
 					GL.BufferData<uint>(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(uint)), (uint[]) indices, BufferUsageHint.StaticDraw);
+				if (!KeepCopyInMemory) {
+					IndexBuffer temp;
+					buffers.TryRemove(copy, out temp);
+					copy = null;
+				}
 				indices = null;
 			}
 		}
 
 		/// <summary>
-		/// Unbinds the current index buffer.
+		/// Unbinds the current index buffer
 		/// </summary>
 		public static void Unbind() {
 			GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 		}
 
 		/// <summary>
-		/// Replaces the indices with the specified array.
+		/// Replaces the indices with the specified array
 		/// </summary>
-		/// <param name="indices">The indices to use. Has to be byte[], ushort[] or uint[].</param>
-		public void ReplaceIndicesWith(Array indices) {
-			if (indices == null)
-				indices = new byte[0];
-			count = indices.Length;
-			this.indices = indices;
-			if (indices is byte[])
+		/// <param name="array">The indices to use. Has to be byte[], ushort[] or uint[]</param>
+		public void ReplaceIndicesWith(Array array) {
+			if (array == null)
+				array = new byte[0];
+			count = array.Length;
+			if (copy != null) {
+				IndexBuffer temp;
+				buffers.TryRemove(copy, out temp);
+				copy = null;
+			}
+			indices = array;
+			buffers.TryAdd(array, this);
+			if (KeepCopyInMemory)
+				copy = array;
+			if (array is byte[])
 				format = DrawElementsType.UnsignedByte;
-			else if (indices is ushort[])
+			else if (array is ushort[])
 				format = DrawElementsType.UnsignedShort;
-			else
+			else if (array is uint[])
 				format = DrawElementsType.UnsignedInt;
+			else
+				throw new ArgumentException("The index array must be byte[], ushort[] or uint[]", nameof(array));
 		}
 
 		/// <summary>
-		/// Adds a reference to this index buffer.
+		/// Adds a reference to this index buffer
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -190,33 +224,33 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Returns the buffer name.
+		/// Returns the buffer name
 		/// </summary>
-		/// <returns>The buffer name.</returns>
+		/// <returns>The buffer name</returns>
 		public override int GetHashCode() {
 			return name;
 		}
 
 		/// <summary>
-		/// Creates a System.String that describes this IndexBuffer.
+		/// Creates a System.String that describes this IndexBuffer
 		/// </summary>
-		/// <returns>A System.String that describes this IndexBuffer.</returns>
+		/// <returns>A System.String that describes this IndexBuffer</returns>
 		public override string ToString() {
 			return "Index buffer (handle " + name + ")";
 		}
 
 		/// <summary>
-		/// Compares whether this IndexBuffer is equal to the specified object.
+		/// Compares whether this IndexBuffer is equal to the specified object
 		/// </summary>
-		/// <param name="obj">An object to compare to.</param>
+		/// <param name="obj">An object to compare to</param>
 		public override bool Equals(object obj) {
 			return Equals(obj as IndexBuffer);
 		}
 
 		/// <summary>
-		/// Compares whether this IndexBuffer is equal to the specified object.
+		/// Compares whether this IndexBuffer is equal to the specified object
 		/// </summary>
-		/// <param name="other">The object to compare to.</param>
+		/// <param name="other">The object to compare to</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -225,7 +259,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the buffer and the resources consumed by it.
+		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		~IndexBuffer() {
 			if (name == 0 || count == 0)
@@ -236,16 +270,16 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the buffer and the resources consumed by it.
+		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		public void Dispose() {
 			Dispose(false);
 		}
 
 		/// <summary>
-		/// Disposes of the buffer and the resources consumed by it.
+		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
-		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed.</param>
+		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed</param>
 		public void Dispose(bool forceDispose) {
 			if (name == 0 || count == 0)
 				return;
@@ -259,6 +293,12 @@ namespace System.Graphics.Models {
 				}
 				name = 0;
 				count = 0;
+				IndexBuffer temp;
+				if (copy != null) {
+					buffers.TryRemove(copy, out temp);
+					copy = null;
+				} else if (indices != null)
+					buffers.TryRemove(indices, out temp);
 				indices = null;
 				GC.SuppressFinalize(this);
 			}

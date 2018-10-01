@@ -38,7 +38,7 @@ namespace System.Graphics.ES20 {
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void ClearColor(Color4 color) {
+		public static void ClearColor(ColorF color) {
 			GL.ClearColor(color.R, color.G, color.B, color.A);
 		}
 
@@ -56,7 +56,7 @@ namespace System.Graphics.ES20 {
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void BlendColor(Color4 color) {
+		public static void BlendColor(ColorF color) {
 			GL.BlendColor(color.R, color.G, color.B, color.A);
 		}
 
@@ -112,7 +112,7 @@ namespace System.Graphics.ES20 {
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void Uniform4(int location, Color4 color) {
+		public static void Uniform4(int location, ColorF color) {
 			GL.Uniform4(location, color.R, color.G, color.B, color.A);
 		}
 

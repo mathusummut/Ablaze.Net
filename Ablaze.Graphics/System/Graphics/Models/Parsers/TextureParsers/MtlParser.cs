@@ -50,9 +50,9 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 							case "ka":
 								if (material != null) {
 									if (indices.Length == 4)
-										material.AmbientHue = new Color4(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+										material.AmbientHue = new ColorF(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 									else if (indices.Length >= 5)
-										material.AmbientHue = new Color4(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+										material.AmbientHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 									if (material.AmbientHue.R == 0f && material.AmbientHue.G == 0f && material.AmbientHue.B == 0f) {
 										material.AmbientHue.R = 0.15f;
 										material.AmbientHue.G = 0.15f;
@@ -67,7 +67,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 										material.MaterialHue.G = float.Parse(indices[2], NumberStyles.Float);
 										material.MaterialHue.B = float.Parse(indices[3], NumberStyles.Float);
 									} else if (indices.Length >= 5)
-										material.MaterialHue = new Color4(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+										material.MaterialHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 									if (material.MaterialHue.R == 0f && material.MaterialHue.G == 0f && material.MaterialHue.B == 0f) {
 										material.MaterialHue.R = 1f;
 										material.MaterialHue.G = 1f;
@@ -78,9 +78,9 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 							case "ks":
 								if (material != null) {
 									if (indices.Length == 4)
-										material.ShineHue = new Color4(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+										material.ShineHue = new ColorF(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 									else if (indices.Length >= 5)
-										material.ShineHue = new Color4(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+										material.ShineHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 								}
 								break;
 							case "d":
@@ -142,15 +142,15 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 			/// <summary>
 			/// The component's hue and opacity.
 			/// </summary>
-			public Color4 MaterialHue = Light.DefaultMaterialHue;
+			public ColorF MaterialHue = Light.DefaultMaterialHue;
 			/// <summary>
 			/// The hue of the ambient light that hits the object.
 			/// </summary>
-			public Color4 AmbientHue = Light.DefaultAmbientHue;
+			public ColorF AmbientHue = Light.DefaultAmbientHue;
 			/// <summary>
 			/// The hue of the reflective shine of the object.
 			/// </summary>
-			public Color4 ShineHue = Light.DefaultShineHue;
+			public ColorF ShineHue = Light.DefaultShineHue;
 			/// <summary>
 			/// The shininess exponent of the material.
 			/// </summary>

@@ -122,6 +122,7 @@
     <Compile Include="System\Graphics\Models\AnimatedModel.cs" />
     <Compile Include="System\Graphics\Models\GlobalShader.cs" />
     <Compile Include="System\Graphics\Models\Light.cs" />
+    <Compile Include="System\Graphics\Models\TextureEnums.cs" />
     <Compile Include="System\Graphics\Models\VertexArrayBuffer.cs" />
     <Compile Include="System\Graphics\Models\DataBuffer.cs" />
     <Compile Include="System\Graphics\Models\FrameBuffer.cs" />

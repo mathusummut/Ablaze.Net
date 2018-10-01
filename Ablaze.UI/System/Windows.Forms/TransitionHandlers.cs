@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace System.Windows.Forms {
 	internal static class TransitionHandlers {
-		[TransitionHandler(typeof(Color4))]
-		public static AnimationState Transition(Color4 currentValue, object targetValue, double gradient, double linearSpeed, bool stoppable, ref object cachedValue, out Color4 newValue) {
+		[TransitionHandler(typeof(ColorF))]
+		public static AnimationState Transition(ColorF currentValue, object targetValue, double gradient, double linearSpeed, bool stoppable, ref object cachedValue, out ColorF newValue) {
 			newValue = currentValue;
-			if (stoppable && !(cachedValue == null || (Color4) cachedValue == currentValue))
+			if (stoppable && !(cachedValue == null || (ColorF) cachedValue == currentValue))
 				return AnimationState.ValueDidntUpdateAsExpected;
-			Color4 target = (Color4) targetValue;
-			Color4 transitionVal = ImageLib.TransitionClamp(currentValue, target, (float) gradient, (float) linearSpeed);
+			ColorF target = (ColorF) targetValue;
+			ColorF transitionVal = ImageLib.TransitionClamp(currentValue, target, (float) gradient, (float) linearSpeed);
 			if (Math.Abs(transitionVal.A - currentValue.A) <= float.Epsilon &&
 				Math.Abs(transitionVal.R - currentValue.R) <= float.Epsilon &&
 				Math.Abs(transitionVal.G - currentValue.G) <= float.Epsilon &&
@@ -684,7 +684,7 @@ namespace System.Windows.Forms {
 						worker = PixelWorker.FromImage(image, false, false);
 						CurrentValues = worker.ToFloatArray();
 						worker.Dispose();
-						worker = PixelWorker.FromImage(target, true, false, false, true);
+						worker = PixelWorker.FromImage(target, true, false, ImageParameterAction.RemoveReference, true);
 						Target = worker.Buffer;
 						worker.Dispose();
 					} catch /*(Exception e)*/ {

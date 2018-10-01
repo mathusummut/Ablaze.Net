@@ -157,7 +157,7 @@ namespace System.Graphics.Models {
 				shader.SetUniformValue(GlobalShaderParams.LightPosition.ToString(), Light.Position, ShaderSetMode.SetImmediately);
 				shader.SetUniformValue(GlobalShaderParams.PointLight.ToString(), Light.PointLight ? 1f : 0f, ShaderSetMode.SetImmediately);
 			}
-			Render(null);
+			base.Render(null);
 		}
 
 		/// <summary>

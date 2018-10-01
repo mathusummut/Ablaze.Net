@@ -17,7 +17,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static MeshComponent GenerateHeightmap(ref HeightMapParams parameters) {
-			return GenerateHeightmap(parameters.Image, parameters.Scale, parameters.ColorHeightMultiplier, parameters.BlurRadius, parameters.OptimizeIndices, parameters.FlushBuffer);
+			return GenerateHeightmap(parameters.Image, parameters.Scale, parameters.ColorHeightMultiplier, parameters.BlurRadius, parameters.OptimizeIndices, parameters.FlushBuffer, parameters.BindAction);
 		}
 
 		/// <summary>
@@ -30,13 +30,14 @@ namespace System.Graphics.Models {
 		/// <param name="optimizeIndices">Whether to optimize the indices. Takes less space, but may take ages to generate if a large size is used.</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
 		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public static MeshComponent GenerateHeightmap(Bitmap image, Vector2 scale, Vector3 colorHeightMultiplier, float blurRadius, bool optimizeIndices = false, bool flushBuffer = true) {
+		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
+		public static MeshComponent GenerateHeightmap(Bitmap image, Vector2 scale, Vector3 colorHeightMultiplier, float blurRadius, bool optimizeIndices = false, bool flushBuffer = true, ImageParameterAction bindAction = ImageParameterAction.RemoveReference) {
 			if (image == null)
 				return MeshComponent.Empty;
 			float[][] heights;
 			int width, height;
 			Size size;
-			using (PixelWorker temp = PixelWorker.FromImage(image, true, false, false)) {
+			using (PixelWorker temp = PixelWorker.FromImage(image, true, false, bindAction)) {
 				size = temp.Size;
 				if (blurRadius >= 0f)
 					ImageLib.BoxBlur(temp, blurRadius);
@@ -114,24 +115,30 @@ namespace System.Graphics.Models {
 		/// manipulate the mesh vertices must be performed on an OpenGL thread.
 		/// </summary>
 		public bool FlushBuffer;
+		/// <summary>
+		/// Determines what to do with the image after binding into GPU memory
+		/// </summary>
+		public ImageParameterAction BindAction;
 
 		/// <summary>
-		/// Initializes the height map parameters.
+		/// Initializes the height map parameters
 		/// </summary>
-		/// <param name="image">The image to generate the height map from.</param>
-		/// <param name="scale">The X and Y scale of the base.</param>
-		/// <param name="colorHeightMultiplier">The height multipler of each color component (RGB).</param>
-		/// <param name="blurRadius">The smoothness of the generated vertices.</param>
-		/// <param name="optimizeIndices">Whether to optimize the indices. Takes less space, but may take ages to generate if a large size is used.</param>
+		/// <param name="image">The image to generate the height map from</param>
+		/// <param name="scale">The X and Y scale of the base</param>
+		/// <param name="colorHeightMultiplier">The height multipler of each color component (RGB)</param>
+		/// <param name="blurRadius">The smoothness of the generated vertices</param>
+		/// <param name="optimizeIndices">Whether to optimize the indices. Takes less space, but may take ages to generate if a large size is used</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
-		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public HeightMapParams(Bitmap image, Vector2 scale, Vector3 colorHeightMultiplier, float blurRadius, bool optimizeIndices = false, bool flushBuffer = true) {
+		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
+		/// manipulate the mesh vertices must be performed on an OpenGL thread</param>
+		public HeightMapParams(Bitmap image, Vector2 scale, Vector3 colorHeightMultiplier, float blurRadius, bool optimizeIndices = false, bool flushBuffer = true, ImageParameterAction bindAction = ImageParameterAction.RemoveReference) {
 			Image = image;
 			Scale = scale;
 			ColorHeightMultiplier = colorHeightMultiplier;
 			BlurRadius = blurRadius;
 			OptimizeIndices = optimizeIndices;
 			FlushBuffer = flushBuffer;
+			BindAction = bindAction;
 		}
 	}
 }

@@ -95,7 +95,7 @@
     <Compile Include="System\Diagnostics\AsyncResult.cs" />
     <Compile Include="System\Diagnostics\ErrorLogger.cs" />
     <Compile Include="System\Drawing\BgraColor.cs" />
-    <Compile Include="System\Drawing\Color4.cs" />
+    <Compile Include="System\Drawing\ColorF.cs" />
     <Compile Include="System\Drawing\FourierWorker.cs" />
     <Compile Include="System\ExceptionMode.cs" />
     <Compile Include="System\Half.cs" />

@@ -50,6 +50,7 @@ namespace Ablaze.ModelViewer {
 			}
 			childDialog = new HeightMapDialog();
 			childDialog.ComponentLoaded += ChildDialog_ComponentLoaded;
+			Scene.KeepCopyInMemory = true;
 			EnableFullscreenOnAltEnter = true;
 			ReduceGdiCpuUsage = true;
 			IsGdiEnabled = true;
@@ -137,8 +138,6 @@ namespace Ablaze.ModelViewer {
 			currentDistanceProperty = new FieldOrProperty(nameof(currentDistance), this);
 			currentViewDirectionProperty = new FieldOrProperty(nameof(currentViewDirection), this);
 			renderUpdates = RenderUpdates;
-			IndexBuffer.KeepBuffer = true;
-			MeshComponent.KeepBuffer = true;
 			processUpdates = ProcessUpdates;
 			MouseDown += ModelViewer_MouseDown;
 			PhysicalMouseMove += ModelViewer_PhysicalMouseMove;
@@ -180,7 +179,7 @@ namespace Ablaze.ModelViewer {
 			Bitmap bitmap;
 			lock (BorderSyncLock)
 				bitmap = Border.FastCopy();
-			using (PixelWorker wrapper = PixelWorker.FromImage(bitmap, false, true, false)) {
+			using (PixelWorker wrapper = PixelWorker.FromImage(bitmap, false, true, ImageParameterAction.RemoveReference)) {
 				wrapper.ApplyFunctionToAllPixels(delegate (int i, BgraColor color) {
 					return ImageLib.ChangeLightness(color, -60);
 				});

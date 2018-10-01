@@ -91,7 +91,15 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets whether the model is visible (rendered) or not.
 		/// </summary>
-		bool IsVisible {
+		bool Visible {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets whether to keep a copy of the vertices in memory even after loading the vertices into GPU memory (allows faster and multithreaded vertex retrieval)
+		/// </summary>
+		bool KeepCopyInMemory {
 			get;
 			set;
 		}

@@ -13,7 +13,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 		/// <param name="source">The location of the file to parse the texture from.</param>
 		/// <returns>A list of the textures parsed.</returns>
 		public static ITexture[] Parse(Stream source) {
-			return new ITexture[] { new Texture2D(new Bitmap(source), NPotTextureScaleMode.ScaleUp, true) };
+			return new ITexture[] { new Texture2D(new Bitmap(source), NPotTextureScaleMode.ScaleUp, ImageParameterAction.Dispose) };
 		}
 	}
 }

@@ -10,8 +10,26 @@ using System.Threading.Tasks;
 
 namespace System.Drawing {
 	/// <summary>
+	/// Determines what to do with the image after being passed as a parameter
+	/// </summary>
+	public enum ImageParameterAction {
+		/// <summary>
+		/// This is the default action, where the image reference is removed when it is no longer needed
+		/// </summary>
+		RemoveReference,
+		/// <summary>
+		/// A reference to the image will be kept for faster and easier retrieval
+		/// </summary>
+		KeepReference,
+		/// <summary>
+		/// The image will be automatically disposed when it is no longer used
+		/// </summary>
+		Dispose
+	}
+
+	/// <summary>
 	/// Wraps a bitmap image to optimize for fast lock-free thread-safe pixel processing.
-	/// Only supports 32-bit BGRA, 24-bit BGR and 8-bit grayscale bitmaps.
+	/// Supports 32-bit BGRA, 24-bit BGR and 8-bit grayscale bitmaps.
 	/// You can use foreach to iterate through all bytes/pixels of the enumerator with maximum speed.
 	/// Enumeration type can be configured in ThreadLocal variables that are present as fields of the instance.
 	/// </summary>
@@ -32,9 +50,9 @@ namespace System.Drawing {
 		/// </summary>
 		private Rectangle bounds;
 		/// <summary>
-		/// Whether to dispose the image as well on dispose.
+		/// What to do when the passed image is no longer used
 		/// </summary>
-		public bool DisposeImage = true;
+		public ImageParameterAction ImageAction = ImageParameterAction.Dispose;
 		/// <summary>
 		/// The pixel components available in the buffer. If no buffering is used, this will be null.
 		/// </summary>
@@ -438,7 +456,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="imagePath">The path to the image to load from.</param>
 		/// <param name="useBuffer">Whether changing pixel values are written to a buffer instead of directly to an image (false usually means faster).</param>
-		public PixelWorker(string imagePath, bool useBuffer = false) : this(Extensions.ImageFromFile(imagePath), useBuffer, false, true) {
+		public PixelWorker(string imagePath, bool useBuffer = false) : this(Extensions.ImageFromFile(imagePath), useBuffer, false, ImageParameterAction.Dispose) {
 		}
 
 		/// <summary>
@@ -446,13 +464,14 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="stream">The stream to load the image from.</param>
 		/// <param name="useBuffer">Whether changing pixel values are written to a buffer instead of directly to an image (false usually means faster).</param>
-		public PixelWorker(Stream stream, bool useBuffer = false) : this(new Bitmap(stream), useBuffer, false, true) {
+		public PixelWorker(Stream stream, bool useBuffer = false) : this(new Bitmap(stream), useBuffer, false, ImageParameterAction.Dispose) {
 		}
 
-		private PixelWorker(Bitmap image, bool useBuffer, bool writeOnDispose, bool disposeImage, bool lockBitmap = true) : this(image, new Rectangle(Point.Empty, image.Size), useBuffer, writeOnDispose, disposeImage, lockBitmap) {
+		private PixelWorker(Bitmap image, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction, bool lockBitmap = true) : this(image, new Rectangle(Point.Empty, image.Size), useBuffer, writeOnDispose, imageAction, lockBitmap) {
 		}
 
-		private PixelWorker(Bitmap image, Rectangle rect, bool useBuffer, bool writeOnDispose, bool disposeImage, bool lockBitmap = true) {
+		private PixelWorker(Bitmap image, Rectangle rect, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction, bool lockBitmap = true) {
+			ImageAction = imageAction;
 			this.writeOnDispose = writeOnDispose;
 			this.image = image;
 			format = image.PixelFormat;
@@ -471,7 +490,6 @@ namespace System.Drawing {
 				LoadBuffer();
 			else if (lockBitmap)
 				LockBits(ImageLockMode.ReadWrite);
-			DisposeImage = disposeImage;
 		}
 
 		/// <summary>
@@ -572,19 +590,19 @@ namespace System.Drawing {
 		/// <param name="image">The image to get the required data from.</param>
 		/// <param name="useBuffer">Whether changing pixel values are written to a buffer instead of directly to the image (false means faster).</param>
 		/// <param name="writeOnDispose">Whether to write changes on dispose.</param>
-		/// <param name="disposeImage">Whether to dispose the image as well on dispose.</param>
+		/// <param name="imageAction">What to do when the passed image is no longer used</param>
 		/// <param name="doNotUseImageDirectly">If true, the image is copied into a buffer and the original is left untouched.</param>
 		/// <param name="lockBitmap">For internal use only.</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static PixelWorker FromImage(Bitmap image, bool useBuffer, bool writeOnDispose, bool disposeImage = false, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
+		public static PixelWorker FromImage(Bitmap image, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.RemoveReference, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
 			if (image == null)
 				throw new ArgumentNullException(nameof(image), "The image cannot be null.");
 			else if (image.IsDisposed())
 				throw new ArgumentException("Cannot load a worker from a disposed image.", nameof(image));
 			else
-				return FromImage(image, new Rectangle(Point.Empty, image.Size), useBuffer, writeOnDispose, disposeImage, doNotUseImageDirectly, lockBitmap);
+				return FromImage(image, new Rectangle(Point.Empty, image.Size), useBuffer, writeOnDispose, imageAction, doNotUseImageDirectly, lockBitmap);
 		}
 
 		/// <summary>
@@ -594,10 +612,10 @@ namespace System.Drawing {
 		/// <param name="rect">The region to extract from the image for the pixel worker.</param>
 		/// <param name="useBuffer">Whether changing pixel values are written to a buffer instead of directly to the image (false means faster).</param>
 		/// <param name="writeOnDispose">Whether to write changes on dispose.</param>
-		/// <param name="disposeImage">Whether to dispose the image as well on dispose.</param>
+		/// <param name="imageAction">Whether to dispose the image as well on dispose.</param>
 		/// <param name="doNotUseImageDirectly">If true, the image is copied into a buffer and the original is left untouched.</param>
 		/// <param name="lockBitmap">For internal use only.</param>
-		public static PixelWorker FromImage(Bitmap image, Rectangle rect, bool useBuffer, bool writeOnDispose, bool disposeImage = false, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
+		public static PixelWorker FromImage(Bitmap image, Rectangle rect, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.RemoveReference, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
 			if (image == null)
 				throw new ArgumentNullException(nameof(image), "The image cannot be null.");
 			else if (image.IsDisposed())
@@ -607,8 +625,10 @@ namespace System.Drawing {
 				if (instance.size != rect.Size)
 					throw new ArgumentException("The image already has a pixel worker initialized from it.", nameof(image));
 				Interlocked.Increment(ref instance.referenceCounter);
-				if (instance.DisposeImage && !disposeImage)
-					instance.DisposeImage = false;
+				if (imageAction == ImageParameterAction.KeepReference || instance.ImageAction == ImageParameterAction.KeepReference)
+					instance.ImageAction = ImageParameterAction.KeepReference;
+				else if (!(instance.ImageAction == ImageParameterAction.Dispose && imageAction == ImageParameterAction.Dispose))
+					instance.ImageAction = ImageParameterAction.RemoveReference;
 				if (instance.Buffer == null && useBuffer)
 					instance.LoadBuffer();
 				if (!instance.writeOnDispose)
@@ -634,11 +654,11 @@ namespace System.Drawing {
 						}
 					}
 					image.UnlockBits(data);
-					if (disposeImage)
+					if (imageAction == ImageParameterAction.Dispose)
 						image.DisposeSafe();
 					return new PixelWorker(buffer, rect.Width, rect.Height, false);
 				} else
-					return new PixelWorker(image, rect, useBuffer, writeOnDispose, disposeImage, lockBitmap);
+					return new PixelWorker(image, rect, useBuffer, writeOnDispose, imageAction, lockBitmap);
 			}
 		}
 
@@ -700,8 +720,10 @@ namespace System.Drawing {
 		/// DO NOT USE UNLESS NECESSARY. Refills the buffer from the bitmap memory.
 		/// </summary>
 		private void LoadBuffer() {
+			if (image == null)
+				return;
 			lock (LockSync) {
-				if (image.IsDisposed() || Buffer != null)
+				if (image == null || image.IsDisposed() || Buffer != null)
 					return;
 				Buffer = new byte[pixelComponentCount];
 				if (!IsLocked) {
@@ -723,6 +745,11 @@ namespace System.Drawing {
 				}
 				image.UnlockBits(bitmapData);
 				IsLocked = false;
+				if (ImageAction == ImageParameterAction.Dispose) {
+					image.Dispose();
+					image = null;
+				} else if (ImageAction == ImageParameterAction.RemoveReference)
+					image = null;
 			}
 		}
 
@@ -753,7 +780,7 @@ namespace System.Drawing {
 		public void CopyFrom(Bitmap image) {
 			if (image == null)
 				return;
-			using (PixelWorker worker = FromImage(image, true, false, false, true))
+			using (PixelWorker worker = FromImage(image, true, false, ImageParameterAction.RemoveReference, true))
 				CopyFrom(worker.ToByteArray(false), false);
 		}
 
@@ -4712,7 +4739,7 @@ namespace System.Drawing {
 					}
 					PixelWorker temp;
 					WrapperCollection.TryRemove(image, out temp);
-					if (DisposeImage)
+					if (ImageAction == ImageParameterAction.Dispose)
 						image.DisposeSafe();
 					image = null;
 				}
@@ -4879,7 +4906,7 @@ namespace System.Drawing {
 			if (image != null) {
 				PixelWorker temp;
 				WrapperCollection.TryRemove(image, out temp);
-				if (DisposeImage)
+				if (ImageAction == ImageParameterAction.Dispose)
 					image.DisposeSafe();
 				image = null;
 			}

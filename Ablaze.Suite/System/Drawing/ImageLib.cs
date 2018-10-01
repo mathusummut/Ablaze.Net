@@ -154,7 +154,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="source">The bitmap to use as source.</param>
 		public static Rectangle GetTrimBounds(this Bitmap source) {
-			using (PixelWorker data = PixelWorker.FromImage(source, false, false, false))
+			using (PixelWorker data = PixelWorker.FromImage(source, false, false, ImageParameterAction.RemoveReference))
 				return GetTrimBounds(source);
 		}
 
@@ -257,7 +257,7 @@ namespace System.Drawing {
 		public static void Overlay(this Bitmap baseImage, Bitmap overlayImage, float opacity, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == overlayImage || baseImage == null || overlayImage == null || opacity == 0f)
 				return;
-			using (PixelWorker lockedBase = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker lockedBase = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				Overlay(lockedBase, overlayImage, opacity, layout, interpolation);
 		}
 
@@ -275,7 +275,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == overlayImage.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(overlayImage.PixelFormat));
 			if (disposeOverlayImage)
 				overlayImage = ResizeWithLayout(overlayImage, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(overlayImage, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(overlayImage, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				Overlay(baseImage, lockedOverlay, opacity);
 		}
 
@@ -301,7 +301,7 @@ namespace System.Drawing {
 		public static void Transition(this Bitmap baseImage, Bitmap overlayImage, float opacity, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == overlayImage || baseImage == null || overlayImage == null || opacity == 0f)
 				return;
-			using (PixelWorker lockedBase = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker lockedBase = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				Transition(lockedBase, overlayImage, opacity, layout, interpolation);
 		}
 
@@ -319,7 +319,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == overlayImage.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(overlayImage.PixelFormat));
 			if (disposeOverlayImage)
 				overlayImage = ResizeWithLayout(overlayImage, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(overlayImage, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(overlayImage, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				Transition(baseImage, lockedOverlay, opacity);
 		}
 
@@ -346,7 +346,7 @@ namespace System.Drawing {
 		public static void Transition(this Bitmap baseImage, Bitmap overlayImage, float[][] kernel, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == overlayImage || baseImage == null || overlayImage == null)
 				return;
-			using (PixelWorker lockedBase = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker lockedBase = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				Transition(lockedBase, overlayImage, kernel, layout, interpolation);
 		}
 
@@ -365,7 +365,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == overlayImage.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(overlayImage.PixelFormat));
 			if (disposeOverlayImage)
 				overlayImage = ResizeWithLayout(overlayImage, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(overlayImage, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(overlayImage, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				Transition(baseImage, lockedOverlay, kernel);
 		}
 
@@ -394,7 +394,7 @@ namespace System.Drawing {
 		public static void ChangeContrast(this Bitmap image, float value) {
 			if (image == null || value == 1f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ChangeContrast(source, value);
 		}
 
@@ -449,7 +449,7 @@ namespace System.Drawing {
 		public static void ChangeBrightness(this Bitmap image, float multiplier) {
 			if (image == null || multiplier == 1f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ChangeBrightness(source, multiplier);
 		}
 
@@ -503,7 +503,7 @@ namespace System.Drawing {
 		public static void ChangeBrightnessNormalize(this Bitmap image, float multiplier) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ChangeBrightnessNormalize(source, multiplier);
 		}
 
@@ -561,7 +561,7 @@ namespace System.Drawing {
 		public static void RaiseBy(this Bitmap image, double exponent) {
 			if (image == null || exponent == 1.0f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				RaiseBy(source, exponent);
 		}
 
@@ -618,7 +618,7 @@ namespace System.Drawing {
 		public static void Open(this Bitmap image, int radius) {
 			if (image == null || radius <= 0)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Open(source, radius);
 		}
 
@@ -644,7 +644,7 @@ namespace System.Drawing {
 		public static void Open(this Bitmap image, float radius) {
 			if (image == null || radius <= 0)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Open(source, radius);
 		}
 
@@ -670,7 +670,7 @@ namespace System.Drawing {
 		public static void Close(this Bitmap image, int radius) {
 			if (image == null || radius <= 0)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Close(source, radius);
 		}
 
@@ -696,7 +696,7 @@ namespace System.Drawing {
 		public static void Close(this Bitmap image, float radius) {
 			if (image == null || radius <= 0)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Close(source, radius);
 		}
 
@@ -724,7 +724,7 @@ namespace System.Drawing {
 		public static void SaltAndPepperNoise(this Bitmap image, double frequency = 0.08, byte salt = 255, byte pepper = 0) {
 			if (image == null || frequency == 0.0f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				SaltAndPepperNoise(source, frequency, salt, pepper);
 		}
 
@@ -770,7 +770,7 @@ namespace System.Drawing {
 		public static void Logarithm(this Bitmap image) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Logarithm(source);
 		}
 
@@ -845,7 +845,7 @@ namespace System.Drawing {
 		public static void AddWith(this Bitmap baseImage, Bitmap toAdd, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || toAdd == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				AddWith(source, toAdd, layout, interpolation);
 		}
 
@@ -862,7 +862,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == toAdd.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(toAdd.PixelFormat));
 			if (disposeOverlayImage)
 				toAdd = ResizeWithLayout(toAdd, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(toAdd, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(toAdd, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				AddWith(baseImage, lockedOverlay);
 		}
 
@@ -887,7 +887,7 @@ namespace System.Drawing {
 		public static void BitwiseAnd(this Bitmap baseImage, Bitmap mask, bool ignoreAlpha = true, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || mask == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				BitwiseAnd(source, mask, ignoreAlpha, layout, interpolation);
 		}
 
@@ -905,7 +905,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == mask.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(mask.PixelFormat));
 			if (disposeOverlayImage)
 				mask = ResizeWithLayout(mask, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(mask, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(mask, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				BitwiseAnd(baseImage, lockedOverlay, ignoreAlpha);
 		}
 
@@ -939,7 +939,7 @@ namespace System.Drawing {
 		public static void BitwiseOr(this Bitmap baseImage, Bitmap mask, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || mask == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				BitwiseOr(source, mask, layout, interpolation);
 		}
 
@@ -956,7 +956,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == mask.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(mask.PixelFormat));
 			if (disposeOverlayImage)
 				mask = ResizeWithLayout(mask, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(mask, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(mask, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				BitwiseOr(baseImage, lockedOverlay);
 		}
 
@@ -985,7 +985,7 @@ namespace System.Drawing {
 		public static void BitwiseXor(this Bitmap baseImage, Bitmap mask, bool ignoreAlpha = true, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || mask == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				BitwiseXor(source, mask, ignoreAlpha, layout, interpolation);
 		}
 
@@ -1003,7 +1003,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == mask.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(mask.PixelFormat));
 			if (disposeOverlayImage)
 				mask = ResizeWithLayout(mask, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(mask, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(mask, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				BitwiseXor(baseImage, lockedOverlay, ignoreAlpha);
 		}
 
@@ -1038,7 +1038,7 @@ namespace System.Drawing {
 		public static void AddAndNormalizeWith(this Bitmap baseImage, Bitmap toAdd, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || toAdd == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				AddAndNormalizeWith(source, toAdd, layout, interpolation);
 		}
 
@@ -1056,7 +1056,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == toAdd.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(toAdd.PixelFormat));
 			if (disposeOverlayImage)
 				toAdd = ResizeWithLayout(toAdd, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(toAdd, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(toAdd, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				AddAndNormalizeWith(baseImage, lockedOverlay);
 		}
 
@@ -1095,7 +1095,7 @@ namespace System.Drawing {
 		public static void MultiplyAndNormalizeWith(this Bitmap baseImage, Bitmap toMult, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || toMult == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				MultiplyAndNormalizeWith(source, toMult, layout, interpolation);
 		}
 
@@ -1113,7 +1113,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == toMult.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(toMult.PixelFormat));
 			if (disposeOverlayImage)
 				toMult = ResizeWithLayout(toMult, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(toMult, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(toMult, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				MultiplyAndNormalizeWith(baseImage, lockedOverlay);
 		}
 
@@ -1152,7 +1152,7 @@ namespace System.Drawing {
 		public static void Subtract(this Bitmap baseImage, Bitmap filter, bool subtractAlpha = false, ImageLayout layout = ImageLayout.Stretch, InterpolationMode interpolation = InterpolationMode.HighQualityBicubic) {
 			if (baseImage == null || filter == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(baseImage, false, true, ImageParameterAction.RemoveReference))
 				Subtract(source, filter, subtractAlpha, layout, interpolation);
 		}
 
@@ -1170,7 +1170,7 @@ namespace System.Drawing {
 			bool disposeOverlayImage = !(baseImage.Size == filter.Size && baseImage.ComponentCount * 8 == Image.GetPixelFormatSize(filter.PixelFormat));
 			if (disposeOverlayImage)
 				filter = ResizeWithLayout(filter, baseImage.Size, layout, interpolation);
-			using (PixelWorker lockedOverlay = PixelWorker.FromImage(filter, false, false, disposeOverlayImage))
+			using (PixelWorker lockedOverlay = PixelWorker.FromImage(filter, false, false, disposeOverlayImage ? ImageParameterAction.Dispose : ImageParameterAction.RemoveReference))
 				Subtract(baseImage, lockedOverlay, subtractAlpha);
 		}
 
@@ -1199,7 +1199,7 @@ namespace System.Drawing {
 		public static void ChangeLightness(this Bitmap image, int offset) {
 			if (image == null || offset == 0f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ChangeLightness(source, offset);
 		}
 
@@ -1254,7 +1254,7 @@ namespace System.Drawing {
 		public static void BitwiseAnd(this Bitmap image, byte mask, bool ignoreAlpha = true) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				BitwiseAnd(source, mask, ignoreAlpha);
 		}
 
@@ -1310,7 +1310,7 @@ namespace System.Drawing {
 		public static void BitwiseOr(this Bitmap image, byte mask, bool ignoreAlpha = true) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				BitwiseOr(source, mask, ignoreAlpha);
 		}
 
@@ -1366,7 +1366,7 @@ namespace System.Drawing {
 		public static void BitwiseXor(this Bitmap image, byte mask, bool ignoreAlpha = true) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				BitwiseXor(source, mask, ignoreAlpha);
 		}
 
@@ -1635,7 +1635,7 @@ namespace System.Drawing {
 		public static void SetBackColor(this Bitmap image, BgraColor backColor, float opacity) {
 			if (opacity == 0f || backColor.A == 0)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				SetBackColor(source, backColor, opacity);
 		}
 
@@ -1667,7 +1667,7 @@ namespace System.Drawing {
 		/// <param name="opacity">The multiplier to use.</param>
 		public static void SetImageOpacity(this Bitmap image, float opacity) {
 			if (image.PixelFormat == PixelFormat.Format32bppArgb || image.PixelFormat == PixelFormat.Format32bppPArgb) {
-				using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+				using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 					SetImageOpacity(source, opacity);
 			}
 		}
@@ -1701,7 +1701,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to mirror.</param>
 		/// <param name="mode">The mirror mode to use.</param>
 		public static void Mirror(this Bitmap image, MirrorMode mode) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Mirror(source, mode);
 		}
 
@@ -1786,7 +1786,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image to shift.</param>
 		public static void FFTShift(this Bitmap image) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				FFTShift(source);
 		}
 
@@ -2112,7 +2112,7 @@ namespace System.Drawing {
 		/// <param name="overlayPixel">The target pixel color.</param>
 		/// <param name="gradient">The transition state (0 - original, 1 - target color).</param>
 		/// <param name="offset">The transition linear offset.</param>
-		public static Color4 Transition(this Color4 basePixel, Color4 overlayPixel, float gradient, float offset) {
+		public static ColorF Transition(this ColorF basePixel, ColorF overlayPixel, float gradient, float offset) {
 			if (gradient == 0f)
 				return basePixel;
 			else if (gradient == 1f)
@@ -2151,7 +2151,7 @@ namespace System.Drawing {
 					result.W -= offset;
 			}
 
-			return new Color4(result);
+			return new ColorF(result);
 		}
 
 		/// <summary>
@@ -2205,7 +2205,7 @@ namespace System.Drawing {
 		/// <param name="overlayPixel">The target pixel color.</param>
 		/// <param name="gradient">The transition state (0 - original, 1 - target color).</param>
 		/// <param name="offset">The transition linear offset.</param>
-		public static Color4 TransitionClamp(this Color4 basePixel, Color4 overlayPixel, float gradient, float offset) {
+		public static ColorF TransitionClamp(this ColorF basePixel, ColorF overlayPixel, float gradient, float offset) {
 			if (gradient <= float.Epsilon)
 				return basePixel;
 			else if (gradient >= 1f)
@@ -2244,7 +2244,7 @@ namespace System.Drawing {
 					result.W -= offset;
 			}
 
-			return new Color4(result);
+			return new ColorF(result);
 		}
 
 		/// <summary>
@@ -2333,7 +2333,7 @@ namespace System.Drawing {
 			if (radius == 0f || amount == 0f)
 				return;
 			byte[] buffer = null;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ApplyFilter(source, type, radius, amount, ref buffer);
 		}
 
@@ -2348,7 +2348,7 @@ namespace System.Drawing {
 		public static void ApplyFilter(this Bitmap image, Filter type, float radius, float amount, ref byte[] buffer) {
 			if (radius == 0f || amount == 0f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ApplyFilter(source, type, radius, amount, ref buffer);
 		}
 
@@ -2426,7 +2426,7 @@ namespace System.Drawing {
 		/// <param name="amount">The mix level of the filter.</param>
 		public static void ApplyFilter(this Bitmap image, Filter type, int radius, float amount = 1f) {
 			byte[] buffer = null;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ApplyFilter(source, type, radius, amount, ref buffer);
 		}
 
@@ -2439,7 +2439,7 @@ namespace System.Drawing {
 		/// <param name="amount">The mix level of the filter.</param>
 		/// <param name="buffer">An optional buffer the size of PixelComponentCount of the image (or more) to use as working memory.</param>
 		public static void ApplyFilter(this Bitmap image, Filter type, int radius, float amount, ref byte[] buffer) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ApplyFilter(source, type, radius, amount, ref buffer);
 		}
 
@@ -2608,7 +2608,7 @@ namespace System.Drawing {
 		public static void ApplyFilter(this Bitmap image, float[] kernelHorizontal, float[] kernelVertical, bool skipAlpha = false) {
 			if ((kernelHorizontal == null || kernelHorizontal.Length == 0) && (kernelVertical == null || kernelVertical.Length == 0))
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ApplyFilter(source, kernelHorizontal, kernelVertical, skipAlpha);
 		}
 
@@ -2724,7 +2724,7 @@ namespace System.Drawing {
 		/// <param name="skipAlpha">If true, the alpha channel will be untouched.</param>
 		[CLSCompliant(false)]
 		public static Bitmap ApplyFilter(this Bitmap image, float[][] kernel, bool skipAlpha = false) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return ApplyFilter(source, kernel, skipAlpha);
 		}
 
@@ -2750,7 +2750,7 @@ namespace System.Drawing {
 			int radiusX = kernelWidth / 2, radiusY = kernelHeight / 2;
 			int radiusXMax = (kernelWidth & 1) == 0 ? radiusX : radiusX + 1;
 			int radiusYMax = (kernelHeight & 1) == 0 ? radiusY : radiusY + 1;
-			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, false)) {
+			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, ImageParameterAction.RemoveReference)) {
 				ParallelLoop.For(0, source.PixelComponentCount, delegate (int i) {
 					int componentCount = source.ComponentCount;
 					int componentIndex = i % componentCount;
@@ -2960,7 +2960,7 @@ namespace System.Drawing {
 		public static Bitmap SignedDistanceField(this Bitmap image, float searchDistance, byte threshold = 128) {
 			if (searchDistance == 0)
 				return image.FastCopy();
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return SignedDistanceField(source, searchDistance, threshold);
 		}
 
@@ -2979,7 +2979,7 @@ namespace System.Drawing {
 				return SignedDistanceField(source, (int) searchDistance, threshold);
 			else if (searchDistance <= 1f) {
 				Bitmap result = SignedDistanceField(source, 1, threshold);
-				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, false))
+				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, ImageParameterAction.RemoveReference))
 					Transition(overlay, source, 1f - searchDistance);
 				return result;
 			} else {
@@ -3000,7 +3000,7 @@ namespace System.Drawing {
 			if (searchDistance == 0)
 				return image.FastCopy();
 			searchDistance = Math.Abs(searchDistance);
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return SignedDistanceField(source, searchDistance, threshold);
 		}
 
@@ -3015,7 +3015,7 @@ namespace System.Drawing {
 				return source.ToBitmap();
 			searchDistance = Math.Min(Math.Abs(searchDistance), Math.Max(source.Width, source.Height));
 			Bitmap resultant = new Bitmap(source.Width, source.Height, source.Format);
-			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, false)) {
+			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, ImageParameterAction.RemoveReference)) {
 				ParallelLoop.For(0, source.PixelComponentCount, delegate (int i) {
 					int componentCount = source.ComponentCount;
 					int componentIndex = i % componentCount;
@@ -3066,7 +3066,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to erode.</param>
 		/// <param name="radius">The radius to erode at in pixels.</param>
 		public static Bitmap Erode(this Bitmap image, float radius) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return Erode(source, radius);
 		}
 
@@ -3084,7 +3084,7 @@ namespace System.Drawing {
 				return Erode(source, (int) radius);
 			else if (radius <= 1f) {
 				Bitmap result = Erode(source, 1);
-				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, false))
+				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, ImageParameterAction.RemoveReference))
 					Transition(overlay, source, 1f - radius);
 				return result;
 			} else {
@@ -3101,7 +3101,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to erode.</param>
 		/// <param name="radius">The radius to erode at in pixels.</param>
 		public static Bitmap Erode(this Bitmap image, int radius) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return Erode(source, radius);
 		}
 
@@ -3112,7 +3112,7 @@ namespace System.Drawing {
 		/// <param name="radius">The radius to erode at in pixels.</param>
 		public static Bitmap Erode(this PixelWorker source, int radius) {
 			Bitmap resultant = new Bitmap(source.Width, source.Height, source.Format);
-			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, false))
+			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, ImageParameterAction.RemoveReference))
 				Erode(source, wrapper, radius);
 			return resultant;
 		}
@@ -3151,7 +3151,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to dilate.</param>
 		/// <param name="radius">The radius to dilate at in pixels.</param>
 		public static Bitmap Dilate(this Bitmap image, int radius) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return Dilate(source, radius);
 		}
 
@@ -3162,7 +3162,7 @@ namespace System.Drawing {
 		/// <param name="radius">The radius to dilate at in pixels.</param>
 		public static Bitmap Dilate(this PixelWorker source, int radius) {
 			Bitmap resultant = new Bitmap(source.Width, source.Height, source.Format);
-			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, false))
+			using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, ImageParameterAction.RemoveReference))
 				Dilate(source, wrapper, radius);
 			return resultant;
 		}
@@ -3173,7 +3173,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to dilate.</param>
 		/// <param name="radius">The radius to dilate at in pixels.</param>
 		public static Bitmap Dilate(this Bitmap image, float radius) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return Dilate(source, radius);
 		}
 
@@ -3191,7 +3191,7 @@ namespace System.Drawing {
 				return Dilate(source, (int) radius);
 			else if (radius <= 1f) {
 				Bitmap result = Dilate(source, 1);
-				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, false))
+				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, ImageParameterAction.RemoveReference))
 					Transition(overlay, source, 1f - radius);
 				return result;
 			} else {
@@ -3236,10 +3236,10 @@ namespace System.Drawing {
 		/// <param name="image">The image to get the required data from.</param>
 		/// <param name="useBuffer">Whether changing pixel values are written to a buffer instead of directly to the image (false means faster).</param>
 		/// <param name="writeOnDispose">Whether to write changes on dispose.</param>
-		/// <param name="disposeImage">Whether to dispose the image as well on dispose.</param>
+		/// <param name="imageAction">What to do when the passed image is no longer used</param>
 		/// <param name="doNotUseImageDirectly">If true, the image is copied into a buffer and the original is left untouched.</param>
-		public static PixelWorker ToWorker(this Bitmap image, bool useBuffer, bool writeOnDispose, bool disposeImage = false, bool doNotUseImageDirectly = false) {
-			return PixelWorker.FromImage(image, useBuffer, writeOnDispose, disposeImage, doNotUseImageDirectly);
+		public static PixelWorker ToWorker(this Bitmap image, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.RemoveReference, bool doNotUseImageDirectly = false) {
+			return PixelWorker.FromImage(image, useBuffer, writeOnDispose, imageAction, doNotUseImageDirectly);
 		}
 
 		/// <summary>
@@ -3250,7 +3250,7 @@ namespace System.Drawing {
 		public static void ChangeGamma(this Bitmap image, float gamma) {
 			if (image == null || gamma == 1f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ChangeGamma(source, gamma);
 		}
 
@@ -3341,7 +3341,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to resize.</param>
 		/// <param name="newSize">The new size of the image.</param>
 		public static Bitmap ResizeNearestNeighbor(this Bitmap image, Size newSize) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return ResizeNearestNeighbor(source, newSize);
 		}
 
@@ -3354,7 +3354,7 @@ namespace System.Drawing {
 			float ratioX = ((float) source.Width) / newSize.Width;
 			float ratioY = ((float) source.Height) / newSize.Height;
 			Bitmap newImage = new Bitmap(newSize.Width, newSize.Height, source.Format);
-			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, false)) {
+			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, ImageParameterAction.RemoveReference)) {
 				ParallelLoop.For(0, newBitmap.PixelComponentCount, delegate (int i) {
 					int pixelNum = i / newBitmap.ComponentCount;
 					newBitmap[i] = source[(((int) Math.Round((pixelNum / newSize.Width) * ratioY)) * source.Width +
@@ -3370,7 +3370,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to resize.</param>
 		/// <param name="newSize">The new size of the image.</param>
 		public static Bitmap ResizeBilinear(this Bitmap image, Size newSize) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return ResizeBilinear(source, newSize);
 		}
 
@@ -3383,7 +3383,7 @@ namespace System.Drawing {
 			float ratioX = ((float) source.Width) / newSize.Width;
 			float ratioY = ((float) source.Height) / newSize.Height;
 			Bitmap newImage = new Bitmap(newSize.Width, newSize.Height, source.Format);
-			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, false)) {
+			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, ImageParameterAction.RemoveReference)) {
 				ParallelLoop.For(0, newBitmap.PixelComponentCount, delegate (int i) {
 					int cc = source.ComponentCount;
 					int pixelNum = i / cc;
@@ -3418,7 +3418,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to resize.</param>
 		/// <param name="newSize">The new size of the image.</param>
 		public static Bitmap ResizeBicubic(this Bitmap image, Size newSize) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return ResizeBicubic(source, newSize);
 		}
 
@@ -3431,7 +3431,7 @@ namespace System.Drawing {
 			double ratioX = ((double) source.Width) / newSize.Width;
 			double ratioY = ((double) source.Height) / newSize.Height;
 			Bitmap newImage = new Bitmap(newSize.Width, newSize.Height, source.Format);
-			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, false)) {
+			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, ImageParameterAction.RemoveReference)) {
 				ParallelLoop.For(0, newBitmap.PixelCount, delegate (int i) {
 					double sourceX = (i % newSize.Width) * ratioX;
 					double sourceY = (i / newSize.Width) * ratioY;
@@ -3455,7 +3455,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to resize.</param>
 		/// <param name="newSize">The new size of the image.</param>
 		public static Bitmap ResizeLanczos(this Bitmap image, Size newSize) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return ResizeLanczos(source, newSize);
 		}
 
@@ -3468,7 +3468,7 @@ namespace System.Drawing {
 			double ratioX = ((double) source.Width) / newSize.Width;
 			double ratioY = ((double) source.Height) / newSize.Height;
 			Bitmap newImage = new Bitmap(newSize.Width, newSize.Height, source.Format);
-			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, false)) {
+			using (PixelWorker newBitmap = PixelWorker.FromImage(newImage, false, true, ImageParameterAction.RemoveReference)) {
 				ParallelLoop.For(0, newBitmap.PixelComponentCount /*newBitmap.PixelCount*/, delegate (int i) {
 					/*double sourceX = (i % newSize.Width) * ratioX;
 					double sourceY = (i / newSize.Width) * ratioY;
@@ -3834,7 +3834,7 @@ namespace System.Drawing {
 		/// <param name="image">The image whose colors to convert to grayscale.</param>
 		/// <param name="premultiplyAlpha">If true, the alpha channel is premultiplied to the color channels.</param>
 		public static Bitmap ToGrayscale(this Bitmap image, bool premultiplyAlpha = false) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false)) {
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference)) {
 				source.ConvertToGrayscale(premultiplyAlpha);
 				return source.ToBitmap();
 			}
@@ -3846,7 +3846,7 @@ namespace System.Drawing {
 		/// <param name="image">The image whose colors to convert to 24-bit.</param>
 		/// <param name="premultiplyAlpha">If true, the alpha channel is premultiplied to the color channels.</param>
 		public static Bitmap To24Bit(this Bitmap image, bool premultiplyAlpha = false) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false)) {
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference)) {
 				source.ConvertTo24Bit(premultiplyAlpha);
 				return source.ToBitmap();
 			}
@@ -3857,7 +3857,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image whose colors to convert to 32-bit.</param>
 		public static Bitmap To32Bit(this Bitmap image) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false)) {
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference)) {
 				source.ConvertTo32Bit();
 				return source.ToBitmap();
 			}
@@ -3871,7 +3871,7 @@ namespace System.Drawing {
 		public static void Invert(this Bitmap image, bool ignoreAlpha = true) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Invert(source, ignoreAlpha);
 		}
 
@@ -4089,7 +4089,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image whose color values to premultply.</param>
 		public static void PremultiplyAlpha(this Bitmap image) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				source.PremultiplyAlpha();
 		}
 
@@ -4099,7 +4099,7 @@ namespace System.Drawing {
 		/// <param name="image">The image whose color channel to extract.</param>
 		/// <param name="channel">0 for Blue, 1 for Green, 2 for Red, 3 for Alpha.</param>
 		public static PixelWorker ExtractChannel(this Bitmap image, int channel) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return source.ExtractChannel(channel);
 		}
 
@@ -4155,7 +4155,7 @@ namespace System.Drawing {
 				return MedianEnhance(source, (int) radius);
 			else if (radius <= 1f) {
 				Bitmap result = MedianEnhance(source, 1);
-				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, false))
+				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, ImageParameterAction.RemoveReference))
 					Transition(overlay, source, 1f - radius);
 				return result;
 			} else {
@@ -4174,7 +4174,7 @@ namespace System.Drawing {
 		public static Bitmap MedianFilter(this Bitmap image, float radius) {
 			if (radius <= 0f)
 				return image.FastCopy();
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return MedianFilter(source, radius);
 		}
 
@@ -4192,7 +4192,7 @@ namespace System.Drawing {
 				return MedianFilter(source, (int) radius);
 			else if (radius <= 1f) {
 				Bitmap result = MedianFilter(source, 1);
-				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, false))
+				using (PixelWorker overlay = PixelWorker.FromImage(result, false, true, ImageParameterAction.RemoveReference))
 					Transition(overlay, source, 1f - radius);
 				return result;
 			} else {
@@ -4211,7 +4211,7 @@ namespace System.Drawing {
 		public static Bitmap MedianFilter(this Bitmap image, int radius) {
 			if (radius <= 0)
 				return image.FastCopy();
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return MedianFilter(source, radius);
 		}
 
@@ -4229,7 +4229,7 @@ namespace System.Drawing {
 				size *= size;
 				unsafe
 				{
-					using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, false)) {
+					using (PixelWorker wrapper = PixelWorker.FromImage(resultant, false, true, ImageParameterAction.RemoveReference)) {
 						ParallelLoop.For(0, source.PixelComponentCount, delegate (int i) {
 							byte* neighbourPixels = stackalloc byte[size];
 							int count = 0;
@@ -4807,7 +4807,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to use for processing (will not be written to).</param>
 		/// <param name="threshold">The edge cutoff threshold (greater than 0).</param>
 		public static bool[][] SobelEdgeFilter(this Bitmap image, float threshold = 8500f) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return SobelEdgeFilter(source, threshold);
 		}
 
@@ -5142,7 +5142,7 @@ namespace System.Drawing {
 		/// <param name="image">The image whose pixels to sample for 'true' values.</param>
 		/// <param name="forFalse">The color to use for 'false' values.</param>
 		public static Bitmap ToBitmap(this bool[][] values, Bitmap image, BgraColor forFalse) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, false, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, false, ImageParameterAction.RemoveReference))
 				return ToBitmap(values, source, forFalse);
 		}
 
@@ -5255,7 +5255,7 @@ namespace System.Drawing {
 		public static void AntiAlias(this Bitmap image, float weight = 0.3f) {
 			if (weight == 0f)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				AntiAlias(source, weight);
 		}
 
@@ -5306,7 +5306,7 @@ namespace System.Drawing {
 		public static void Threshold(this Bitmap image, byte cutoff = 128, bool ignoreAlpha = true) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Threshold(source, cutoff, ignoreAlpha);
 		}
 
@@ -5363,7 +5363,7 @@ namespace System.Drawing {
 		public static void ThresholdDither(this Bitmap image, byte cutoff = 128, bool noiser = false, bool ignoreAlpha = true) {
 			if (image == null)
 				return;
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				ThresholdDither(source, cutoff, noiser, ignoreAlpha);
 		}
 
@@ -5543,7 +5543,7 @@ namespace System.Drawing {
 		/// <param name="image">The image to clamp.</param>
 		/// <param name="cutoff">The threshold to use.</param>
 		public static bool[][] GetThreshold(this Bitmap image, byte cutoff = 128) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				return GetThreshold(source, cutoff);
 		}
 
@@ -6558,7 +6558,7 @@ namespace System.Drawing {
 		/// <param name="image">The image whose colors to normalize.</param>
 		/// <param name="normalizeAlpha">Whether to include alpha in the normalization process.</param>
 		public static void Normalize(this Bitmap image, bool normalizeAlpha = false) {
-			using (PixelWorker source = PixelWorker.FromImage(image, false, true, false))
+			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
 				Normalize(source, normalizeAlpha);
 		}
 

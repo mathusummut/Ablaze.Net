@@ -170,7 +170,7 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="entry">The field/property whose value to animate.</param>
 		/// <param name="targetValue">The target resultant value of the field (must be of a supported type).
-		/// Supported types: Numeric values, Color, Color4, Point, PointF, Size, SizeF, Rectangle, RectangleF, Vector2, Vector3, Vector4, Bitmap and PixelWorker.
+		/// Supported types: Numeric values, Color, ColorF, Point, PointF, Size, SizeF, Rectangle, RectangleF, Vector2, Vector3, Vector4, Bitmap and PixelWorker.
 		/// If using Bitmap or PixelWorker: the lock use for syncing animations is the 'Tag' property and the target image must be the same size and bits as the original.</param>
 		/// <param name="gradient">The animation speed multiplier [0, 1] usually 0.4 (ie. the distance between the current value and the target value is multiplied by this value).</param>
 		/// <param name="linearSpeed">The linear speed that is there to counteract the exponential infinity that one gets when dividing the distance between the current value and the target value with the animation speed.</param>
@@ -327,7 +327,7 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="entry">The field/property whose value to animate.</param>
 		/// <param name="targetValue">The target resultant value of the field (must be of a supported type).
-		/// Supported types: Numeric values, Color, Color4, Point, PointF, Size, SizeF, Rectangle, RectangleF, Vector2, Vector3, Vector4, Bitmap and PixelWorker.
+		/// Supported types: Numeric values, Color, ColorF, Point, PointF, Size, SizeF, Rectangle, RectangleF, Vector2, Vector3, Vector4, Bitmap and PixelWorker.
 		/// If using Bitmap or PixelWorker: the lock use for syncing animations is the 'Tag' property and the target image must be the same size and bits as the original.</param>
 		/// <param name="gradient">The animation speed multiplier [0, 1] usually 0.4 (ie. the distance between the current value and the target value is multiplied by this value).</param>
 		/// <param name="linearSpeed">The linear speed that is there to counteract the exponential infinity that one gets when dividing the distance between the current value and the target value with the animation speed.</param>

@@ -60,7 +60,7 @@ namespace System.Graphics.Models.Parsers {
 				indices = line.Trim().Split(SplitChar, StringSplitOptions.RemoveEmptyEntries);
 				if (indices.Length != 0) {
 					switch (indices[0].ToLower()) {
-						case "v":
+						case "v": //define vertex
 							if (indices.Length >= 4)
 								vertices.Add(new Vector3(float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float)));
 							else if (indices.Length == 3)
@@ -70,7 +70,7 @@ namespace System.Graphics.Models.Parsers {
 							else
 								vertices.Add(new Vector3());
 							break;
-						case "vt":
+						case "vt": //define texture coordinate
 							if (indices.Length >= 3)
 								texCoords.Add(new Vector2(float.Parse(indices[1], NumberStyles.Float), 1f - float.Parse(indices[2], NumberStyles.Float)));
 							else if (indices.Length == 2)
@@ -78,7 +78,7 @@ namespace System.Graphics.Models.Parsers {
 							else
 								texCoords.Add(new Vector2(0f, 1f));
 							break;
-						case "vn":
+						case "vn": //define normal
 							if (indices.Length >= 4)
 								normals.Add(new Vector3(float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float)));
 							else if (indices.Length == 3)
@@ -88,12 +88,12 @@ namespace System.Graphics.Models.Parsers {
 							else
 								normals.Add(new Vector3());
 							break;
-						case "f":
-							if (indices.Length == 4) {
+						case "f": //define a face
+							if (indices.Length == 4) { //triangle
 								points.Add(LoadFace(indices[1].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count));
 								points.Add(LoadFace(indices[2].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count));
 								points.Add(LoadFace(indices[3].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count));
-							} else if (indices.Length == 5) {
+							} else if (indices.Length == 5) { //quadrilateral
 								temp1 = LoadFace(indices[1].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count);
 								points.Add(temp1);
 								points.Add(LoadFace(indices[2].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count));
@@ -102,7 +102,7 @@ namespace System.Graphics.Models.Parsers {
 								points.Add(temp1);
 								points.Add(temp2);
 								points.Add(LoadFace(indices[4].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count));
-							} else {
+							} else { //polygon
 								vertexIndices = new List<KeyValuePair<VertexIndex, Vertex>>(indices.Length - 1);
 								for (i = 1; i < indices.Length; i++) {
 									temp1 = LoadFace(indices[i].Split(FaceSplitChar, StringSplitOptions.None), vertices.Count);
@@ -120,9 +120,9 @@ namespace System.Graphics.Models.Parsers {
 								points.AddRange(MeshExtensions.TriangulatePolygon(vertexIndices));
 							}
 							break;
-						case "o":
-						case "g":
-						case "usemtl":
+						case "o": //define a new object
+						case "g": //define a new face
+						case "usemtl": //use a material
 							if (indices[0] == "usemtl")
 								textures.Add(FindByMaterial(loadedTextures, indices[1]));
 							else
@@ -146,15 +146,15 @@ namespace System.Graphics.Models.Parsers {
 								points = new List<VertexIndex>();
 							}
 							break;
-						case "mtllib":
+						case "mtllib": //link to material library
 							parsedTextures = TextureParser.Parse(line.Substring(line.IndexOf("mtllib", StringComparison.InvariantCultureIgnoreCase) + 7).Trim());
 							if (parsedTextures != null)
 								loadedTextures.AddRange(parsedTextures);
 							break;
-						case "new":
+						case "new": //define new model
 							models.AddRange(Parse(reader, textures, loadedTextures));
 							break;
-						case "newmtl": //mtl
+						case "newmtl": //define a new material
 							if (current == null && material != null) {
 								ITexture empty = new Texture2D() {
 									Info = material
@@ -166,16 +166,16 @@ namespace System.Graphics.Models.Parsers {
 								Name = line.Substring(line.IndexOf("newmtl", StringComparison.InvariantCultureIgnoreCase) + 7).Trim()
 							};
 							break;
-						case "ns":
+						case "ns": //define material shininess
 							if (material != null && indices.Length >= 2)
 								material.Shininess = float.Parse(indices[1], NumberStyles.Float);
 							break;
-						case "ka":
+						case "ka": //define material ambient hue
 							if (material != null) {
 								if (indices.Length == 4)
-									material.AmbientHue = new Color4(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+									material.AmbientHue = new ColorF(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 								else if (indices.Length >= 5)
-									material.AmbientHue = new Color4(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+									material.AmbientHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 								if (material.AmbientHue.R == 0f && material.AmbientHue.G == 0f && material.AmbientHue.B == 0f) {
 									material.AmbientHue.R = 0.15f;
 									material.AmbientHue.G = 0.15f;
@@ -183,14 +183,14 @@ namespace System.Graphics.Models.Parsers {
 								}
 							}
 							break;
-						case "kd":
+						case "kd": //define material hue
 							if (material != null) {
 								if (indices.Length == 4) {
 									material.MaterialHue.R = float.Parse(indices[1], NumberStyles.Float);
 									material.MaterialHue.G = float.Parse(indices[2], NumberStyles.Float);
 									material.MaterialHue.B = float.Parse(indices[3], NumberStyles.Float);
 								} else if (indices.Length >= 5)
-									material.MaterialHue = new Color4(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+									material.MaterialHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 								if (material.MaterialHue.R == 0f && material.MaterialHue.G == 0f && material.MaterialHue.B == 0f) {
 									material.MaterialHue.R = 1f;
 									material.MaterialHue.G = 1f;
@@ -198,29 +198,29 @@ namespace System.Graphics.Models.Parsers {
 								}
 							}
 							break;
-						case "ks":
+						case "ks": //define material shine hue
 							if (material != null) {
 								if (indices.Length == 4)
-									material.ShineHue = new Color4(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+									material.ShineHue = new ColorF(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 								else if (indices.Length >= 5)
-									material.ShineHue = new Color4(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
+									material.ShineHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 							}
 							break;
-						case "d":
+						case "d": //define material opacity
 							if (material != null && indices.Length >= 2) {
 								material.MaterialHue.A = float.Parse(indices[1], NumberStyles.Float);
 								if (material.MaterialHue.A == 0f)
 									material.MaterialHue.A = 1f;
 							}
 							break;
-						case "tr":
+						case "tr": //define inverted material opacity
 							if (material != null && indices.Length >= 2) {
 								material.MaterialHue.A = 1f - float.Parse(indices[1], NumberStyles.Float);
 								if (material.MaterialHue.A == 0f)
 									material.MaterialHue.A = 1f;
 							}
 							break;
-						case "map_kd":
+						case "map_kd": //define texture mapping
 							name = line.Substring(line.IndexOf("map_kd", StringComparison.InvariantCultureIgnoreCase) + 7).Trim();
 							if (textureLookup.TryGetValue(name, out current)) {
 								foreach (ITexture tex in current)

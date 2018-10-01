@@ -33,6 +33,7 @@ namespace System.Graphics.Models {
 		private IModel parent;
 		private Vector3 currentLoc, currentRot, currentScale = Vector3.One;
 		private float alpha = 1f;
+		private bool keepCopyInMemory;
 		private int vertices, triangles;
 		/// <summary>
 		/// Used to safely iterate or modify the components in this model
@@ -41,14 +42,14 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// A list of the component structures managed by the model
 		/// </summary>
-		private List<IModel> components = new List<IModel>();
+		protected List<IModel> componentList = new List<IModel>();
 
 		/// <summary>
 		/// Gets a read-only wrapper for the components in the model
 		/// </summary>
 		public ReadOnlyCollection<IModel> Components {
 			get {
-				return components.AsReadOnly();
+				return componentList.AsReadOnly();
 			}
 		}
 
@@ -91,7 +92,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public int Count {
 			get {
-				return components.Count;
+				return componentList.Count;
 			}
 		}
 
@@ -105,19 +106,19 @@ namespace System.Graphics.Models {
 #endif
 			get {
 				lock (SyncRoot)
-					return components[index];
+					return componentList[index];
 			}
 			set {
 				lock (SyncRoot) {
-					IModel val = components[index];
+					IModel val = componentList[index];
 					if (value == val)
 						return;
 					vertices -= val.Vertices;
 					triangles -= val.Triangles;
 					if (value == null)
-						components.RemoveAt(index);
+						componentList.RemoveAt(index);
 					else {
-						components[index] = value;
+						componentList[index] = value;
 						vertices += value.Vertices;
 						triangles += value.Triangles;
 					}
@@ -144,18 +145,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Whether the model components are visible (rendered) or not
+		/// Gets or sets whether the model components are visible (rendered) or not
 		/// </summary>
-		public bool IsVisible {
-			get {
-				return components.Count == 0 ? true : components[0].IsVisible;
-			}
-			set {
-				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].IsVisible = value;
-				}
-			}
+		public bool Visible {
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -163,12 +157,12 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool Cull {
 			get {
-				return components.Count == 0 ? true : components[0].Cull;
+				return componentList.Count == 0 ? true : componentList[0].Cull;
 			}
 			set {
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Cull = value;
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Cull = value;
 				}
 			}
 		}
@@ -178,12 +172,12 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public MeshMode MeshMode {
 			get {
-				return components.Count == 0 ? MeshMode.Normal : components[0].MeshMode;
+				return componentList.Count == 0 ? MeshMode.Normal : componentList[0].MeshMode;
 			}
 			set {
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].MeshMode = value;
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].MeshMode = value;
 				}
 			}
 		}
@@ -205,12 +199,12 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public ITexture[] DefaultTextures {
 			get {
-				if (components.Count == 0)
+				if (componentList.Count == 0)
 					return Texture2D.EmptyTexture;
-				List<ITexture> defaultTextures = new List<ITexture>(components.Count);
+				List<ITexture> defaultTextures = new List<ITexture>(componentList.Count);
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						defaultTextures.AddRange(components[i].DefaultTextures);
+					for (int i = 0; i < componentList.Count; i++)
+						defaultTextures.AddRange(componentList[i].DefaultTextures);
 				}
 				return defaultTextures.ToArray();
 			}
@@ -221,8 +215,8 @@ namespace System.Graphics.Models {
 				MeshComponent model;
 				IModel component;
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++) {
-						component = components[i];
+					for (int i = 0; i < componentList.Count; i++) {
+						component = componentList[i];
 						model = component as MeshComponent;
 						if (model == null)
 							component.DefaultTextures = value;
@@ -241,24 +235,24 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public ITexture[] Textures {
 			get {
-				if (components.Count == 0)
+				if (componentList.Count == 0)
 					return Texture2D.EmptyTexture;
-				List<ITexture> textures = new List<ITexture>(components.Count);
+				List<ITexture> textures = new List<ITexture>(componentList.Count);
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						textures.AddRange(components[i].Textures);
+					for (int i = 0; i < componentList.Count; i++)
+						textures.AddRange(componentList[i].Textures);
 				}
 				return textures.ToArray();
 			}
 			set {
 				if (value == null || value.Length == 0)
-					value = components.Count == 0 ? Texture2D.EmptyTexture : components[0].DefaultTextures;
+					value = componentList.Count == 0 ? Texture2D.EmptyTexture : componentList[0].DefaultTextures;
 				int index = 0;
 				MeshComponent model;
 				IModel component;
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++) {
-						component = components[i];
+					for (int i = 0; i < componentList.Count; i++) {
+						component = componentList[i];
 						model = component as MeshComponent;
 						if (model == null)
 							component.Textures = value;
@@ -277,7 +271,23 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool IsDisposed {
 			get {
-				return components.Count == 0;
+				return componentList.Count == 0;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether to keep a copy of the vertices in memory even after loading the vertices into GPU memory (allows faster and multithreaded vertex retrieval)
+		/// </summary>
+		public bool KeepCopyInMemory {
+			get {
+				return keepCopyInMemory;
+			}
+			set {
+				keepCopyInMemory = value;
+				lock (SyncRoot) {
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].KeepCopyInMemory = value;
+				}
 			}
 		}
 
@@ -286,12 +296,12 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool FlushBufferOnNextRender {
 			get {
-				return components.Count == 0 ? false : components[0].FlushBufferOnNextRender;
+				return componentList.Count == 0 ? false : componentList[0].FlushBufferOnNextRender;
 			}
 			set {
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].FlushBufferOnNextRender = value;
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].FlushBufferOnNextRender = value;
 				}
 			}
 		}
@@ -301,12 +311,12 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public BufferUsageHint Optimization {
 			get {
-				return components.Count == 0 ? BufferUsageHint.StaticDraw : components[0].Optimization;
+				return componentList.Count == 0 ? BufferUsageHint.StaticDraw : componentList[0].Optimization;
 			}
 			set {
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Optimization = value;
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Optimization = value;
 				}
 			}
 		}
@@ -316,14 +326,14 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public Vector3 Center {
 			get {
-				if (components.Count == 0)
+				if (componentList.Count == 0)
 					return Vector3.Zero;
 				Vector3 total = Vector3.Zero;
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						total += components[i].Center;
+					for (int i = 0; i < componentList.Count; i++)
+						total += componentList[i].Center;
 				}
-				return total / components.Count;
+				return total / componentList.Count;
 			}
 		}
 
@@ -340,8 +350,8 @@ namespace System.Graphics.Models {
 				Vector3 toMove = value - currentLoc;
 				currentLoc = value;
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Location += toMove;
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Location += toMove;
 				}
 				RaiseLocationChanged();
 			}
@@ -366,8 +376,8 @@ namespace System.Graphics.Models {
 				Vector3 toScale = Vector3.Divide(value, currentScale);
 				currentScale = value;
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Scale = Vector3.Multiply(components[i].Scale, toScale);
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Scale = Vector3.Multiply(componentList[i].Scale, toScale);
 				}
 				RaiseScaleChanged();
 			}
@@ -386,8 +396,8 @@ namespace System.Graphics.Models {
 				Vector3 toRotate = value - currentRot;
 				currentRot = value;
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Rotation += toRotate;
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Rotation += toRotate;
 				}
 				RaiseRotationChanged();
 			}
@@ -398,11 +408,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public float MinX {
 			get {
-				float minX = components.Count == 0 ? currentLoc.X : components[0].MinX;
+				float minX = componentList.Count == 0 ? currentLoc.X : componentList[0].MinX;
 				float temp;
 				lock (SyncRoot) {
-					for (int i = 1; i < components.Count; i++) {
-						temp = components[i].MinX;
+					for (int i = 1; i < componentList.Count; i++) {
+						temp = componentList[i].MinX;
 						if (temp < minX)
 							minX = temp;
 					}
@@ -416,11 +426,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public float MinY {
 			get {
-				float minY = components.Count == 0 ? currentLoc.Y : components[0].MinY;
+				float minY = componentList.Count == 0 ? currentLoc.Y : componentList[0].MinY;
 				float temp;
 				lock (SyncRoot) {
-					for (int i = 1; i < components.Count; i++) {
-						temp = components[i].MinY;
+					for (int i = 1; i < componentList.Count; i++) {
+						temp = componentList[i].MinY;
 						if (temp < minY)
 							minY = temp;
 					}
@@ -434,11 +444,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public float MinZ {
 			get {
-				float minZ = components.Count == 0 ? currentLoc.Z : components[0].MinZ;
+				float minZ = componentList.Count == 0 ? currentLoc.Z : componentList[0].MinZ;
 				float temp;
 				lock (SyncRoot) {
-					for (int i = 1; i < components.Count; i++) {
-						temp = components[i].MinZ;
+					for (int i = 1; i < componentList.Count; i++) {
+						temp = componentList[i].MinZ;
 						if (temp < minZ)
 							minZ = temp;
 					}
@@ -452,11 +462,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public float MaxX {
 			get {
-				float maxX = components.Count == 0 ? currentLoc.X : components[0].MaxX;
+				float maxX = componentList.Count == 0 ? currentLoc.X : componentList[0].MaxX;
 				float temp;
 				lock (SyncRoot) {
-					for (int i = 1; i < components.Count; i++) {
-						temp = components[i].MaxX;
+					for (int i = 1; i < componentList.Count; i++) {
+						temp = componentList[i].MaxX;
 						if (temp > maxX)
 							maxX = temp;
 					}
@@ -470,11 +480,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public float MaxY {
 			get {
-				float maxY = components.Count == 0 ? currentLoc.Y : components[0].MaxY;
+				float maxY = componentList.Count == 0 ? currentLoc.Y : componentList[0].MaxY;
 				float temp;
 				lock (SyncRoot) {
-					for (int i = 1; i < components.Count; i++) {
-						temp = components[i].MaxY;
+					for (int i = 1; i < componentList.Count; i++) {
+						temp = componentList[i].MaxY;
 						if (temp > maxY)
 							maxY = temp;
 					}
@@ -488,11 +498,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public float MaxZ {
 			get {
-				float maxZ = components.Count == 0 ? currentLoc.Z : components[0].MaxZ;
+				float maxZ = componentList.Count == 0 ? currentLoc.Z : componentList[0].MaxZ;
 				float temp;
 				lock (SyncRoot) {
-					for (int i = 1; i < components.Count; i++) {
-						temp = components[i].MaxZ;
+					for (int i = 1; i < componentList.Count; i++) {
+						temp = componentList[i].MaxZ;
 						if (temp > maxZ)
 							maxZ = temp;
 					}
@@ -541,13 +551,14 @@ namespace System.Graphics.Models {
 		/// Creates a new empty model structure
 		/// </summary>
 		public Model() {
+			Visible = true;
 		}
 
 		/// <summary>
 		/// Creates a new model structure from the specified components
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
-		public Model(IEnumerable<IModel> components) {
+		public Model(IEnumerable<IModel> components) : this() {
 			AddRange(components);
 		}
 
@@ -555,7 +566,7 @@ namespace System.Graphics.Models {
 		/// Creates a new model structure from the specified components
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
-		public Model(IEnumerable<Model> components) {
+		public Model(IEnumerable<Model> components) : this() {
 			AddRange(components);
 		}
 
@@ -563,7 +574,7 @@ namespace System.Graphics.Models {
 		/// Creates a new model structure from the specified components
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
-		public Model(IEnumerable<MeshComponent> components) {
+		public Model(IEnumerable<MeshComponent> components) : this() {
 			AddRange(components);
 		}
 
@@ -571,7 +582,7 @@ namespace System.Graphics.Models {
 		/// Creates a new model structure from the specified components
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
-		public Model(params IModel[] components) {
+		public Model(params IModel[] components) : this() {
 			AddRange(components);
 		}
 
@@ -579,7 +590,7 @@ namespace System.Graphics.Models {
 		/// Creates a new model structure from the specified components
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
-		public Model(params Model[] components) {
+		public Model(params Model[] components) : this() {
 			AddRange(components);
 		}
 
@@ -587,7 +598,7 @@ namespace System.Graphics.Models {
 		/// Creates a new model structure from the specified components.
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
-		public Model(params MeshComponent[] components) {
+		public Model(params MeshComponent[] components) : this() {
 			AddRange(components);
 		}
 
@@ -595,10 +606,10 @@ namespace System.Graphics.Models {
 		/// Clones the specified model structure
 		/// </summary>
 		/// <param name="model">The model structure to clone</param>
-		public Model(Model model) : this(model, model == null ? null : model.components) {
+		public Model(Model model) : this(model, model == null ? null : model.componentList) {
 		}
 
-		private Model(Model model, List<IModel> components) {
+		private Model(Model model, List<IModel> components) : this() {
 			if (model == null)
 				return;
 			AddRange(components);
@@ -620,7 +631,7 @@ namespace System.Graphics.Models {
 			if (model == null)
 				return;
 			lock (SyncRoot) {
-				if (components.Contains(model))
+				if (componentList.Contains(model))
 					return;
 				IModel parent = this;
 				do {
@@ -628,7 +639,9 @@ namespace System.Graphics.Models {
 						throw new InvalidOperationException("Cannot add parent models as children to the current model.");
 					parent = parent.Parent;
 				} while (parent != null);
-				components.Add(model);
+				if (!model.KeepCopyInMemory && KeepCopyInMemory)
+					model.KeepCopyInMemory = true;
+				componentList.Add(model);
 				model.Parent = this;
 				vertices += model.Vertices;
 				triangles += model.Triangles;
@@ -730,7 +743,7 @@ namespace System.Graphics.Models {
 			if (model == null)
 				return false;
 			lock (SyncRoot) {
-				if (components.Remove(model)) {
+				if (componentList.Remove(model)) {
 					model.Parent = null;
 					vertices -= model.Vertices;
 					triangles -= model.Triangles;
@@ -748,8 +761,8 @@ namespace System.Graphics.Models {
 #endif
 		public void Clear() {
 			lock (SyncRoot) {
-				List<IModel> oldComponents = components;
-				components = new List<IModel>();
+				List<IModel> oldComponents = componentList;
+				componentList = new List<IModel>();
 				vertices = 0;
 				triangles = 0;
 				foreach (IModel component in oldComponents)
@@ -769,18 +782,20 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
 		public virtual void Render(IModel nextModel) {
+			if (!Visible)
+				return;
 			RaiseRenderBegin();
 			if (nextModel == null) {
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Render();
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Render();
 				}
 			} else {
 				Model model = (Model) nextModel;
 				lock (SyncRoot) {
 					lock (model.SyncRoot) {
-						for (int i = 0; i < components.Count; i++)
-							components[i].Render(model.components[i]);
+						for (int i = 0; i < componentList.Count; i++)
+							componentList[i].Render(model.componentList[i]);
 					}
 				}
 			}
@@ -847,8 +862,8 @@ namespace System.Graphics.Models {
 		/// <param name="vector">The vector to translate at</param>
 		public void TranslateMesh(Vector3 vector) {
 			lock (SyncRoot) {
-				for (int i = 0; i < components.Count; i++)
-					components[i].TranslateMesh(vector);
+				for (int i = 0; i < componentList.Count; i++)
+					componentList[i].TranslateMesh(vector);
 			}
 		}
 
@@ -859,8 +874,8 @@ namespace System.Graphics.Models {
 		/// <param name="centre">The centre to enlarge against</param>
 		public void ScaleMesh(float scale, Vector3 centre) {
 			lock (SyncRoot) {
-				for (int i = 0; i < components.Count; i++)
-					components[i].ScaleMesh(scale, centre);
+				for (int i = 0; i < componentList.Count; i++)
+					componentList[i].ScaleMesh(scale, centre);
 			}
 		}
 
@@ -871,8 +886,8 @@ namespace System.Graphics.Models {
 		/// <param name="centre">The centre to enlarge against</param>
 		public void ScaleMesh(Vector3 scale, Vector3 centre) {
 			lock (SyncRoot) {
-				for (int i = 0; i < components.Count; i++)
-					components[i].ScaleMesh(scale, centre);
+				for (int i = 0; i < componentList.Count; i++)
+					componentList[i].ScaleMesh(scale, centre);
 			}
 		}
 
@@ -882,8 +897,8 @@ namespace System.Graphics.Models {
 		/// <param name="matrix">The matrix to multiply transform vertices with</param>
 		public void ApplyMatrixTransformation(ref Matrix4 matrix) {
 			lock (SyncRoot) {
-				for (int i = 0; i < components.Count; i++)
-					components[i].ApplyMatrixTransformation(ref matrix);
+				for (int i = 0; i < componentList.Count; i++)
+					componentList[i].ApplyMatrixTransformation(ref matrix);
 			}
 		}
 
@@ -905,7 +920,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public IEnumerator<IModel> GetEnumerator() {
-			return components.GetEnumerator();
+			return componentList.GetEnumerator();
 		}
 
 		/// <summary>
@@ -915,7 +930,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		IEnumerator IEnumerable.GetEnumerator() {
-			return components.GetEnumerator();
+			return componentList.GetEnumerator();
 		}
 
 		/// <summary>
@@ -933,10 +948,10 @@ namespace System.Graphics.Models {
 		/// <returns>A copy of the model.</returns>
 		public virtual IModel Clone(bool cloneComponents = true) {
 			if (cloneComponents) {
-				List<IModel> temp = new List<IModel>(components.Count);
+				List<IModel> temp = new List<IModel>(componentList.Count);
 				lock (SyncRoot) {
-					for (int i = 0; i < components.Count; i++)
-						temp.Add(components[i].Clone(true));
+					for (int i = 0; i < componentList.Count; i++)
+						temp.Add(componentList[i].Clone(true));
 				}
 				return new Model(this, temp);
 			} else
@@ -1001,10 +1016,10 @@ namespace System.Graphics.Models {
 					parent = null;
 				}
 				if (disposeChildren) {
-					for (int i = 0; i < components.Count; i++)
-						components[i].Dispose(true, false);
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].Dispose(true, false);
 				}
-				components.Clear();
+				componentList.Clear();
 				vertices = 0;
 				triangles = 0;
 			}
