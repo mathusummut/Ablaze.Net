@@ -31,18 +31,65 @@ namespace System.Graphics {
 		/// <param name="handle">The handle of the leaked resource (for debugging purposes).</param>
 		public delegate void ResourceLeakedEventHandler(object sender, LeakedWhile state, IntPtr handle);
 		private static ConcurrentDictionary<IntPtr, GraphicsContext> Contexts = new ConcurrentDictionary<IntPtr, GraphicsContext>();
+		private static ConcurrentDictionary<Thread, bool> isFinalizer = new ConcurrentDictionary<Thread, bool>();
 		private Thread currentContextThread;
 		private static bool isExiting;
+		private IntPtr handle;
 		/// <summary>
-		/// Gets or sets how to handle logged resource leaks.
+		/// Defines how to handle logged resource leaks
 		/// </summary>
 		public static ExceptionMode LeakHandling = ExceptionMode.Log;
-		private IntPtr handle;
-
 		/// <summary>
-		/// Fired when an OpenGL resource has leaked out of garbage collection.
+		/// Whether errors are ignored when the application is about to exit
+		/// </summary>
+		public static bool SuppressOnExit;
+		/// <summary>
+		/// Fired when an OpenGL resource has leaked out of garbage collection
 		/// </summary>
 		public static event ResourceLeakedEventHandler ResourceLeaked = HandleLeak;
+
+		/// <summary>
+		/// Gets whether a graphics context is currently available
+		/// </summary>
+		public static bool IsGraphicsContextAvailable {
+			get {
+				return GraphicsPlatform.Factory.GetCurrentContext() != IntPtr.Zero;
+			}
+		}
+
+		/// <summary>
+		/// Gets the GraphicsContext that is current on this thread.
+		/// </summary>
+		public static GraphicsContext CurrentContext {
+			get {
+				IntPtr handle = GraphicsPlatform.Factory.GetCurrentContext();
+				if (handle == IntPtr.Zero)
+					return null;
+				GraphicsContext context;
+				if (Contexts.TryGetValue(handle, out context))
+					return context;
+				else {
+					GraphicsContext current = GraphicsPlatform.Factory.CreateGLContext(handle);
+					Contexts.TryAdd(handle, current);
+					return current;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the current threaod is considered as a finalizer thread used for garbage collection
+		/// </summary>
+		public static bool IsFinalizer {
+			get {
+				return isFinalizer.ContainsKey(Thread.CurrentThread);
+			}
+			set {
+				if (value)
+					isFinalizer[Thread.CurrentThread] = true;
+				else
+					isFinalizer.TryRemove(Thread.CurrentThread, out value);
+			}
+		}
 
 		/// <summary>
 		/// Gets the thread in which this context is current.
@@ -68,34 +115,6 @@ namespace System.Graphics {
 					SwapInterval = 1;
 				else if (!value)
 					SwapInterval = 0;
-			}
-		}
-
-		/// <summary>
-		/// Gets whether a graphics context is currently available.
-		/// </summary>
-		public static bool IsGraphicsContextAvailable {
-			get {
-				return GraphicsPlatform.Factory.GetCurrentContext() != IntPtr.Zero;
-			}
-		}
-
-		/// <summary>
-		/// Gets the GraphicsContext that is current on this thread.
-		/// </summary>
-		public static GraphicsContext CurrentContext {
-			get {
-				IntPtr handle = GraphicsPlatform.Factory.GetCurrentContext();
-				if (handle == IntPtr.Zero)
-					return null;
-				GraphicsContext context;
-				if (Contexts.TryGetValue(handle, out context))
-					return context;
-				else {
-					GraphicsContext current = GraphicsPlatform.Factory.CreateGLContext(handle);
-					Contexts.TryAdd(handle, current);
-					return current;
-				}
 			}
 		}
 
@@ -250,7 +269,7 @@ namespace System.Graphics {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		private static void HandleLeak(object sender, LeakedWhile state, IntPtr handle) {
-			if (isExiting || LeakHandling == ExceptionMode.Ignore || AppDomain.CurrentDomain.IsFinalizingForUnload() || Environment.HasShutdownStarted)
+			if (LeakHandling == ExceptionMode.Ignore || (SuppressOnExit && (isExiting || AppDomain.CurrentDomain.IsFinalizingForUnload() || Environment.HasShutdownStarted)))
 				return;
 			string st8 = state.ToString().ToLower();
 			if (LeakHandling == ExceptionMode.Throw) {
@@ -274,7 +293,12 @@ namespace System.Graphics {
 		/// Disposes of the resources used by the GraphicsContext.
 		/// </summary>
 		~GraphicsContext() {
-			Dispose();
+			IsFinalizer = true;
+			try {
+				Dispose();
+			} finally {
+				IsFinalizer = false;
+			}
 		}
 
 		/// <summary>

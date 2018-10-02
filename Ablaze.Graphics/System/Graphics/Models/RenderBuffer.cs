@@ -113,7 +113,12 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and its resources.
 		/// </summary>
 		~RenderBuffer() {
-			Dispose();
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose();
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>
@@ -122,7 +127,7 @@ namespace System.Graphics.Models {
 		public void Dispose() {
 			if (name == 0)
 				return;
-			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+			else if (GraphicsContext.IsFinalizer) {
 				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
 				name = 0;
 				return;

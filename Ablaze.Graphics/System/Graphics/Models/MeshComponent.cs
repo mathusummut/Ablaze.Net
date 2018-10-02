@@ -1225,7 +1225,12 @@ namespace System.Graphics.Models {
 		/// Disposes of the OpenGL resources used by the model.
 		/// </summary>
 		~MeshComponent() {
-			Dispose();
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose();
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>

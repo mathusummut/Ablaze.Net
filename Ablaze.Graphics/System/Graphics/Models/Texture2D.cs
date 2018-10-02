@@ -442,7 +442,12 @@ namespace System.Graphics.Models {
 		/// Disposes of the texture and the resources consumed by it
 		/// </summary>
 		~Texture2D() {
-			Dispose(true);
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose(true);
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>
@@ -468,7 +473,7 @@ namespace System.Graphics.Models {
 					image = null;
 				}
 				if (name != 0) {
-					if (Threading.Thread.CurrentThread.IsThreadPoolThread)
+					if (GraphicsContext.IsFinalizer)
 						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
 					else {
 						try {

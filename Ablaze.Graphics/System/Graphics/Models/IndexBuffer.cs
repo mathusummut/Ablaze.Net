@@ -261,7 +261,12 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		~IndexBuffer() {
-			Dispose(true);
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose(true);
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>
@@ -278,7 +283,7 @@ namespace System.Graphics.Models {
 		public void Dispose(bool forceDispose) {
 			if (name == 0 || count == 0)
 				return;
-			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+			else if (GraphicsContext.IsFinalizer) {
 				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
 				name = 0;
 				count = 0;

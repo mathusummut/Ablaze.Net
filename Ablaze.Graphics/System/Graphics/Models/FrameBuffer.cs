@@ -3,13 +3,13 @@ using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Manages an OpenGl framebuffer object.
+	/// Manages an OpenGl framebuffer object
 	/// </summary>
 	public sealed class FrameBuffer : IEquatable<FrameBuffer>, IDisposable {
 		private int name;
 
 		/// <summary>
-		/// Gets the native OpenGL name of the buffer.
+		/// Gets the native OpenGL name of the buffer
 		/// </summary>
 		public int Name {
 #if NET45
@@ -21,7 +21,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Checks whether the buffer is disposed.
+		/// Checks whether the buffer is disposed
 		/// </summary>
 		public bool IsDisposed {
 #if NET45
@@ -33,14 +33,14 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Initializes a new GL frame buffer.
+		/// Initializes a new GL frame buffer
 		/// </summary>
 		public FrameBuffer() {
 		}
 
 		/// <summary>
-		/// Binds the framebuffer object.
-		/// All fragment output that follows will be captured by it. 
+		/// Binds the framebuffer object
+		/// All fragment output that follows will be captured by it
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -59,7 +59,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Removes any current framebuffer object.
+		/// Removes any current framebuffer object
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -87,33 +87,33 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Calculates the hash code for this FrameBuffer.
+		/// Calculates the hash code for this FrameBuffer
 		/// </summary>
-		/// <returns>A System.Int32 containing the hashcode of this FrameBuffer.</returns>
+		/// <returns>A System.Int32 containing the hashcode of this FrameBuffer</returns>
 		public override int GetHashCode() {
 			return name;
 		}
 
 		/// <summary>
-		/// Creates a System.String that describes this FrameBuffer.
+		/// Creates a System.String that describes this FrameBuffer
 		/// </summary>
-		/// <returns>A System.String that describes this FrameBuffer.</returns>
+		/// <returns>A System.String that describes this FrameBuffer</returns>
 		public override string ToString() {
 			return "Frame buffer (handle " + name + ")";
 		}
 
 		/// <summary>
-		/// Compares whether this FrameBuffer is equal to the specified object.
+		/// Compares whether this FrameBuffer is equal to the specified object
 		/// </summary>
-		/// <param name="obj">An object to compare to.</param>
+		/// <param name="obj">An object to compare to</param>
 		public override bool Equals(object obj) {
 			return Equals(obj as FrameBuffer);
 		}
 
 		/// <summary>
-		/// Compares whether this FrameBuffer is equal to the specified object.
+		/// Compares whether this FrameBuffer is equal to the specified object
 		/// </summary>
-		/// <param name="other">The object to compare to.</param>
+		/// <param name="other">The object to compare to</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -122,19 +122,24 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the frame buffer.
+		/// Disposes of the frame buffer
 		/// </summary>
 		~FrameBuffer() {
-			Dispose();
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose();
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>
-		/// Disposes of the frame buffer.
+		/// Disposes of the frame buffer
 		/// </summary>
 		public void Dispose() {
 			if (name == 0)
 				return;
-			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+			else if (GraphicsContext.IsFinalizer) {
 				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
 				name = 0;
 				return;

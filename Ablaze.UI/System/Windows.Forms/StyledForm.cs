@@ -1745,13 +1745,25 @@ namespace System.Windows.Forms {
 			NativeApi.DwmEnableBlurBehindWindow(handle, ref style);
 		}
 
+		/// <summary>
+		/// Called when the ShowInTaskbar property has changed
+		/// </summary>
+		/// <param name="showInTaskbar">The new value of the property</param>
+		protected virtual void OnShowInTaskbarChanged(bool showInTaskbar) {
+		}
+
 		private object SetShowInTaskbarCore(object newValue) {
-			bool wasVisible = Visible;
-			if (wasVisible)
-				SetVisibleNoAnimation(false);
-			base.ShowInTaskbar = (bool) newValue;
-			if (wasVisible)
-				SetVisibleNoAnimation(true);
+			bool newValueBool = (bool) newValue;
+			if (newValueBool) {
+				bool wasVisible = Visible;
+				if (wasVisible)
+					SetVisibleNoAnimation(false);
+				base.ShowInTaskbar = true;
+				if (wasVisible)
+					SetVisibleNoAnimation(true);
+			} else
+				base.ShowInTaskbar = false;
+			OnShowInTaskbarChanged(newValueBool);
 			return null;
 		}
 

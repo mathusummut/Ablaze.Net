@@ -21,6 +21,7 @@ namespace Ablaze.ModelViewer {
 	/// The main window of the model viewer.
 	/// </summary>
 	public class ModelViewer : GraphicsForm {
+		private static ModelViewer Viewer; //for debugging purposes
 		private static string Parameters;
 		private UIAnimationHandler processUpdates;
 		private WaitCallback renderUpdates;
@@ -641,7 +642,8 @@ namespace Ablaze.ModelViewer {
 #endif
 			if (args.Length != 0)
 				Parameters = args[0].Trim();
-			MessageLoop.Run(new ModelViewer());
+			Viewer = new ModelViewer();
+			MessageLoop.Run(Viewer);
 		}
 
 		/// <summary>

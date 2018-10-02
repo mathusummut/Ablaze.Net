@@ -848,7 +848,12 @@ namespace System.Graphics.Models {
 		/// Disposes of the shader program.
 		/// </summary>
 		~Shader() {
-			Dispose();
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose();
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>
@@ -857,13 +862,12 @@ namespace System.Graphics.Models {
 		public void Dispose() {
 			if (name == 0)
 				return;
-			else if (boundShader.Value == this)
-				boundShader.Value = Empty;
-			if (Thread.CurrentThread.IsThreadPoolThread) {
+			else if (GraphicsContext.IsFinalizer) {
 				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
 				name = 0;
 				return;
-			}
+			} else if (boundShader.Value == this)
+				boundShader.Value = Empty;
 			try {
 				GL.DeleteProgram(name);
 			} catch {

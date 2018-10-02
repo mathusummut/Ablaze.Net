@@ -1058,7 +1058,12 @@ namespace System.Graphics.Models {
 		/// Disposes of the resources used model
 		/// </summary>
 		~Model() {
-			Dispose(false, true);
+			GraphicsContext.IsFinalizer = true;
+			try {
+				Dispose(false, true);
+			} finally {
+				GraphicsContext.IsFinalizer = false;
+			}
 		}
 
 		/// <summary>
@@ -1082,7 +1087,7 @@ namespace System.Graphics.Models {
 		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
 		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically</param>
 		public void Dispose(bool disposeChildren, bool removeFromParent) {
-			OnDisposing(Threading.Thread.CurrentThread.IsThreadPoolThread);
+			OnDisposing(GraphicsContext.IsFinalizer);
 			lock (SyncRoot) {
 				if (removeFromParent) {
 					Model tentativeParent = parent as Model;
