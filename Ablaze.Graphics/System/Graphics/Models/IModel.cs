@@ -105,7 +105,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the parent model (can be null).
+		/// Gets or sets the parent model (can be null)
 		/// </summary>
 		IModel Parent {
 			get;
@@ -251,18 +251,6 @@ namespace System.Graphics.Models {
 		Vector3 Bounds {
 			get;
 		}
-
-		/// <summary>
-		/// Adds the specified component to the model.
-		/// </summary>
-		/// <param name="model">The component to add.</param>
-		void Add(IModel model);
-
-		/// <summary>
-		/// Removes the specified component from the model.
-		/// </summary>
-		/// <param name="model">The components to remove.</param>
-		bool Remove(IModel model);
 
 		/// <summary>
 		/// Translate the model by the specified vector.

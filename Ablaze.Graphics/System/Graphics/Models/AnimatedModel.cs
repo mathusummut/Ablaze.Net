@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
@@ -56,7 +57,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the animation frame interval
+		/// Gets or sets the animation frame interval in milliseconds
 		/// </summary>
 		public float FrameInterval {
 			get {
@@ -89,10 +90,10 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Constructs a new animated model
 		/// </summary>
-		/// <param name="frameInterval">The animation interval between every frame</param>
+		/// <param name="frameInterval">The animation frame interval in milliseconds</param>
 		/// <param name="loop">Whether the animation is looped continuously</param>
 		/// <param name="linearInterpolation">Whether linear interpolation between frames is performed for smoother animations</param>
-		public AnimatedModel(float frameInterval = 0.04167f, bool loop = true, bool linearInterpolation = true) {
+		public AnimatedModel(float frameInterval = 41.67f, bool loop = true, bool linearInterpolation = true) {
 			FrameInterval = frameInterval;
 			Loop = loop;
 			LinearInterpolation = linearInterpolation;
@@ -111,6 +112,7 @@ namespace System.Graphics.Models {
 			IModel thisFrame = null;
 			float interpolate = 0f;
 			if (restartOnNextRender) {
+				restartOnNextRender = false;
 				GoToFrame(0f);
 				lock (SyncRoot) {
 					if (Count != 0)
@@ -200,12 +202,19 @@ namespace System.Graphics.Models {
 				lock (model.SyncRoot) {
 					if (model.Count == 0)
 						return;
-					else if (Count == 0) {
-						for (int i = 0; i < model.Count; i++)
-							componentList.Add(model.componentList[i]);
-					} else {
-						for (int i = 0; i < Count; i++)
-							componentList[i] = new Model(componentList[i], model.componentList[i]);
+					else if (Count == 0)
+						AddRange((IEnumerable<IModel>) model);
+					else {
+						IModel current;
+						Model modelList;
+						for (int i = 0; i < Count; i++) {
+							current = GetComponent(i);
+							modelList = current as Model;
+							if (modelList == null)
+								Replace(i, new Model(current, model.GetComponent(i)));
+							else
+								modelList.Add(model.GetComponent(i));
+						}
 					}
 				}
 			}

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Concurrent;
+using System.Graphics.OGL;
 using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
-	using OGL;
-
 	/// <summary>
 	/// A managed wrapper for an index buffer
 	/// </summary>
@@ -262,11 +261,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		~IndexBuffer() {
-			if (name == 0 || count == 0)
-				return;
-			GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-			name = 0;
-			count = 0;
+			Dispose(true);
 		}
 
 		/// <summary>
@@ -283,6 +278,12 @@ namespace System.Graphics.Models {
 		public void Dispose(bool forceDispose) {
 			if (name == 0 || count == 0)
 				return;
+			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+				name = 0;
+				count = 0;
+				return;
+			}
 			if (references > 0)
 				references--;
 			if (references <= 0 || forceDispose) {

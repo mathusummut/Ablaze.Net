@@ -27,7 +27,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using IEnumerable = System.Collections.IEnumerable;
 
 namespace System.Linq {
 	/// <summary>

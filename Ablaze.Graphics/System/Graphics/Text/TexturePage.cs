@@ -51,7 +51,7 @@ namespace System.Graphics.Text {
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
 
 				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0,
-					System.Graphics.OGL.PixelFormat.Bgra, PixelType.UnsignedByte, dataSource.Scan0);
+					System.Graphics.OGL.TargetPixelFormat.Bgra, PixelType.UnsignedByte, dataSource.Scan0);
 
 				GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 			});

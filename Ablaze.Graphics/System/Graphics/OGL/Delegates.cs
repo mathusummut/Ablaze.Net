@@ -1078,22 +1078,22 @@ namespace System.Graphics.OGL {
 			public static ColorPointervINTEL glColorPointervINTEL;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ColorSubTable(System.Graphics.OGL.ColorTableTarget target, Int32 start, Int32 count, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr data);
+			public delegate void ColorSubTable(System.Graphics.OGL.ColorTableTarget target, Int32 start, Int32 count, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr data);
 			[CLSCompliant(false)]
 			public static ColorSubTable glColorSubTable;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ColorSubTableEXT(System.Graphics.OGL.ColorTableTarget target, Int32 start, Int32 count, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr data);
+			public delegate void ColorSubTableEXT(System.Graphics.OGL.ColorTableTarget target, Int32 start, Int32 count, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr data);
 			[CLSCompliant(false)]
 			public static ColorSubTableEXT glColorSubTableEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ColorTable(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr table);
+			public delegate void ColorTable(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr table);
 			[CLSCompliant(false)]
 			public static ColorTable glColorTable;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ColorTableEXT(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.PixelInternalFormat internalFormat, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr table);
+			public delegate void ColorTableEXT(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.PixelInternalFormat internalFormat, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr table);
 			[CLSCompliant(false)]
 			public static ColorTableEXT glColorTableEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -1118,7 +1118,7 @@ namespace System.Graphics.OGL {
 			public unsafe static ColorTableParameterivSGI glColorTableParameterivSGI;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ColorTableSGI(System.Graphics.OGL.SgiColorTable target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr table);
+			public delegate void ColorTableSGI(System.Graphics.OGL.SgiColorTable target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr table);
 			[CLSCompliant(false)]
 			public static ColorTableSGI glColorTableSGI;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -1188,17 +1188,17 @@ namespace System.Graphics.OGL {
 			public static CompressedMultiTexImage3DEXT glCompressedMultiTexImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedMultiTexSubImage1DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr bits);
+			public delegate void CompressedMultiTexSubImage1DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr bits);
 			[CLSCompliant(false)]
 			public static CompressedMultiTexSubImage1DEXT glCompressedMultiTexSubImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedMultiTexSubImage2DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr bits);
+			public delegate void CompressedMultiTexSubImage2DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr bits);
 			[CLSCompliant(false)]
 			public static CompressedMultiTexSubImage2DEXT glCompressedMultiTexSubImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedMultiTexSubImage3DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr bits);
+			public delegate void CompressedMultiTexSubImage3DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr bits);
 			[CLSCompliant(false)]
 			public static CompressedMultiTexSubImage3DEXT glCompressedMultiTexSubImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -1233,32 +1233,32 @@ namespace System.Graphics.OGL {
 			public static CompressedTexImage3DARB glCompressedTexImage3DARB;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTexSubImage1D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr data);
+			public delegate void CompressedTexSubImage1D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr data);
 			[CLSCompliant(false)]
 			public static CompressedTexSubImage1D glCompressedTexSubImage1D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTexSubImage1DARB(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr data);
+			public delegate void CompressedTexSubImage1DARB(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr data);
 			[CLSCompliant(false)]
 			public static CompressedTexSubImage1DARB glCompressedTexSubImage1DARB;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTexSubImage2D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr data);
+			public delegate void CompressedTexSubImage2D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr data);
 			[CLSCompliant(false)]
 			public static CompressedTexSubImage2D glCompressedTexSubImage2D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTexSubImage2DARB(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr data);
+			public delegate void CompressedTexSubImage2DARB(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr data);
 			[CLSCompliant(false)]
 			public static CompressedTexSubImage2DARB glCompressedTexSubImage2DARB;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTexSubImage3D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr data);
+			public delegate void CompressedTexSubImage3D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr data);
 			[CLSCompliant(false)]
 			public static CompressedTexSubImage3D glCompressedTexSubImage3D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTexSubImage3DARB(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr data);
+			public delegate void CompressedTexSubImage3DARB(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr data);
 			[CLSCompliant(false)]
 			public static CompressedTexSubImage3DARB glCompressedTexSubImage3DARB;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -1278,37 +1278,37 @@ namespace System.Graphics.OGL {
 			public static CompressedTextureImage3DEXT glCompressedTextureImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTextureSubImage1DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr bits);
+			public delegate void CompressedTextureSubImage1DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr bits);
 			[CLSCompliant(false)]
 			public static CompressedTextureSubImage1DEXT glCompressedTextureSubImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTextureSubImage2DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr bits);
+			public delegate void CompressedTextureSubImage2DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr bits);
 			[CLSCompliant(false)]
 			public static CompressedTextureSubImage2DEXT glCompressedTextureSubImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void CompressedTextureSubImage3DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, Int32 imageSize, IntPtr bits);
+			public delegate void CompressedTextureSubImage3DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, Int32 imageSize, IntPtr bits);
 			[CLSCompliant(false)]
 			public static CompressedTextureSubImage3DEXT glCompressedTextureSubImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ConvolutionFilter1D(System.Graphics.OGL.ConvolutionTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
+			public delegate void ConvolutionFilter1D(System.Graphics.OGL.ConvolutionTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
 			[CLSCompliant(false)]
 			public static ConvolutionFilter1D glConvolutionFilter1D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ConvolutionFilter1DEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
+			public delegate void ConvolutionFilter1DEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
 			[CLSCompliant(false)]
 			public static ConvolutionFilter1DEXT glConvolutionFilter1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ConvolutionFilter2D(System.Graphics.OGL.ConvolutionTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
+			public delegate void ConvolutionFilter2D(System.Graphics.OGL.ConvolutionTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
 			[CLSCompliant(false)]
 			public static ConvolutionFilter2D glConvolutionFilter2D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ConvolutionFilter2DEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
+			public delegate void ConvolutionFilter2DEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr image);
 			[CLSCompliant(false)]
 			public static ConvolutionFilter2DEXT glConvolutionFilter2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -1973,7 +1973,7 @@ namespace System.Graphics.OGL {
 			public static DrawMeshArraysSUN glDrawMeshArraysSUN;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void DrawPixels(Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void DrawPixels(Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static DrawPixels glDrawPixels;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -2928,12 +2928,12 @@ namespace System.Graphics.OGL {
 			public unsafe static GetClipPlane glGetClipPlane;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetColorTable(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr table);
+			public delegate void GetColorTable(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr table);
 			[CLSCompliant(false)]
 			public static GetColorTable glGetColorTable;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetColorTableEXT(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr data);
+			public delegate void GetColorTableEXT(System.Graphics.OGL.ColorTableTarget target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr data);
 			[CLSCompliant(false)]
 			public static GetColorTableEXT glGetColorTableEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -2968,7 +2968,7 @@ namespace System.Graphics.OGL {
 			public unsafe static GetColorTableParameterivSGI glGetColorTableParameterivSGI;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetColorTableSGI(System.Graphics.OGL.SgiColorTable target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr table);
+			public delegate void GetColorTableSGI(System.Graphics.OGL.SgiColorTable target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr table);
 			[CLSCompliant(false)]
 			public static GetColorTableSGI glGetColorTableSGI;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -3018,12 +3018,12 @@ namespace System.Graphics.OGL {
 			public static GetCompressedTextureImageEXT glGetCompressedTextureImageEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetConvolutionFilter(System.Graphics.OGL.ConvolutionTarget target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr image);
+			public delegate void GetConvolutionFilter(System.Graphics.OGL.ConvolutionTarget target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr image);
 			[CLSCompliant(false)]
 			public static GetConvolutionFilter glGetConvolutionFilter;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetConvolutionFilterEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr image);
+			public delegate void GetConvolutionFilterEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr image);
 			[CLSCompliant(false)]
 			public static GetConvolutionFilterEXT glGetConvolutionFilterEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -3178,12 +3178,12 @@ namespace System.Graphics.OGL {
 			public static GetHandleARB glGetHandleARB;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetHistogram(System.Graphics.OGL.HistogramTarget target, bool reset, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
+			public delegate void GetHistogram(System.Graphics.OGL.HistogramTarget target, bool reset, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
 			[CLSCompliant(false)]
 			public static GetHistogram glGetHistogram;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetHistogramEXT(System.Graphics.OGL.ExtHistogram target, bool reset, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
+			public delegate void GetHistogramEXT(System.Graphics.OGL.ExtHistogram target, bool reset, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
 			[CLSCompliant(false)]
 			public static GetHistogramEXT glGetHistogramEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -3363,12 +3363,12 @@ namespace System.Graphics.OGL {
 			public unsafe static GetMaterialiv glGetMaterialiv;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetMinmax(System.Graphics.OGL.MinmaxTarget target, bool reset, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
+			public delegate void GetMinmax(System.Graphics.OGL.MinmaxTarget target, bool reset, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
 			[CLSCompliant(false)]
 			public static GetMinmax glGetMinmax;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetMinmaxEXT(System.Graphics.OGL.ExtHistogram target, bool reset, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
+			public delegate void GetMinmaxEXT(System.Graphics.OGL.ExtHistogram target, bool reset, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr values);
 			[CLSCompliant(false)]
 			public static GetMinmaxEXT glGetMinmaxEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -3428,7 +3428,7 @@ namespace System.Graphics.OGL {
 			public unsafe static GetMultiTexGenivEXT glGetMultiTexGenivEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetMultiTexImageEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
+			public delegate void GetMultiTexImageEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
 			[CLSCompliant(false)]
 			public static GetMultiTexImageEXT glGetMultiTexImageEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -3933,12 +3933,12 @@ namespace System.Graphics.OGL {
 			public unsafe static GetSamplerParameteriv glGetSamplerParameteriv;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetSeparableFilter(System.Graphics.OGL.SeparableTarget target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr row, [OutAttribute] IntPtr column, [OutAttribute] IntPtr span);
+			public delegate void GetSeparableFilter(System.Graphics.OGL.SeparableTarget target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr row, [OutAttribute] IntPtr column, [OutAttribute] IntPtr span);
 			[CLSCompliant(false)]
 			public static GetSeparableFilter glGetSeparableFilter;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetSeparableFilterEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr row, [OutAttribute] IntPtr column, [OutAttribute] IntPtr span);
+			public delegate void GetSeparableFilterEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr row, [OutAttribute] IntPtr column, [OutAttribute] IntPtr span);
 			[CLSCompliant(false)]
 			public static GetSeparableFilterEXT glGetSeparableFilterEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -4038,7 +4038,7 @@ namespace System.Graphics.OGL {
 			public unsafe static GetTexGeniv glGetTexGeniv;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetTexImage(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
+			public delegate void GetTexImage(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
 			[CLSCompliant(false)]
 			public static GetTexImage glGetTexImage;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -4088,7 +4088,7 @@ namespace System.Graphics.OGL {
 			public static GetTexParameterPointervAPPLE glGetTexParameterPointervAPPLE;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void GetTextureImageEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
+			public delegate void GetTextureImageEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
 			[CLSCompliant(false)]
 			public static GetTextureImageEXT glGetTextureImageEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -5738,17 +5738,17 @@ namespace System.Graphics.OGL {
 			public unsafe static MultiTexGenivEXT glMultiTexGenivEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void MultiTexImage1DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void MultiTexImage1DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static MultiTexImage1DEXT glMultiTexImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void MultiTexImage2DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void MultiTexImage2DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static MultiTexImage2DEXT glMultiTexImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void MultiTexImage3DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void MultiTexImage3DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static MultiTexImage3DEXT glMultiTexImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -5788,17 +5788,17 @@ namespace System.Graphics.OGL {
 			public static MultiTexRenderbufferEXT glMultiTexRenderbufferEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void MultiTexSubImage1DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void MultiTexSubImage1DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static MultiTexSubImage1DEXT glMultiTexSubImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void MultiTexSubImage2DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void MultiTexSubImage2DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static MultiTexSubImage2DEXT glMultiTexSubImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void MultiTexSubImage3DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void MultiTexSubImage3DEXT(System.Graphics.OGL.TextureUnit texunit, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static MultiTexSubImage3DEXT glMultiTexSubImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -7398,7 +7398,7 @@ namespace System.Graphics.OGL {
 			public static ReadnPixelsARB glReadnPixelsARB;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void ReadPixels(Int32 x, Int32 y, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
+			public delegate void ReadPixels(Int32 x, Int32 y, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, [OutAttribute] IntPtr pixels);
 			[CLSCompliant(false)]
 			public static ReadPixels glReadPixels;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -7963,12 +7963,12 @@ namespace System.Graphics.OGL {
 			public unsafe static SelectPerfMonitorCountersAMD glSelectPerfMonitorCountersAMD;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void SeparableFilter2D(System.Graphics.OGL.SeparableTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr row, IntPtr column);
+			public delegate void SeparableFilter2D(System.Graphics.OGL.SeparableTarget target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr row, IntPtr column);
 			[CLSCompliant(false)]
 			public static SeparableFilter2D glSeparableFilter2D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void SeparableFilter2DEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr row, IntPtr column);
+			public delegate void SeparableFilter2DEXT(System.Graphics.OGL.ExtConvolution target, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr row, IntPtr column);
 			[CLSCompliant(false)]
 			public static SeparableFilter2DEXT glSeparableFilter2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8633,12 +8633,12 @@ namespace System.Graphics.OGL {
 			public unsafe static TexGeniv glTexGeniv;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexImage1D(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexImage1D(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexImage1D glTexImage1D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexImage2D(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexImage2D(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexImage2D glTexImage2D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8653,12 +8653,12 @@ namespace System.Graphics.OGL {
 			public static TexImage2DMultisampleCoverageNV glTexImage2DMultisampleCoverageNV;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexImage3D(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexImage3D(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexImage3D glTexImage3D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexImage3DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexImage3DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexImage3DEXT glTexImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8673,7 +8673,7 @@ namespace System.Graphics.OGL {
 			public static TexImage3DMultisampleCoverageNV glTexImage3DMultisampleCoverageNV;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexImage4DSGIS(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 depth, Int32 size4d, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexImage4DSGIS(System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.PixelInternalFormat internalformat, Int32 width, Int32 height, Int32 depth, Int32 size4d, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexImage4DSGIS glTexImage4DSGIS;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8723,37 +8723,37 @@ namespace System.Graphics.OGL {
 			public static TexRenderbufferNV glTexRenderbufferNV;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage1D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage1D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage1D glTexSubImage1D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage1DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage1DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage1DEXT glTexSubImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage2D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage2D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage2D glTexSubImage2D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage2DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage2DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage2DEXT glTexSubImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage3D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage3D(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage3D glTexSubImage3D;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage3DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage3DEXT(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage3DEXT glTexSubImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TexSubImage4DSGIS(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 woffset, Int32 width, Int32 height, Int32 depth, Int32 size4d, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TexSubImage4DSGIS(System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 woffset, Int32 width, Int32 height, Int32 depth, Int32 size4d, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TexSubImage4DSGIS glTexSubImage4DSGIS;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8773,12 +8773,12 @@ namespace System.Graphics.OGL {
 			public static TextureColorMaskSGIS glTextureColorMaskSGIS;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TextureImage1DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TextureImage1DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TextureImage1DEXT glTextureImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TextureImage2DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TextureImage2DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TextureImage2DEXT glTextureImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8793,7 +8793,7 @@ namespace System.Graphics.OGL {
 			public static TextureImage2DMultisampleNV glTextureImage2DMultisampleNV;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TextureImage3DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TextureImage3DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, System.Graphics.OGL.ExtDirectStateAccess internalformat, Int32 width, Int32 height, Int32 depth, Int32 border, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TextureImage3DEXT glTextureImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
@@ -8863,17 +8863,17 @@ namespace System.Graphics.OGL {
 			public static TextureRenderbufferEXT glTextureRenderbufferEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TextureSubImage1DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TextureSubImage1DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 width, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TextureSubImage1DEXT glTextureSubImage1DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TextureSubImage2DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TextureSubImage2DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 width, Int32 height, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TextureSubImage2DEXT glTextureSubImage2DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]
 			[CLSCompliant(false)]
-			public delegate void TextureSubImage3DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.PixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
+			public delegate void TextureSubImage3DEXT(UInt32 texture, System.Graphics.OGL.TextureTarget target, Int32 level, Int32 xoffset, Int32 yoffset, Int32 zoffset, Int32 width, Int32 height, Int32 depth, System.Graphics.OGL.TargetPixelFormat format, System.Graphics.OGL.PixelType type, IntPtr pixels);
 			[CLSCompliant(false)]
 			public static TextureSubImage3DEXT glTextureSubImage3DEXT;
 			[System.Security.SuppressUnmanagedCodeSecurity()]

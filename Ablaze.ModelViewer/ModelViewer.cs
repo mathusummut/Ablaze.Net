@@ -172,6 +172,7 @@ namespace Ablaze.ModelViewer {
 		protected override void OnFadeInCompleted() {
 			base.OnFadeInCompleted();
 			UIAnimator.SharedAnimator.Interval = 6;
+			UpdateTimerRunning = true;
 		}
 
 		private void ContextMenu_PaintBackground(object sender, PaintEventArgs e) {
@@ -223,7 +224,7 @@ namespace Ablaze.ModelViewer {
 				}
 				RenderUpdates(null);
 			} else
-				UpdateTimerRunning = false;
+				InvalidateGL();
 		}
 
 		private void ChangeTextureMenuItem_Click(object sender, EventArgs e) {
@@ -486,19 +487,15 @@ namespace Ablaze.ModelViewer {
 			switch (e.KeyCode) {
 				case Keys.Left:
 					isLeftArrowDown = true;
-					UpdateTimerRunning = true;
 					break;
 				case Keys.Right:
 					isRightArrowDown = true;
-					UpdateTimerRunning = true;
 					break;
 				case Keys.Up:
 					isUpArrowDown = true;
-					UpdateTimerRunning = true;
 					break;
 				case Keys.Down:
 					isDownArrowDown = true;
-					UpdateTimerRunning = true;
 					break;
 				case Keys.T:
 					ShowInTaskbar = !ShowInTaskbar;

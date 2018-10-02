@@ -109,10 +109,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the vertex array buffer.
 		/// </summary>
 		~VertexArrayBuffer() {
-			if (name == 0)
-				return;
-			GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-			name = 0;
+			Dispose(true);
 		}
 
 		/// <summary>
@@ -129,7 +126,11 @@ namespace System.Graphics.Models {
 		public void Dispose(bool forceDispose) {
 			if (name == 0)
 				return;
-			else if (references > 0)
+			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+				name = 0;
+				return;
+			} else if (references > 0)
 				references--;
 			if (references <= 0 || forceDispose) {
 				try {

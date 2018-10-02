@@ -30,6 +30,9 @@ namespace System.Graphics.Models {
 		/// Called when the rotation of the model has changed
 		/// </summary>
 		public event Action RotationChanged;
+		/// <summary>
+		/// The parent of the model
+		/// </summary>
 		private IModel parent;
 		private Vector3 currentLoc, currentRot, currentScale = Vector3.One;
 		private float alpha = 1f;
@@ -42,7 +45,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// A list of the component structures managed by the model
 		/// </summary>
-		protected List<IModel> componentList = new List<IModel>();
+		private List<IModel> componentList = new List<IModel>();
 
 		/// <summary>
 		/// Gets a read-only wrapper for the components in the model
@@ -54,19 +57,13 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the parent model (can be null)
+		/// Gets or sets the parent model (can be null, not guaranteed to be accurate)
 		/// </summary>
 		public IModel Parent {
 			get {
 				return parent;
 			}
 			set {
-				if (value == parent)
-					return;
-				if (parent != null)
-					parent.Remove(this);
-				if (value != null)
-					value.Add(this);
 				parent = value;
 			}
 		}
@@ -621,31 +618,94 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified component to the model
+		/// Gets the component at the specified index without locking
 		/// </summary>
+		/// <param name="index">The index of the model to return</param>
+		protected IModel GetComponent(int index) {
+			return componentList[index];
+		}
+
+		/// <summary>
+		/// Gets the index of the specified model, or -1 if not found
+		/// </summary>
+		/// <param name="model">The index of the model to replace</param>
+		public int IndexOf(IModel model) {
+			if (model == null)
+				return -1;
+			lock (SyncRoot)
+				return componentList.IndexOf(model);
+		}
+
+		/// <summary>
+		/// Replaces the specified model
+		/// </summary>
+		/// <param name="oldModel">The index of the model to replace</param>
+		/// <param name="newModel">The model to replace with</param>
+		public void Replace(IModel oldModel, IModel newModel) {
+			if (oldModel == null || newModel == null)
+				return;
+			lock (SyncRoot)
+				Replace(componentList.IndexOf(oldModel), newModel);
+		}
+
+		/// <summary>
+		/// Replaces the model at the specified index
+		/// </summary>
+		/// <param name="index">The index of the model to replace</param>
+		/// <param name="newModel">The model to replace with</param>
+		public void Replace(int index, IModel newModel) {
+			if (newModel == null)
+				return;
+			lock (SyncRoot) {
+				IModel old = componentList[index];
+				old.Parent = null;
+				vertices -= old.Vertices;
+				triangles -= old.Triangles;
+				IModel parent = this;
+				do {
+					if (newModel == parent)
+						throw new InvalidOperationException("Cannot add parent models as children to the current model");
+					parent = parent.Parent;
+				} while (parent != null);
+				if (!newModel.KeepCopyInMemory && KeepCopyInMemory)
+					newModel.KeepCopyInMemory = true;
+				componentList[index] = newModel;
+				newModel.Parent = this;
+				vertices += newModel.Vertices;
+				triangles += newModel.Triangles;
+			}
+        }
+
+		/// <summary>
+		/// Adds the component to the model at the specified index
+		/// </summary>
+		/// <param name="index">The index to insert at. If the index is -1, the components inserted at the end</param>
 		/// <param name="model">The component to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void Add(IModel model) {
+		public virtual void Insert(int index, IModel model) {
 			if (model == null)
 				return;
 			lock (SyncRoot) {
-				if (componentList.Contains(model))
-					return;
 				IModel parent = this;
 				do {
 					if (model == parent)
-						throw new InvalidOperationException("Cannot add parent models as children to the current model.");
+						throw new InvalidOperationException("Cannot add parent models as children to the current model");
 					parent = parent.Parent;
 				} while (parent != null);
 				if (!model.KeepCopyInMemory && KeepCopyInMemory)
 					model.KeepCopyInMemory = true;
-				componentList.Add(model);
+				componentList.Insert(index == -1 ? Count : index, model);
 				model.Parent = this;
 				vertices += model.Vertices;
 				triangles += model.Triangles;
 			}
+		}
+
+		/// <summary>
+		/// Adds the specified component to the model
+		/// </summary>
+		/// <param name="model">The component to add</param>
+		public void Add(IModel model) {
+			Insert(-1, model);
 		}
 
 		/// <summary>
@@ -730,6 +790,24 @@ namespace System.Graphics.Models {
 				return;
 			foreach (MeshComponent model in models)
 				Add(model);
+		}
+
+		/// <summary>
+		/// Removes the specified component from the model
+		/// </summary>
+		/// <param name="index">The index of the component to remove</param>
+#if NET45
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+		public bool RemoveAt(int index) {
+			lock (SyncRoot) {
+				IModel model = componentList[index];
+				componentList.RemoveAt(index);
+				model.Parent = null;
+				vertices -= model.Vertices;
+				triangles -= model.Triangles;
+				return true;
+			}
 		}
 
 		/// <summary>
@@ -980,14 +1058,14 @@ namespace System.Graphics.Models {
 		/// Disposes of the resources used model
 		/// </summary>
 		~Model() {
-			Dispose(true, true, true);
+			Dispose(false, true);
 		}
 
 		/// <summary>
 		/// Disposes of the resources used by the model
 		/// </summary>
 		public void Dispose() {
-			Dispose(true, true, false);
+			Dispose(true, true);
 		}
 
 		/// <summary>
@@ -995,7 +1073,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
 		public void Dispose(bool disposeChildren) {
-			Dispose(disposeChildren, true, false);
+			Dispose(disposeChildren, true);
 		}
 
 		/// <summary>
@@ -1004,17 +1082,14 @@ namespace System.Graphics.Models {
 		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
 		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically</param>
 		public void Dispose(bool disposeChildren, bool removeFromParent) {
-			Dispose(disposeChildren, removeFromParent, false);
-		}
-
-		private void Dispose(bool disposeChildren, bool removeFromParent, bool finalizer) {
-			OnDisposing(finalizer);
+			OnDisposing(Threading.Thread.CurrentThread.IsThreadPoolThread);
 			lock (SyncRoot) {
-				if (parent != null) {
-					if (removeFromParent)
-						parent.Remove(this);
-					parent = null;
+				if (removeFromParent) {
+					Model tentativeParent = parent as Model;
+					if (tentativeParent != null)
+						tentativeParent.Remove(this);
 				}
+				parent = null;
 				if (disposeChildren) {
 					for (int i = 0; i < componentList.Count; i++)
 						componentList[i].Dispose(true, false);

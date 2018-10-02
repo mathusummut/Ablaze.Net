@@ -113,10 +113,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and its resources.
 		/// </summary>
 		~RenderBuffer() {
-			if (name == 0)
-				return;
-			GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-			name = 0;
+			Dispose();
 		}
 
 		/// <summary>
@@ -125,6 +122,11 @@ namespace System.Graphics.Models {
 		public void Dispose() {
 			if (name == 0)
 				return;
+			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+				name = 0;
+				return;
+			}
 			try {
 				GL.DeleteRenderbuffers(1, ref name);
 			} catch {

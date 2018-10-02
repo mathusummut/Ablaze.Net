@@ -53,10 +53,11 @@ namespace System.Graphics.Models {
 		private Vector3 oldLoc, currentLoc, oldRot, currentRot, oldScale = Vector3.One, currentScale = Vector3.One;
 		private bool isClone, isDisposed, updateBuffer;
 		private Matrix4 generatedMatrix = Matrix4.Identity;
-		private ITexture texture;
+		private MeshComponent lastNextModel;
 		private VertexArrayBuffer VertexArrayBuffer;
 		private DataBuffer DataBuffer;
 		private IndexBuffer indexBuffer;
+		private ITexture texture;
 		private IModel parent;
 		private int triangles, vertices;
 		/// <summary>
@@ -171,19 +172,13 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the parent model (can be null).
+		/// Gets or sets the parent model (can be null, not guaranteed to be accurate)
 		/// </summary>
 		public IModel Parent {
 			get {
 				return parent;
 			}
 			set {
-				if (value == parent)
-					return;
-				if (parent != null)
-					parent.Remove(this);
-				if (value != null)
-					value.Add(this);
 				parent = value;
 			}
 		}
@@ -854,21 +849,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified component to the model.
-		/// </summary>
-		/// <param name="model">The component to add.</param>
-		public void Add(IModel model) {
-		}
-
-		/// <summary>
-		/// Removes the specified component from the model.
-		/// </summary>
-		/// <param name="model">The components to remove.</param>
-		public bool Remove(IModel model) {
-			return false;
-		}
-
-		/// <summary>
 		/// Sets up the initial settings for an OpenGL context. Call this before anything is initialized or drawn.
 		/// </summary>
 		public static void SetupGLEnvironment() {
@@ -1047,7 +1027,8 @@ namespace System.Graphics.Models {
 			} else
 				vab.Bind();
 			bool hasBufferUpdated = BindAndUpdateDataBuffer();
-			if (vab == null || hasBufferUpdated) {
+			if (vab == null || hasBufferUpdated || nextModel != lastNextModel) {
+				lastNextModel = nextModel;
 				GL.EnableVertexAttribArray(0);
 				GL.EnableVertexAttribArray(1);
 				GL.EnableVertexAttribArray(2);
@@ -1269,20 +1250,22 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the resources used by the model.
+		/// Disposes of the resources used by the model
 		/// </summary>
-		/// <param name="disposeChildren">Whether to dispose of the child components of the model.</param>
-		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically.</param>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
+		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically</param>
 		public void Dispose(bool disposeChildren, bool removeFromParent) {
 			if (isDisposed)
 				return;
 			isDisposed = true;
 			OnDisposing();
-			if (parent != null) {
-				if (removeFromParent)
-					parent.Remove(this);
-				parent = null;
+			if (removeFromParent) {
+				Model tentativeParent = parent as Model;
+				if (tentativeParent != null)
+					tentativeParent.Remove(this);
 			}
+			parent = null;
+			lastNextModel = null;
 			if (texture != null) {
 				texture.Dispose();
 				texture = null;

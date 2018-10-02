@@ -6,8 +6,6 @@ using System.Graphics.OGL;
 using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
-	using PixelFormat = OGL.PixelFormat;
-
 	/// <summary>
 	/// A managed wrapper for an OpenGL texture
 	/// </summary>
@@ -130,7 +128,7 @@ namespace System.Graphics.Models {
 				Bind(TextureWrapMode.ClampToEdge);
 				Bitmap bmp = new Bitmap(TextureSize.Width, TextureSize.Height);
 				BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, Premultiplied ? Drawing.Imaging.PixelFormat.Format32bppPArgb : Drawing.Imaging.PixelFormat.Format32bppArgb);
-				GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+				GL.GetTexImage(TextureTarget.Texture2D, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 				bmp.UnlockBits(data);
 				return bmp;
 			}
@@ -277,7 +275,7 @@ namespace System.Graphics.Models {
 				if (init) {
 					GL.GenTextures(1, out name);
 					GL.BindTexture(TextureTarget.Texture2D, name);
-					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
+					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? TextureMinFilter.Linear : TextureMinFilter.Nearest));
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) (LinearScalingFilter ? TextureMagFilter.Linear : TextureMagFilter.Nearest));
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) mode);
@@ -302,11 +300,11 @@ namespace System.Graphics.Models {
 				GL.GenTextures(1, out name);
 				GL.BindTexture(TextureTarget.Texture2D, name);
 				if (BitmapSize == TextureSize) {
-					BitmapData data = image.LockBits(new Rectangle(Point.Empty, TextureSize), ImageLockMode.ReadOnly, Drawing.Imaging.PixelFormat.Format32bppArgb);
-					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+					BitmapData data = image.LockBits(new Rectangle(Point.Empty, TextureSize), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 					image.UnlockBits(data);
 				} else {
-					using (Bitmap tempImage = new Bitmap(TextureSize.Width, TextureSize.Height, Drawing.Imaging.PixelFormat.Format32bppArgb)) {
+					using (Bitmap tempImage = new Bitmap(TextureSize.Width, TextureSize.Height, PixelFormat.Format32bppArgb)) {
 						Rectangle rect = new Rectangle(Point.Empty, pad ? BitmapSize : TextureSize);
 						using (Drawing.Graphics g = Drawing.Graphics.FromImage(tempImage)) {
 							g.CompositingMode = CompositingMode.SourceCopy;
@@ -315,8 +313,8 @@ namespace System.Graphics.Models {
 							g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 							g.DrawImage(image, rect);
 						}
-						BitmapData data = tempImage.LockBits(rect, ImageLockMode.ReadOnly, Drawing.Imaging.PixelFormat.Format32bppArgb);
-						GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+						BitmapData data = tempImage.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+						GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 						tempImage.UnlockBits(data);
 					}
 				}
@@ -369,7 +367,7 @@ namespace System.Graphics.Models {
 			Bind(TextureWrapMode.ClampToEdge);
 			GL.PixelStore(PixelStoreParameter.UnpackRowLength, source.Width);
 			BitmapData data = source.LockBits(srcRegion, ImageLockMode.ReadOnly, source.PixelFormat);
-			GL.TexSubImage2D(TextureTarget.Texture2D, 0, textureRectLoc.X, textureRectLoc.Y, srcRegion.Width, srcRegion.Height, PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+			GL.TexSubImage2D(TextureTarget.Texture2D, 0, textureRectLoc.X, textureRectLoc.Y, srcRegion.Width, srcRegion.Height, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 			source.UnlockBits(data);
 			GL.PixelStore(PixelStoreParameter.UnpackRowLength, 0);
 		}
@@ -444,17 +442,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the texture and the resources consumed by it
 		/// </summary>
 		~Texture2D() {
-			if (image != null) {
-				if (bindAction == ImageParameterAction.Dispose) {
-					bindAction = ImageParameterAction.RemoveReference;
-					image.Dispose();
-				}
-				image = null;
-			}
-			if (name != 0) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-				name = 0;
-			}
+			Dispose(true);
 		}
 
 		/// <summary>
@@ -480,10 +468,14 @@ namespace System.Graphics.Models {
 					image = null;
 				}
 				if (name != 0) {
-					try {
-						GL.DeleteTextures(1, ref name);
-					} catch {
-						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+					if (Threading.Thread.CurrentThread.IsThreadPoolThread)
+						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+					else {
+						try {
+							GL.DeleteTextures(1, ref name);
+						} catch {
+							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+						}
 					}
 					name = 0;
 				}

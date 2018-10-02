@@ -111,10 +111,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the data buffer.
 		/// </summary>
 		~DataBuffer() {
-			if (name == 0)
-				return;
-			GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-			name = 0;
+			Dispose(true);
 		}
 
 		/// <summary>
@@ -128,10 +125,15 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and the resources consumed by it.
 		/// </summary>
 		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed.</param>
+		/// 
 		public void Dispose(bool forceDispose) {
 			if (name == 0)
 				return;
-			else if (references > 0)
+			else if (Threading.Thread.CurrentThread.IsThreadPoolThread) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+				name = 0;
+				return;
+			} else if (references > 0)
 				references--;
 			if (references <= 0 || forceDispose) {
 				try {

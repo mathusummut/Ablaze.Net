@@ -191,7 +191,7 @@ namespace System.Text {
 
 		/// <summary>Saves the JSON to a file.</summary>
 		public void Save(string path, Stringify format = Stringify.Plain) {
-			using (var s = File.CreateText(path))
+			using (StreamWriter s = File.CreateText(path))
 				Save(s, format);
 		}
 

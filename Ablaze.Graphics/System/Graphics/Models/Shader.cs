@@ -848,10 +848,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the shader program.
 		/// </summary>
 		~Shader() {
-			if (name == 0)
-				return;
-			GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-			name = 0;
+			Dispose();
 		}
 
 		/// <summary>
@@ -862,6 +859,11 @@ namespace System.Graphics.Models {
 				return;
 			else if (boundShader.Value == this)
 				boundShader.Value = Empty;
+			if (Thread.CurrentThread.IsThreadPoolThread) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+				name = 0;
+				return;
+			}
 			try {
 				GL.DeleteProgram(name);
 			} catch {

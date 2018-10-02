@@ -39509,7 +39509,7 @@ namespace System.Graphics.OGL {
 	/// <summary>
 	/// Used in GL.Arb.CompressedTexSubImage1D, GL.Arb.CompressedTexSubImage2D, GL.Arb.CompressedTexSubImage3D, GL.ColorSubTable, GL.ColorTable, GL.CompressedTexSubImage1D, GL.CompressedTexSubImage2D, GL.CompressedTexSubImage3D, GL.ConvolutionFilter1D, GL.ConvolutionFilter2D, GL.DrawPixels, GL.GetColorTable, GL.GetConvolutionFilter, GL.GetHistogram, GL.GetMinmax, GL.GetSeparableFilter, GL.GetTexImage, GL.ReadPixels, GL.SeparableFilter2D, GL.TexImage1D, GL.TexImage2D, GL.TexImage3D, GL.TexSubImage1D, GL.TexSubImage2D, GL.TexSubImage3D, GL.Ext.ColorSubTable, GL.Ext.ColorTable, GL.Ext.CompressedMultiTexSubImage1D, GL.Ext.CompressedMultiTexSubImage2D, GL.Ext.CompressedMultiTexSubImage3D, GL.Ext.CompressedTextureSubImage1D, GL.Ext.CompressedTextureSubImage2D, GL.Ext.CompressedTextureSubImage3D, GL.Ext.ConvolutionFilter1D, GL.Ext.ConvolutionFilter2D, GL.Ext.GetColorTable, GL.Ext.GetConvolutionFilter, GL.Ext.GetHistogram, GL.Ext.GetMinmax, GL.Ext.GetMultiTexImage, GL.Ext.GetSeparableFilter, GL.Ext.GetTextureImage, GL.Ext.MultiTexImage1D, GL.Ext.MultiTexImage2D, GL.Ext.MultiTexImage3D, GL.Ext.MultiTexSubImage1D, GL.Ext.MultiTexSubImage2D, GL.Ext.MultiTexSubImage3D, GL.Ext.SeparableFilter2D, GL.Ext.TexImage3D, GL.Ext.TexSubImage1D, GL.Ext.TexSubImage2D, GL.Ext.TexSubImage3D, GL.Ext.TextureImage1D, GL.Ext.TextureImage2D, GL.Ext.TextureImage3D, GL.Ext.TextureSubImage1D, GL.Ext.TextureSubImage2D, GL.Ext.TextureSubImage3D, GL.Sgi.ColorTable, GL.Sgi.GetColorTable, GL.Sgis.TexImage4D, GL.Sgis.TexSubImage4D
 	/// </summary>
-	public enum PixelFormat : int {
+	public enum TargetPixelFormat : int {
 		/// <summary>
 		/// Original was GL_COLOR_INDEX = 0x1900
 		/// </summary>

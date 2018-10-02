@@ -66,7 +66,8 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="textures">The textures for the model to use (can be null or empty)</param>
 		/// <returns>An animated model with all the parsed components</returns>
 		public static Model Parse(Stream mesh, ITexture[] textures) {
-			AnimatedModel model = new AnimatedModel(0.075f);
+			const float AnimationSpeed = 75f;
+			AnimatedModel model = new AnimatedModel(AnimationSpeed);
 			using (BinaryReader reader = new BinaryReader(mesh)) {
 				if (Encoding.ASCII.GetString(reader.ReadBytes(3)) != "G3D")
 					throw new FormatException("Unrecognized model format (expected \"G3D\" at start of file)");
@@ -85,7 +86,6 @@ namespace System.Graphics.Models.Parsers {
 				float specularPower; //the strength of the specular highlights
 				float opacity; //the model opacity
 				MeshPropertyFlag properties;
-				//bool culling; //if true, all polygons are rendered by both sides, else only "counter clockwise" faces are rendered
 				MeshTexture associatedTextures;
 				ITexture diffuseTexture; //the texture used by the model
 				int vertex, frame, index;
@@ -93,7 +93,6 @@ namespace System.Graphics.Models.Parsers {
 				Vertex[] frameBufferData, coords;
 				uint[] indices;
 				AnimatedModel animatedComponent;
-				MeshComponent component;
 
 				for (int i = 0; i < meshCount; i++) {
 					name = Encoding.ASCII.GetString(reader.ReadBytes(64)).TruncateAtNull();
@@ -140,11 +139,16 @@ namespace System.Graphics.Models.Parsers {
 					indices = new uint[indexCount];
 					for (index = 0; index < indexCount; index++)
 						indices[index] = reader.ReadUInt32();
-					animatedComponent = new AnimatedModel(0.075f);
+					animatedComponent = new AnimatedModel(AnimationSpeed);
 					for (frame = 0; frame < frameCount; frame++) {
-						component = new MeshComponent(diffuseTexture, bufferData[frame], indices);
-						animatedComponent.Add(component);
-						component.Cull = (properties & MeshPropertyFlag.TwoSided) != MeshPropertyFlag.TwoSided;
+						animatedComponent.Add(new MeshComponent(diffuseTexture, bufferData[frame], indices) {
+							Cull = (properties & MeshPropertyFlag.TwoSided) != MeshPropertyFlag.TwoSided,
+							Alpha = opacity,
+							MaterialHue = diffuseColor,
+							ShineHue = specularColor,
+							Shininess = specularPower,
+							Name = name
+						});
 					}
 					model.CombineWith(animatedComponent);
 				}
