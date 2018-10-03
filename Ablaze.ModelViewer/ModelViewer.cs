@@ -560,8 +560,7 @@ namespace Ablaze.ModelViewer {
 		private void RenderUpdates(object state) {
 			Vector3 up = Vector3.UnitY;
 			Vector3 eye = currentViewDirection * currentDistance;
-			Matrix4 transformation = Matrix4.CreateRotationZ(angleZ) * Matrix4.CreateRotationY(currentAngleY) * Matrix4.CreateRotationX(currentAngleX);
-			Scene.Camera = transformation * Matrix4.LookAt(ref eye, ref currentViewTarget, ref up);
+			Scene.Camera = Matrix4.CreateRotationZ(angleZ) * Matrix4.CreateRotationY(currentAngleY) * Matrix4.CreateRotationX(currentAngleX) * Matrix4.LookAt(ref eye, ref currentViewTarget, ref up);
 			//Scene.Light.Position = /*eye*/ new Vector3(20f, 0f, 0f);
 			//Scene.Light.PointLight = true;
 			//Fade light with distance

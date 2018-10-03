@@ -1005,6 +1005,8 @@ namespace System.Graphics.Models {
 			}
 			shader.SetUniformValue(GlobalShaderParams.MaterialHue.ToString(), materialHue, ShaderSetMode.SetImmediately);
 			bool premultiplied = false;
+			if (texture == null)
+				texture = this.texture;
 			if (texture == null) {
 				GL.BindTexture(TextureTarget.Texture2D, 0);
 				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), 0f, ShaderSetMode.SetImmediately);
@@ -1018,15 +1020,33 @@ namespace System.Graphics.Models {
 			shader.SetUniformValue(GlobalShaderParams.AmbientHue.ToString(), AmbientHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.ShineHue.ToString(), ShineHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.Shininess.ToString(), Shininess, ShaderSetMode.SetImmediately);
+			bool hasBufferUpdated = false;
 			VertexArrayBuffer vab = VertexArrayBuffer;
 			if (vab == null) {
 				if (GL.Delegates.glGenVertexArrays != null) {
 					vab = new VertexArrayBuffer();
 					VertexArrayBuffer = vab;
+					vab.Bind();
+					hasBufferUpdated = true;
 				}
-			} else
+			} else {
+				ErrorCode error = GL.GetError();
+				if (error != ErrorCode.NoError)
+					Console.WriteLine("OpenGL error found before binding VAO: " + error);
 				vab.Bind();
-			bool hasBufferUpdated = BindAndUpdateDataBuffer();
+				error = GL.GetError();
+				if (error != ErrorCode.NoError) {
+					vab.Dispose();
+					vab = new VertexArrayBuffer();
+					VertexArrayBuffer = vab;
+					vab.Bind();
+					hasBufferUpdated = true;
+					error = GL.GetError();
+					if (error != ErrorCode.NoError)
+						Console.WriteLine("OpenGL error found before after binding VAO: " + error);
+				}
+			}
+			hasBufferUpdated |= BindAndUpdateDataBuffer();
 			if (vab == null || hasBufferUpdated || nextModel != lastNextModel) {
 				lastNextModel = nextModel;
 				GL.EnableVertexAttribArray(0);

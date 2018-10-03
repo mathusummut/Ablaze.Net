@@ -128,7 +128,7 @@ namespace System.Graphics.Models.Parsers {
 						if (associatedTextures != MeshTexture.None) {
 							coords = bufferData[0];
 							for (vertex = 0; vertex < vertexCount; vertex++)
-								coords[vertex].TexPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+								coords[vertex].TexPos = new Vector2(reader.ReadSingle(), 1f - reader.ReadSingle());
 							for (frame = 1; frame < frameCount; frame++) {
 								frameBufferData = bufferData[frame];
 								for (vertex = 0; vertex < vertexCount; vertex++)
