@@ -16,44 +16,44 @@ Use the Ablaze.Convert tool to change the target platform.
 
 ## WinForms to Ablaze.Net Replacements:
 
-```Form -> StyledForm (a customisable form) or GraphicsForm (if going to use OpenGL or a game loop)
-OpenFileFialog/SaveFileDialog -> FilePrompt (set Open property to true/false)
-Application.Run -> MessageLoop.Run
-Application.EnableVisualStyles() -> Remove
-Application.SetCompatibleTextRenderingDefault -> Remove
-Form.ShowDialog() -> MessageLoop.ShowDialog()
-Control.PointToClient/Form.PointToClient -> Extensions.PointToClient (more reliable) //StyledForm.PointToClient is already modified
-	(same for PointToScreen, RectangleToClient and RectangleToScreen)
-MessageBox -> StyledMessageBox
-RichTextBox -> NewRichTextBox
-Button -> StyledButton
-CheckBox -> StyledCheckBox
-ComboBox -> StyledComboBox
-ContextMenu -> StyledContextMenu
-ToolStripItem -> StyledItem
-Label -> StyledLabel
-MenuStrip -> StyledMenuStrip
-TrackBar -> StyledSlider
-LinkLabel -> LinkLabelCustomCursor
-SplitContainer -> BufferedSplitContainer
-ToolStripProfessionalRenderer -> StyleRenderer```
+	Form -> StyledForm (a customisable form) or GraphicsForm (if going to use OpenGL or a game loop)
+	OpenFileFialog/SaveFileDialog -> FilePrompt (set Open property to true/false)
+	Application.Run -> MessageLoop.Run
+	Application.EnableVisualStyles() -> Remove
+	Application.SetCompatibleTextRenderingDefault -> Remove
+	Form.ShowDialog() -> MessageLoop.ShowDialog()
+	Control.PointToClient/Form.PointToClient -> Extensions.PointToClient (more reliable) //StyledForm.PointToClient is already modified
+		(same for PointToScreen, RectangleToClient and RectangleToScreen)
+	MessageBox -> StyledMessageBox
+	RichTextBox -> NewRichTextBox
+	Button -> StyledButton
+	CheckBox -> StyledCheckBox
+	ComboBox -> StyledComboBox
+	ContextMenu -> StyledContextMenu
+	ToolStripItem -> StyledItem
+	Label -> StyledLabel
+	MenuStrip -> StyledMenuStrip
+	TrackBar -> StyledSlider
+	LinkLabel -> LinkLabelCustomCursor
+	SplitContainer -> BufferedSplitContainer
+	ToolStripProfessionalRenderer -> StyleRenderer
 
 ## Additional Replacements:
 
-```new Bitmap("file string") -> Extensions.ImageFromFile("file string")
-Bitmap.Dispose() -> Bitmap.DisposeSafe() (extension method in System.Extensions)
-Pen.Dispose() -> Pen.DisposeSafe() (extension method in System.Extensions)
-Brush.Dispose() -> Brush.DisposeSafe() (extension method in System.Extensions)
-Stopwatch -> PreciseStopwatch
-new FileStream -> FileUtils.LoadFile
-File.Exists -> FileUtils.FileExists
-Path.GetFileNameWithoutExtension -> FileUtils.GetFileNameWithoutExtension
-Path.Combine -> FileUtils.CombinePath
-Directory.Exists -> FileUtils.FolderExists
-Matrix4x4 -> Matrix4
-Parallel.For -> ParallelLoop.For
-Random -> UniformRandom (unless using a particular seed)
-Buffer.BlockCopy -> Extensions.MemoryCopy```
+	new Bitmap("file string") -> Extensions.ImageFromFile("file string")
+	Bitmap.Dispose() -> Bitmap.DisposeSafe() (extension method in System.Extensions)
+	Pen.Dispose() -> Pen.DisposeSafe() (extension method in System.Extensions)
+	Brush.Dispose() -> Brush.DisposeSafe() (extension method in System.Extensions)
+	Stopwatch -> PreciseStopwatch
+	new FileStream -> FileUtils.LoadFile
+	File.Exists -> FileUtils.FileExists
+	Path.GetFileNameWithoutExtension -> FileUtils.GetFileNameWithoutExtension
+	Path.Combine -> FileUtils.CombinePath
+	Directory.Exists -> FileUtils.FolderExists
+	Matrix4x4 -> Matrix4
+	Parallel.For -> ParallelLoop.For
+	Random -> UniformRandom (unless using a particular seed)
+	Buffer.BlockCopy -> Extensions.MemoryCopy
 
 ```
            CCCCCCCCCCCCC        ######    ######
@@ -69,5 +69,4 @@ Buffer.BlockCopy -> Extensions.MemoryCopy```
       C:::::CCCCCCCC::::C  ######::::######::::######
        CC:::::::::::::::C       #::::#    #::::#
          CCC::::::::::::C       #::::#    #::::#
-           CCCCCCCCCCCCC        ######    ######
-```
+           CCCCCCCCCCCCC        ######    ######```
