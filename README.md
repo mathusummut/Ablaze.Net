@@ -55,7 +55,8 @@ Use the Ablaze.Convert tool to change the target platform.
 	Random -> UniformRandom (unless using a particular seed)
 	Buffer.BlockCopy -> Extensions.MemoryCopy
 
-```
+Enjoy the open-source privilege!
+
            CCCCCCCCCCCCC        ######    ######
          CCC::::::::::::C       #::::#    #::::#
        CC:::::::::::::::C       #::::#    #::::#
@@ -69,4 +70,4 @@ Use the Ablaze.Convert tool to change the target platform.
       C:::::CCCCCCCC::::C  ######::::######::::######
        CC:::::::::::::::C       #::::#    #::::#
          CCC::::::::::::C       #::::#    #::::#
-           CCCCCCCCCCCCC        ######    ######```
+           CCCCCCCCCCCCC        ######    ######
