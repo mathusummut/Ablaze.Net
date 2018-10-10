@@ -25,12 +25,19 @@ namespace System.Graphics.Models {
 		/// Increases texture interpolation quality by reducing shimmering caused by aliasing, but uses more memory
 		/// </summary>
 		public bool UseMipmapping = true;
-		private ImageParameterAction bindAction = ImageParameterAction.RemoveReference;
 		private bool pad;
 		/// <summary>
 		/// Gets or sets whether to use a linear scaling filter or no filter on the texture
 		/// </summary>
 		public bool LinearScalingFilter = true;
+
+		/// <summary>
+		/// Gets whether mipmapping is supported
+		/// </summary>
+		public static bool? MipmapSupported {
+			get;
+			private set;
+		}
 
 		/// <summary>
 		/// Gets or sets whether the texture alpha components are premultiplied
@@ -43,7 +50,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets additional info to be stored with the texture
 		/// </summary>
-		public object Info {
+		public object Tag {
 			get;
 			set;
 		}
@@ -52,6 +59,14 @@ namespace System.Graphics.Models {
 		/// Gets or sets the texture name
 		/// </summary>
 		public string ID {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets what to do with the passed image after binding the texture into GPU memory
+		/// </summary>
+		public ImageParameterAction BindAction {
 			get;
 			set;
 		}
@@ -88,14 +103,6 @@ namespace System.Graphics.Models {
 		/// Gets the last texture wrap mode used
 		/// </summary>
 		public TextureWrapMode LastTextureWrapMode {
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// Gets whether mipmapping is supported
-		/// </summary>
-		public static bool? MipmapSupported {
 			get;
 			private set;
 		}
@@ -177,12 +184,12 @@ namespace System.Graphics.Models {
 			if (image == null)
 				return;
 			this.image = image;
-			Premultiplied = image.PixelFormat == Drawing.Imaging.PixelFormat.Format32bppPArgb;
+			Premultiplied = image.PixelFormat == PixelFormat.Format32bppPArgb;
 			BitmapSize = image.Size;
 			if (mode == NPotTextureScaleMode.Pad)
 				pad = true;
 			TextureSize = mode == NPotTextureScaleMode.None ? BitmapSize : ImageLib.GetPowerOfTwoSize(BitmapSize, mode == NPotTextureScaleMode.ScaleUp || pad);
-			this.bindAction = bindAction;
+			BindAction = bindAction;
 			LinearScalingFilter = linearScalingFilter;
 			lastFilter = linearScalingFilter;
 			UseMipmapping = useMipmapping;
@@ -318,10 +325,10 @@ namespace System.Graphics.Models {
 						tempImage.UnlockBits(data);
 					}
 				}
-				if (bindAction == ImageParameterAction.Dispose) {
-					bindAction = ImageParameterAction.RemoveReference;
+				if (BindAction == ImageParameterAction.Dispose) {
+					BindAction = ImageParameterAction.RemoveReference;
 					image.Dispose();
-				} else if (bindAction == ImageParameterAction.KeepReference)
+				} else if (BindAction == ImageParameterAction.KeepReference)
 					copy = image;
 				image = null;
 				if (!MipmapSupported.HasValue)
@@ -423,9 +430,9 @@ namespace System.Graphics.Models {
 		public override string ToString() {
 			string str = ID == null ? null : ID.Trim();
 			if (str == null || str.Length == 0)
-				return "{ Handle: " + name + " }";
+				return "Texture2D: { Handle: " + name + " }";
 			else
-				return "{ Handle: " + name + ", Name: " + str + " }";
+				return "Texture2D: { Handle: " + name + ", Name: " + str + " }";
 		}
 
 		/// <summary>
@@ -444,34 +451,59 @@ namespace System.Graphics.Models {
 		~Texture2D() {
 			GraphicsContext.IsFinalizer = true;
 			try {
-				Dispose(true);
+				Dispose(true, true);
 			} finally {
 				GraphicsContext.IsFinalizer = false;
 			}
 		}
 
 		/// <summary>
-		/// Disposes of the texture and the resources consumed by it
+		/// Returns a copy of the current texture (avoid, use AddReference instead)
 		/// </summary>
-		public void Dispose() {
-			Dispose(false);
+		public object Clone() {
+			return Clone(true);
+		}
+
+		/// <summary>
+		/// Returns a copy of the current texture (avoid, use AddReference instead)
+		/// </summary>
+		/// <param name="components">Whether to clone the internal components too</param>
+		public ITexture Clone(bool components) {
+			return new Texture2D(Image, pad ? NPotTextureScaleMode.Pad : (TextureSize == BitmapSize ? NPotTextureScaleMode.None : (TextureSize.Width <= BitmapSize.Width && TextureSize.Height <= BitmapSize.Height ? NPotTextureScaleMode.ScaleDown : NPotTextureScaleMode.ScaleUp)), BindAction, LinearScalingFilter, UseMipmapping);
 		}
 
 		/// <summary>
 		/// Disposes of the texture and the resources consumed by it
 		/// </summary>
+		public void Dispose() {
+			Dispose(true, false);
+		}
+
+		/// <summary>
+		/// Disposes of the texture and the resources consumed by it
+		/// </summary>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the texture</param>
+		public void Dispose(bool disposeChildren) {
+			Dispose(disposeChildren, false);
+		}
+
+		/// <summary>
+		/// Disposes of the texture and the resources consumed by it
+		/// </summary>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the texture</param>
 		/// <param name="forceDispose">If true, the reference count is ignored, forcing the texture to be disposed, unless it is already disposed</param>
-		public void Dispose(bool forceDispose) {
+		public void Dispose(bool disposeChildren, bool forceDispose) {
 			if (references > 0)
 				references--;
 			if (references <= 0 || forceDispose) {
 				if (image != null) {
-					if (bindAction == ImageParameterAction.Dispose) {
-						bindAction = ImageParameterAction.RemoveReference;
+					if (BindAction == ImageParameterAction.Dispose) {
+						BindAction = ImageParameterAction.RemoveReference;
 						image.Dispose();
 					}
 					image = null;
 				}
+				copy = null;
 				if (name != 0) {
 					if (GraphicsContext.IsFinalizer)
 						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));

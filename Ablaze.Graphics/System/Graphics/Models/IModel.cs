@@ -299,7 +299,6 @@ namespace System.Graphics.Models {
 		/// Creates a copy of the model.
 		/// </summary>
 		/// <param name="components">Whether to clone the internal components too.</param>
-		/// <returns>A copy of the model.</returns>
 		IModel Clone(bool components);
 
 		/// <summary>

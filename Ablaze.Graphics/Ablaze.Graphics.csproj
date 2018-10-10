@@ -120,8 +120,10 @@
     <Compile Include="System\Graphics\AGL\Enums.cs" />
     <Compile Include="System\Graphics\EGL\Enums.cs" />
     <Compile Include="System\Graphics\Models\AnimatedModel.cs" />
+    <Compile Include="System\Graphics\Models\AnimatedTexture.cs" />
     <Compile Include="System\Graphics\Models\GlobalShader.cs" />
     <Compile Include="System\Graphics\Models\Light.cs" />
+    <Compile Include="System\Graphics\Models\TextureCollection.cs" />
     <Compile Include="System\Graphics\Models\TextureEnums.cs" />
     <Compile Include="System\Graphics\Models\VertexArrayBuffer.cs" />
     <Compile Include="System\Graphics\Models\DataBuffer.cs" />

@@ -69,7 +69,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the component
+		/// Gets or sets the name of the model
 		/// </summary>
 		public string Name {
 			get;
@@ -77,7 +77,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets an object that contains properties relevant to this mesh
+		/// Gets or sets an object that contains properties relevant to this model
 		/// </summary>
 		public object Tag {
 			get;
@@ -674,7 +674,7 @@ namespace System.Graphics.Models {
 				vertices += newModel.Vertices;
 				triangles += newModel.Triangles;
 			}
-        }
+		}
 
 		/// <summary>
 		/// Adds the component to the model at the specified index
@@ -1042,9 +1042,9 @@ namespace System.Graphics.Models {
 		public override string ToString() {
 			string name = Name == null ? null : Name.Trim();
 			if (name == null || name.Length == 0)
-				return "{ Vertices: " + Vertices + " }";
+				return GetType().Name + ": { Count: " + Count + ", Vertices: " + Vertices + " }";
 			else
-				return "{ Vertices: " + Vertices + ", Name: " + name + " }";
+				return GetType().Name + ": { Count: " + Count + ", Vertices: " + Vertices + ", Name: " + name + " }";
 		}
 
 		/// <summary>

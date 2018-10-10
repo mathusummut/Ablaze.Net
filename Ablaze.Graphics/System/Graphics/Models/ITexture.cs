@@ -1,10 +1,11 @@
-﻿using System.Graphics.OGL;
+﻿using System.Drawing;
+using System.Graphics.OGL;
 
 namespace System.Graphics.Models {
 	/// <summary>
 	/// Represents a bindable texture.
 	/// </summary>
-	public interface ITexture : IEquatable<ITexture>, IDisposable {
+	public interface ITexture : IEquatable<ITexture>, ICloneable, IDisposable {
 		/// <summary>
 		/// Gets or sets whether the texture alpha components are premultiplied.
 		/// </summary>
@@ -23,7 +24,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets additional info to be stored with the texture.
 		/// </summary>
-		object Info {
+		object Tag {
 			get;
 			set;
 		}
@@ -34,6 +35,21 @@ namespace System.Graphics.Models {
 		string ID {
 			get;
 			set;
+		}
+
+		/// <summary>
+		/// Gets or sets what to do with the passed image after binding the texture into GPU memory
+		/// </summary>
+		ImageParameterAction BindAction {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets whether the texture is disposed.
+		/// </summary>
+		bool IsDisposed {
+			get;
 		}
 
 		/// <summary>
@@ -56,5 +72,17 @@ namespace System.Graphics.Models {
 		/// Unbinds the texture.
 		/// </summary>
 		void Unbind();
+
+		/// <summary>
+		/// Creates a copy of the texture
+		/// </summary>
+		/// <param name="components">Whether to clone the internal components too</param>
+		ITexture Clone(bool components);
+
+		/// <summary>
+		/// Disposes of the resources used by the texture
+		/// </summary>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the texture</param>
+		void Dispose(bool disposeChildren);
 	}
 }

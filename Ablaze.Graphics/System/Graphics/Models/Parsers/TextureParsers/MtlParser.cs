@@ -34,7 +34,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 							case "newmtl":
 								if (current == null && material != null) {
 									ITexture empty = new Texture2D() {
-										Info = material
+										Tag = material
 									};
 									textures.Add(empty);
 								} else
@@ -115,7 +115,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 										}
 										foreach (ITexture tex in current) {
 											tex.ID = name;
-											tex.Info = material;
+											tex.Tag = material;
 										}
 									}
 								}
@@ -127,7 +127,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 			}
 			if (current == null && material != null) {
 				ITexture empty = new Texture2D() {
-					Info = material
+					Tag = material
 				};
 				textures.Add(empty);
 			}

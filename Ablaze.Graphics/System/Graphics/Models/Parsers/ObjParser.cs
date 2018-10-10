@@ -133,7 +133,7 @@ namespace System.Graphics.Models.Parsers {
 								if (names.Count != 0)
 									component.Name = names.Dequeue();
 								if (currText != null) {
-									material = currText.Info as MtlParser.Material;
+									material = currText.Tag as MtlParser.Material;
 									if (material != null) {
 										component.AmbientHue = material.AmbientHue;
 										component.MaterialHue = material.MaterialHue;
@@ -157,7 +157,7 @@ namespace System.Graphics.Models.Parsers {
 						case "newmtl": //define a new material
 							if (current == null && material != null) {
 								ITexture empty = new Texture2D() {
-									Info = material
+									Tag = material
 								};
 								loadedTextures.Add(empty);
 							} else
@@ -238,7 +238,7 @@ namespace System.Graphics.Models.Parsers {
 									}
 									foreach (ITexture tex in current) {
 										tex.ID = name;
-										tex.Info = material;
+										tex.Tag = material;
 									}
 								}
 							}
@@ -249,7 +249,7 @@ namespace System.Graphics.Models.Parsers {
 			}
 			if (current == null && material != null) {
 				ITexture empty = new Texture2D() {
-					Info = material
+					Tag = material
 				};
 				textures.Add(empty);
 			}
@@ -259,7 +259,7 @@ namespace System.Graphics.Models.Parsers {
 				if (names.Count != 0)
 					component.Name = names.Dequeue();
 				if (currText != null) {
-					material = currText.Info as MtlParser.Material;
+					material = currText.Tag as MtlParser.Material;
 					if (material != null) {
 						component.AmbientHue = material.AmbientHue;
 						component.MaterialHue = material.MaterialHue;
@@ -280,7 +280,7 @@ namespace System.Graphics.Models.Parsers {
 			name = name.ToLower();
 			MtlParser.Material material;
 			for (int i = 0; i < textures.Count; i++) {
-				material = textures[i].Info as MtlParser.Material;
+				material = textures[i].Tag as MtlParser.Material;
 				if (material != null && material.Name.ToLower() == name)
 					return textures[i];
 			}
