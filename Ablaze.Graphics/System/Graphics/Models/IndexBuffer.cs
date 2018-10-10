@@ -16,19 +16,19 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool KeepCopyInMemory;
 		private static ConcurrentDictionary<Array, IndexBuffer> buffers = new ConcurrentDictionary<Array, IndexBuffer>();
-		private int name, count, references = 1;
+		private int id, count, references = 1;
 		private Array indices, copy;
 		private DrawElementsType format;
 
 		/// <summary>
 		/// Gets the native OpenGL name of the buffer
 		/// </summary>
-		public int Name {
+		public int ID {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name;
+				return id;
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace System.Graphics.Models {
 		/// <param name="format">The format of the index buffer</param>
 		public IndexBuffer(int name, int count, DrawElementsType format) {
 			this.count = count;
-			this.name = name;
+			this.id = name;
 			if (name == 0)
 				this.format = DrawElementsType.UnsignedByte;
 			else
@@ -158,11 +158,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public void Bind() {
 			if (indices == null)
-				GL.BindBuffer(BufferTarget.ElementArrayBuffer, name);
+				GL.BindBuffer(BufferTarget.ElementArrayBuffer, id);
 			else {
-				if (name == 0 && indices.Length != 0)
-					GL.GenBuffers(1, out name);
-				GL.BindBuffer(BufferTarget.ElementArrayBuffer, name);
+				if (id == 0 && indices.Length != 0)
+					GL.GenBuffers(1, out id);
+				GL.BindBuffer(BufferTarget.ElementArrayBuffer, id);
 				if (format == DrawElementsType.UnsignedByte)
 					GL.BufferData<byte>(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(byte)), (byte[]) indices, BufferUsageHint.StaticDraw);
 				else if (format == DrawElementsType.UnsignedShort)
@@ -227,7 +227,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>The buffer name</returns>
 		public override int GetHashCode() {
-			return name;
+			return id;
 		}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.String that describes this IndexBuffer</returns>
 		public override string ToString() {
-			return "Index buffer (handle " + name + ")";
+			return "Index buffer (handle " + id + ")";
 		}
 
 		/// <summary>
@@ -254,7 +254,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool Equals(IndexBuffer other) {
-			return other == null ? false : (name == other.name);
+			return other == null ? false : (id == other.id);
 		}
 
 		/// <summary>
@@ -281,11 +281,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed</param>
 		public void Dispose(bool forceDispose) {
-			if (name == 0 || count == 0)
+			if (id == 0 || count == 0)
 				return;
 			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-				name = 0;
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 				count = 0;
 				return;
 			}
@@ -293,11 +293,11 @@ namespace System.Graphics.Models {
 				references--;
 			if (references <= 0 || forceDispose) {
 				try {
-					GL.DeleteBuffers(1, ref name);
+					GL.DeleteBuffers(1, ref id);
 				} catch {
-					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 				}
-				name = 0;
+				id = 0;
 				count = 0;
 				IndexBuffer temp;
 				if (copy != null) {

@@ -2,24 +2,19 @@
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// This class is used, when render output should be captured offscreen into a (set of) Texture(s).
-	/// 
-	/// A fragment shader outputs to the i'th texture by writing to gl_FragData[i] or using an out
-	/// variable bound to the index
-	/// After rendering to the RenderToTexture is completed, the independant textures can be accessed 
-	/// through the [index] operator.
+	/// Renders the buffer output into the specified texture(s)
 	/// </summary>
 	public sealed class RenderToTexture : IDisposable {
 		private FrameBuffer fbo;
 		private RenderBuffer rbo;
 
 		/// <summary>
-		/// Renders the next scene into the specified textures.
+		/// Renders the next scene into the specified textures
 		/// </summary>
-		/// <param name="width">The width of the buffer.</param>
-		/// <param name="height">The height of the buffer.</param>
-		/// <param name="depth">The depth of the buffer.</param>
-		/// <param name="textures">The textures to write to.</param>
+		/// <param name="width">The width of the buffer</param>
+		/// <param name="height">The height of the buffer</param>
+		/// <param name="depth">The depth of the buffer</param>
+		/// <param name="textures">The textures to write to</param>
 		public RenderToTexture(int width, int height, bool depth, Texture2D[] textures) {
 			int buffers = textures.Length;
 			fbo = new FrameBuffer();
@@ -40,10 +35,13 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Signifies a resource leak.
+		/// Signifies a resource leak
 		/// </summary>
 		~RenderToTexture() {
-			GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(fbo.GetHashCode()));
+			if (fbo != null)
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(fbo.GetHashCode()));
+			if (rbo != null)
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(rbo.GetHashCode()));
 		}
 
 		/// <summary>
@@ -52,9 +50,14 @@ namespace System.Graphics.Models {
 		public void Dispose() {
 			FrameBuffer.Unbind();
 			//GL.PopAttrib();
-			fbo.Dispose();
-			if (rbo != null)
+			if (fbo != null) {
+				fbo.Dispose();
+				fbo = null;
+			}
+			if (rbo != null) {
 				rbo.Dispose();
+				rbo = null;
+			}
 			GC.SuppressFinalize(this);
 		}
 	}

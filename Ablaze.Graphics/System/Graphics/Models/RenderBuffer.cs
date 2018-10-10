@@ -7,17 +7,17 @@ namespace System.Graphics.Models {
 	/// This is similar to a FrameBuffer but the resources won't be accessable.
 	/// </summary>
 	public sealed class RenderBuffer : IDisposable {
-		private int name;
+		private int id;
 
 		/// <summary>
 		/// Gets the native OpenGL name of the buffer.
 		/// </summary>
-		public int Name {
+		public int ID {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name;
+				return id;
 			}
 		}
 
@@ -29,7 +29,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name == 0;
+				return id == 0;
 			}
 		}
 
@@ -46,9 +46,9 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void Bind() {
-			if (name == 0)
-				GL.GenRenderbuffers(1, out name);
-			GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, name);
+			if (id == 0)
+				GL.GenRenderbuffers(1, out id);
+			GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, id);
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace System.Graphics.Models {
 #endif
 		public void SetSize(int width, int height) {
 			GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent24, width, height);
-			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, name);
+			GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, id);
 		}
 
 		/// <summary>
@@ -79,7 +79,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>The buffer name.</returns>
 		public override int GetHashCode() {
-			return name;
+			return id;
 		}
 
 		/// <summary>
@@ -87,7 +87,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.String that describes this RenderBuffer.</returns>
 		public override string ToString() {
-			return "Render buffer (handle " + name + ")";
+			return "Render buffer (handle " + id + ")";
 		}
 
 		/// <summary>
@@ -106,7 +106,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool Equals(RenderBuffer other) {
-			return other == null ? false : (name == other.name);
+			return other == null ? false : (id == other.id);
 		}
 
 		/// <summary>
@@ -125,19 +125,19 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and its resources.
 		/// </summary>
 		public void Dispose() {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-				name = 0;
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 				return;
 			}
 			try {
-				GL.DeleteRenderbuffers(1, ref name);
+				GL.DeleteRenderbuffers(1, ref id);
 			} catch {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 			}
-			name = 0;
+			id = 0;
 			GC.SuppressFinalize(this);
 		}
 	}

@@ -12,25 +12,25 @@ namespace System.Graphics.Models.Parsers {
 	/// Contains methods for parsing 3D models from files.
 	/// </summary>
 	public static class ModelParser {
-		private static Dictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>> ParserDictionary;
+		private static Dictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>> ParserDictionary;
 
 		static ModelParser() {
 			Assembly[] assemblies;
 			try {
 				assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			} catch {
-				ParserDictionary = new Dictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>>(StringComparer.Ordinal);
+				ParserDictionary = new Dictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>>(StringComparer.Ordinal);
 				return;
 			}
-			Type typeOfParser = typeof(Func<Stream, ITexture[], Model>);
+			Type typeOfParser = typeof(Func<Stream, TextureCollection, Model>);
 			Type typeOfSave = typeof(Action<IModel, Stream>);
-			Type[] parserSignature = new Type[] { typeof(Stream), typeof(ITexture[]) };
+			Type[] parserSignature = new Type[] { typeof(Stream), typeof(TextureCollection) };
 			Type[] saveSignature = new Type[] { typeof(IModel), typeof(Stream) };
 #if NET35
-			Dictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>> collection = new Dictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>>(StringComparer.Ordinal);
+			Dictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>> collection = new Dictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>>(StringComparer.Ordinal);
 			foreach (Assembly assembly in assemblies) {
 #else
-			ConcurrentDictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>> collection = new ConcurrentDictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>>(StringComparer.Ordinal);
+			ConcurrentDictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>> collection = new ConcurrentDictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>>(StringComparer.Ordinal);
 			Parallel.ForEach(assemblies, assembly => {
 #endif
 				try {
@@ -45,7 +45,7 @@ namespace System.Graphics.Models.Parsers {
 								ModelParserAttribute attr = attributes[0] as ModelParserAttribute;
 								if (attr != null) {
 									MethodInfo method;
-									Func<Stream, ITexture[], Model> parse;
+									Func<Stream, TextureCollection, Model> parse;
 									Action<IModel, Stream> save;
 									foreach (KeyValuePair<string, ValueTuple<string, string>> pair in attr.Extensions) {
 										parse = null;
@@ -53,7 +53,7 @@ namespace System.Graphics.Models.Parsers {
 											try {
 												method = type.GetMethod(pair.Value.Item1, BindingFlags.Public | BindingFlags.Static, null, parserSignature, null);
 												if (method != null)
-													parse = (Func<Stream, ITexture[], Model>) Delegate.CreateDelegate(typeOfParser, null, method);
+													parse = (Func<Stream, TextureCollection, Model>) Delegate.CreateDelegate(typeOfParser, null, method);
 											} catch {
 											}
 										}
@@ -67,9 +67,9 @@ namespace System.Graphics.Models.Parsers {
 											}
 										}
 #if NET35
-										collection.Add(pair.Key, new ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>(parse, save));
+										collection.Add(pair.Key, new ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>(parse, save));
 #else
-										collection.TryAdd(pair.Key, new ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>(parse, save));
+										collection.TryAdd(pair.Key, new ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>(parse, save));
 #endif
 									}
 								}
@@ -87,7 +87,7 @@ namespace System.Graphics.Models.Parsers {
 			ParserDictionary = collection;
 #else
 			);
-			ParserDictionary = new Dictionary<string, ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>>>(collection, StringComparer.Ordinal);
+			ParserDictionary = new Dictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>>(collection, StringComparer.Ordinal);
 #endif
 		}
 
@@ -98,7 +98,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="encoding">The file extension representing the mesh encoding.</param>
 		/// <returns>A list of models with all the parsed components.</returns>
 		public static Model Parse(Stream mesh, string encoding) {
-			return Parse(mesh, encoding, null as ITexture[]);
+			return Parse(mesh, encoding, null as TextureCollection);
 		}
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace System.Graphics.Models.Parsers {
 			if (mesh == null)
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-				return Parse(file, Path.GetExtension(mesh), null as ITexture[]);
+				return Parse(file, Path.GetExtension(mesh), null as TextureCollection);
 		}
 
 		/// <summary>
@@ -146,7 +146,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="mesh">The location of the file to parse the mesh from.</param>
 		/// <param name="textures">The textures to use (can be null or empty).</param>
 		/// <returns>A list of models with all the parsed components.</returns>
-		public static Model Parse(string mesh, params ITexture[] textures) {
+		public static Model Parse(string mesh, TextureCollection textures) {
 			if (mesh == null)
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -183,13 +183,13 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="encoding">The file extension representing the mesh encoding.</param>
 		/// <param name="textures">The textures for the model to use (can be null or empty).</param>
 		/// <returns>A list of models with all the parsed components.</returns>
-		public static Model Parse(Stream mesh, string encoding, params ITexture[] textures) {
+		public static Model Parse(Stream mesh, string encoding, TextureCollection textures) {
 			if (mesh == null || encoding == null || mesh.Position == mesh.Length)
 				return null;
 			encoding = encoding.Trim().ToLower();
 			if (encoding.Length != 0 && encoding[0] == '.')
 				encoding = encoding.Substring(1);
-			ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>> pair;
+			ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>> pair;
 			if (!ParserDictionary.TryGetValue(encoding, out pair) || pair.Item1 == null)
 				throw new NotImplementedException("No " + encoding + " parser has been found (the class must be marked with ModelParserAttribute).");
 			Model models = pair.Item1(mesh, textures);
@@ -214,7 +214,7 @@ namespace System.Graphics.Models.Parsers {
 			encoding = encoding.Trim().ToLower();
 			if (encoding.Length != 0 && encoding[0] == '.')
 				encoding = encoding.Substring(1);
-			ValueTuple<Func<Stream, ITexture[], Model>, Action<IModel, Stream>> pair;
+			ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>> pair;
 			if (!ParserDictionary.TryGetValue(encoding, out pair) || pair.Item2 == null)
 				throw new NotImplementedException("No " + encoding + " serializer handler has been found (the class must be marked with ModelParserAttribute).");
 			pair.Item2(component, saveStream);

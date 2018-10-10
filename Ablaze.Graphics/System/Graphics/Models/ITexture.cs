@@ -5,9 +5,9 @@ namespace System.Graphics.Models {
 	/// <summary>
 	/// Represents a bindable texture.
 	/// </summary>
-	public interface ITexture : IEquatable<ITexture>, ICloneable, IDisposable {
+	public interface ITexture : ICloneable, IDisposable {
 		/// <summary>
-		/// Gets or sets whether the texture alpha components are premultiplied.
+		/// Gets or sets whether the texture alpha components are premultiplied
 		/// </summary>
 		bool Premultiplied {
 			get;
@@ -15,14 +15,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the currently assigned OpenGL name (0 if not bound once yet).
-		/// </summary>
-		int Name {
-			get;
-		}
-
-		/// <summary>
-		/// Gets or sets additional info to be stored with the texture.
+		/// Gets or sets additional info to be stored with the texture
 		/// </summary>
 		object Tag {
 			get;
@@ -30,9 +23,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the texture name.
+		/// Gets or sets the texture name
 		/// </summary>
-		string ID {
+		string Name {
 			get;
 			set;
 		}
@@ -46,30 +39,30 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets whether the texture is disposed.
+		/// Gets whether the texture is disposed
 		/// </summary>
 		bool IsDisposed {
 			get;
 		}
 
 		/// <summary>
-		/// Adds a reference to this texture.
+		/// Adds a reference to this texture
 		/// </summary>
 		void AddReference();
 
 		/// <summary>
-		/// Binds the texture for use with OpenGL operations.
+		/// Binds the texture for use with OpenGL operations
 		/// </summary>
 		void Bind();
 
 		/// <summary>
-		/// Binds the texture for use with OpenGL operations.
+		/// Binds the texture for use with OpenGL operations
 		/// </summary>
-		/// <param name="mode">The texture wrap mode to use.</param>
+		/// <param name="mode">The texture wrap mode to use</param>
 		void Bind(TextureWrapMode mode);
 
 		/// <summary>
-		/// Unbinds the texture.
+		/// Unbinds the texture
 		/// </summary>
 		void Unbind();
 

@@ -9,44 +9,44 @@ using System.Threading.Tasks;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Loads and holds the resources that make up the model, and uses OpenGL for rendering render.
+	/// Loads and holds the resources that make up the model, and uses OpenGL for rendering render
 	/// </summary>
 	public class MeshComponent : IModel, IEnumerable<Vertex>, IEnumerable {
 		/// <summary>
-		/// The size of a Vector2 instance.
+		/// The size of a Vector2 instance
 		/// </summary>
 		public static readonly int Vector2Size = Marshal.SizeOf(typeof(Vector2));
 		/// <summary>
-		/// The size of a Vector3 instance.
+		/// The size of a Vector3 instance
 		/// </summary>
 		public static readonly int Vector3Size = Marshal.SizeOf(typeof(Vector3));
 		/// <summary>
-		/// The size of a Vector4 instance.
+		/// The size of a Vector4 instance
 		/// </summary>
 		public static readonly int Vector4Size = Marshal.SizeOf(typeof(Vector4));
 		/// <summary>
-		/// Called when a model is about to be rendered.
+		/// Called when a model is about to be rendered
 		/// </summary>
 		public event Action RenderBegin;
 		/// <summary>
-		/// Called when a model has been rendered.
+		/// Called when a model has been rendered
 		/// </summary>
 		public event Action RenderEnd;
 		/// <summary>
-		/// Called when the location of the model has changed.
+		/// Called when the location of the model has changed
 		/// </summary>
 		public event Action LocationChanged;
 		/// <summary>
-		/// Called when the scale of the model has changed.
+		/// Called when the scale of the model has changed
 		/// </summary>
 		public event Action ScaleChanged;
 		/// <summary>
-		/// Called when the rotation of the model has changed.
+		/// Called when the rotation of the model has changed
 		/// </summary>
 		public event Action RotationChanged;
-		private ITexture defaultTexture = Texture2D.Empty;
+		private TextureCollection defaultTexture = new TextureCollection();
 		/// <summary>
-		/// The vertex data of the mesh.
+		/// The vertex data of the mesh
 		/// </summary>
 		private Vertex[] bufferData;
 		private IntPtr BufferSize;
@@ -57,11 +57,11 @@ namespace System.Graphics.Models {
 		private VertexArrayBuffer VertexArrayBuffer;
 		private DataBuffer DataBuffer;
 		private IndexBuffer indexBuffer;
-		private ITexture texture;
+		private TextureCollection texture;
 		private IModel parent;
 		private int triangles, vertices;
 		/// <summary>
-		/// The transformation matrix that is used if 'UseCustomTransformation' is set to true. The same as TransformationMatrix.
+		/// The transformation matrix that is used if 'UseCustomTransformation' is set to true. The same as TransformationMatrix
 		/// </summary>
 		public Matrix4 Transformation = Matrix4.Identity;
 
@@ -78,7 +78,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// The buffer that contains the index order of the vertices of the mesh.
+		/// The buffer that contains the index order of the vertices of the mesh
 		/// </summary>
 		public IndexBuffer IndexBuffer {
 			get {
@@ -87,7 +87,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Treats the component as if it is see-through. Set to true if the texture for it is not opaque.
+		/// Treats the component as if it is see-through. Set to true if the texture for it is not opaque
 		/// </summary>
 		public bool LowOpacity {
 			get;
@@ -95,7 +95,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// If true, the 'Transformation' matrix is used instead of 'Location', 'Scale' and 'Rotation'.
+		/// If true, the 'Transformation' matrix is used instead of 'Location', 'Scale' and 'Rotation'
 		/// </summary>
 		public bool UseCustomTransformation {
 			get;
@@ -103,7 +103,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the component's hue and opacity.
+		/// Gets or sets the component's hue and opacity
 		/// </summary>
 		public ColorF MaterialHue {
 			get;
@@ -111,7 +111,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the hue of the ambient light that hits the object.
+		/// Gets or sets the hue of the ambient light that hits the object
 		/// </summary>
 		public ColorF AmbientHue {
 			get;
@@ -119,7 +119,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the hue of the reflective shine of the object.
+		/// Gets or sets the hue of the reflective shine of the object
 		/// </summary>
 		public ColorF ShineHue {
 			get;
@@ -127,7 +127,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the shininess exponent of the material.
+		/// Gets or sets the shininess exponent of the material
 		/// </summary>
 		public float Shininess {
 			get;
@@ -135,7 +135,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the transformation matrix that is used if 'UseCustomTransformation' is set to true.
+		/// Gets or sets the transformation matrix that is used if 'UseCustomTransformation' is set to true
 		/// </summary>
 		public Matrix4 TransformationMatrix {
 			get {
@@ -147,7 +147,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Configures the way textures are wrapped to polygons.
+		/// Configures the way textures are wrapped to polygons
 		/// </summary>
 		public TextureWrapMode WrapMode {
 			get;
@@ -155,7 +155,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of components in the model.
+		/// Gets the number of components in the model
 		/// </summary>
 		public int Count {
 			get {
@@ -164,7 +164,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Set to true if you want the vertex buffer to be flushed on next render.
+		/// Set to true if you want the vertex buffer to be flushed on next render
 		/// </summary>
 		public bool FlushBufferOnNextRender {
 			get;
@@ -184,7 +184,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the component.
+		/// Gets or sets the name of the component
 		/// </summary>
 		public string Name {
 			get;
@@ -192,7 +192,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets an object that contains properties relevant to this mesh.
+		/// Gets or sets an object that contains properties relevant to this mesh
 		/// </summary>
 		public object Tag {
 			get;
@@ -200,7 +200,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the vertex data of the mesh. If the mesh is cloned, it may be shared unless BeginUpdateMesh() was called.
+		/// Gets the vertex data of the mesh. If the mesh is cloned, it may be shared unless BeginUpdateMesh() was called
 		/// </summary>
 		public Vertex[] BufferData {
 			get {
@@ -225,7 +225,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of triangles in the model.
+		/// Gets the number of triangles in the model
 		/// </summary>
 		public int Triangles {
 #if NET45
@@ -237,7 +237,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates a new empty mesh component.
+		/// Creates a new empty mesh component
 		/// </summary>
 		public static MeshComponent Empty {
 #if NET45
@@ -249,7 +249,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets whether the model is visible (rendered) or not.
+		/// Gets or sets whether the model is visible (rendered) or not
 		/// </summary>
 		public bool Visible {
 			get;
@@ -257,7 +257,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// If true, the backs of mesh components are not rendered.
+		/// If true, the backs of mesh components are not rendered
 		/// </summary>
 		public bool Cull {
 			get;
@@ -265,7 +265,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the rendering mode of the polygons of the mesh.
+		/// Gets or sets the rendering mode of the polygons of the mesh
 		/// </summary>
 		public MeshMode MeshMode {
 			get;
@@ -273,7 +273,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the transparency of the mesh material (1 is opaque, 0 is transparent).
+		/// Gets or sets the transparency of the mesh material (1 is opaque, 0 is transparent)
 		/// </summary>
 		public float Alpha {
 			get {
@@ -287,7 +287,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the type of the model for optimization.
+		/// Gets or sets the type of the model for optimization
 		/// </summary>
 		public BufferUsageHint Optimization {
 			get;
@@ -295,7 +295,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of vertices in the model.
+		/// Gets the number of vertices in the model
 		/// </summary>
 		public int Vertices {
 #if NET45
@@ -307,45 +307,35 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the default texture of the model when none is specified.
+		/// Gets or sets the default texture of the model when none is specified
 		/// </summary>
-		public ITexture[] DefaultTextures {
+		public TextureCollection DefaultTextures {
 			get {
-				return new ITexture[] { defaultTexture };
+				return defaultTexture;
 			}
 			set {
-				if (value == null || value.Length == 0)
-					value = Texture2D.EmptyTexture;
-				if (value[0] == defaultTexture)
-					return;
-				defaultTexture.Dispose();
-				defaultTexture = value[0];
-				defaultTexture.AddReference();
-				if (Texture2D.Empty.Equals(texture))
-					texture = defaultTexture;
+				if (value == null || value.Count == 0)
+					value = new TextureCollection();
+				defaultTexture = value;
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the texture used by the model (only the texture at index 0 will be used).
+		/// Gets or sets the texture used by the model
 		/// </summary>
-		public ITexture[] Textures {
+		public TextureCollection Textures {
 			get {
-				return new ITexture[] { texture };
+				return texture;
 			}
 			set {
-				if (value == null || value.Length == 0)
-					value = DefaultTextures;
-				if (value[0] == texture)
-					return;
-				texture.Dispose();
-				texture = value[0];
-				texture.AddReference();
+				if (value == null || value.Count == 0)
+					value = new TextureCollection(DefaultTextures);
+				texture = value;
 			}
 		}
 
 		/// <summary>
-		/// Gets whether the model is disposed.
+		/// Gets whether the model is disposed
 		/// </summary>
 		public bool IsDisposed {
 			get {
@@ -661,7 +651,7 @@ namespace System.Graphics.Models {
 				defaultTexture.AddReference();
 			texture = modelComponent.texture;
 			if (texture == null)
-				texture = Texture2D.Empty;
+				texture = new TextureCollection();
 			else
 				texture.AddReference();
 			indexBuffer = modelComponent.indexBuffer;
@@ -716,9 +706,9 @@ namespace System.Graphics.Models {
 			else
 				bufferData = vertices;
 			if (texture == null)
-				this.texture = Texture2D.Empty;
+				this.texture = new TextureCollection();
 			else {
-				this.texture = texture;
+				this.texture = new TextureCollection(texture);
 				texture.AddReference();
 			}
 			Optimization = optimization;
@@ -1015,7 +1005,8 @@ namespace System.Graphics.Models {
 				if (premultiplied)
 					GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 				texture.Bind(WrapMode);
-				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), texture.Name == 0 ? 0f : 1f, ShaderSetMode.SetImmediately);
+				Texture2D temp = texture as Texture2D;
+				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), temp == null || temp.ID != 0 ? 1f : 0f, ShaderSetMode.SetImmediately);
 			}
 			shader.SetUniformValue(GlobalShaderParams.AmbientHue.ToString(), AmbientHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.ShineHue.ToString(), ShineHue, ShaderSetMode.SetImmediately);

@@ -16,7 +16,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 		/// </summary>
 		/// <param name="source">The location of the file to parse the texture from.</param>
 		/// <returns>A list of the textures parsed.</returns>
-		public static ITexture[] Parse(Stream source) {
+		public static TextureCollection Parse(Stream source) {
 			// invalidate whatever it was before
 			TextureTarget dimension = TextureTarget.Texture2D;
 			int texturehandle = 0;
@@ -282,7 +282,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
 
 			GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int) TextureEnvMode.Modulate);
-			return new ITexture[] { new Texture2D(texturehandle) };
+			return new TextureCollection(new Texture2D(texturehandle));
 		}
 
 		[Flags] // Surface Description

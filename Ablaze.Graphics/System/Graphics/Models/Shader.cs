@@ -94,7 +94,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		protected ShaderSource[] ShaderSources;
 		private bool boundAtLeastOnce;
-		private int name;
+		private int id;
+		/// <summary>
+		/// The name of the shader
+		/// </summary>
+		public string Name;
 		/// <summary>
 		/// Available for your personal use.
 		/// </summary>
@@ -116,12 +120,12 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets the native OpenGL name of the shader.
 		/// </summary>
-		public int Name {
+		public int ID {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name;
+				return id;
 			}
 		}
 
@@ -133,7 +137,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name == 0;
+				return id == 0;
 			}
 		}
 
@@ -142,7 +146,7 @@ namespace System.Graphics.Models {
 				if (GraphicsContext.IsGraphicsContextAvailable) {
 					int prog;
 					GL.GetInteger(GetPName.CurrentProgram, out prog);
-					return prog == name;
+					return prog == id;
 				} else
 					return false;
 			}
@@ -196,7 +200,7 @@ namespace System.Graphics.Models {
 					param = new Parameters();
 				else if (param.Location != -1)
 					return param.Location;
-				int location = GL.GetUniformLocation(name, varName);
+				int location = GL.GetUniformLocation(id, varName);
 				if (location == -1) {
 					if (throwIfNotFound)
 						throw new ArgumentException("The uniform variable '" + varName + "' was not found in the shader.", nameof(varName));
@@ -228,7 +232,7 @@ namespace System.Graphics.Models {
 					param = new Parameters();
 				else if (param.Location != -1)
 					return param.Location;
-				int location = GL.GetAttribLocation(name, varName);
+				int location = GL.GetAttribLocation(id, varName);
 				if (location == -1) {
 					if (throwIfNotFound)
 						throw new ArgumentException("The attribute '" + varName + "' was not found in the shader.", nameof(varName));
@@ -265,7 +269,7 @@ namespace System.Graphics.Models {
 						int size = Marshal.SizeOf(typeof(T));
 						float[] result = new float[((size - 1) / 4) + 1];
 						fixed (float* output = result) {
-							GL.GetUniform(name, location, output);
+							GL.GetUniform(id, location, output);
 							T returnValue = default(T);
 							TypedReference valueref = __makeref(returnValue);
 							byte* valuePtr = (byte*) *((IntPtr*) &valueref);
@@ -305,7 +309,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, int value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.Uniform1(GetUniformIndex(varName, true), value);
@@ -330,7 +334,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, float value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.Uniform1(GetUniformIndex(varName, true), value);
@@ -355,7 +359,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, double value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.Uniform1(GetUniformIndex(varName, true), value);
@@ -380,7 +384,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, Vector2 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.Uniform2(GetUniformIndex(varName, true), value);
@@ -405,7 +409,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, Vector3 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.Uniform3(GetUniformIndex(varName, true), ref value);
@@ -430,7 +434,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, Vector4 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.Uniform4(GetUniformIndex(varName, true), ref value);
@@ -455,7 +459,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public virtual void SetUniformValue(string varName, ref Matrix4 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.UniformMatrix4(GetUniformIndex(varName, true), false, ref value);
@@ -480,7 +484,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public void SetAttributeValue(string varName, int value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.VertexAttrib1(GetAttributeIndex(varName, true), value);
@@ -505,7 +509,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public void SetAttributeValue(string varName, float value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.VertexAttrib1(GetAttributeIndex(varName, true), value);
@@ -530,7 +534,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public void SetAttributeValue(string varName, double value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.VertexAttrib1(GetAttributeIndex(varName, true), value);
@@ -555,7 +559,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public void SetAttributeValue(string varName, Vector2 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.VertexAttrib2(GetAttributeIndex(varName, true), value);
@@ -580,7 +584,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public void SetAttributeValue(string varName, Vector3 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.VertexAttrib3(GetAttributeIndex(varName, true), ref value);
@@ -605,7 +609,7 @@ namespace System.Graphics.Models {
 		/// <param name="value">The target value.</param>
 		/// <param name="mode">The method to use to set the value.</param>
 		public void SetAttributeValue(string varName, Vector4 value, ShaderSetMode mode) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (boundAtLeastOnce && mode != ShaderSetMode.SetOnNextBind && (mode == ShaderSetMode.SetImmediately || IsBound))
 				GL.VertexAttrib4(GetAttributeIndex(varName, true), ref value);
@@ -652,8 +656,8 @@ namespace System.Graphics.Models {
 					if (source.Type != 0 && !string.IsNullOrEmpty(source.SourceCode)) {
 						if (!(GlobalShader.VersionQualifier.Length == 0 || this is GlobalShader))
 							source.SourceCode = GlobalShader.VersionQualifier + source.SourceCode;
-						if (name == 0)
-							name = GL.CreateProgram();
+						if (id == 0)
+							id = GL.CreateProgram();
 						shader = GL.CreateShader(source.Type);
 						GL.ShaderSource(shader, source.SourceCode);
 						GL.CompileShader(shader);
@@ -669,15 +673,15 @@ namespace System.Graphics.Models {
 									Console.WriteLine(info);
 							} else {
 								GL.DeleteShader(shader);
-								GL.DeleteProgram(name);
-								name = 0;
+								GL.DeleteProgram(id);
+								id = 0;
 								if (throwOnError)
 									throw new ArgumentException("The specified " + source.Type + " failed to compile.\n" + info, new InvalidProgramException(source.SourceCode));
 								else
 									return ShaderState.CompilationFailed;
 							}
 						}
-						GL.AttachShader(name, shader);
+						GL.AttachShader(id, shader);
 						GL.DeleteShader(shader);
 						needsLink = true;
 					}
@@ -685,11 +689,11 @@ namespace System.Graphics.Models {
 				ShaderSources = null;
 			}
 			if (needsLink) {
-				GL.LinkProgram(name);
-				GL.GetProgram(name, ProgramParameter.LinkStatus, out status);
+				GL.LinkProgram(id);
+				GL.GetProgram(id, ProgramParameter.LinkStatus, out status);
 				if (status != 1 || DebugMode) {
 					string info;
-					GL.GetProgramInfoLog(name, out info);
+					GL.GetProgramInfoLog(id, out info);
 					if (info == null)
 						info = string.Empty;
 					else
@@ -698,8 +702,8 @@ namespace System.Graphics.Models {
 						if (info.Length != 0)
 							Console.WriteLine(info);
 					} else {
-						GL.DeleteProgram(name);
-						name = 0;
+						GL.DeleteProgram(id);
+						id = 0;
 						if (throwOnError)
 							throw new InvalidProgramException("The specified shaders failed to link.\n" + info);
 						else
@@ -708,9 +712,9 @@ namespace System.Graphics.Models {
 				}
 			}
 			boundAtLeastOnce = true;
-			GL.UseProgram(name);
+			GL.UseProgram(id);
 			boundShader.Value = this;
-			if (name != 0) {
+			if (id != 0) {
 				object value;
 				if (uniformAssignments.Count != 0) {
 					lock (uniformsSyncRoot) {
@@ -814,7 +818,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>The buffer name.</returns>
 		public override int GetHashCode() {
-			return name;
+			return id;
 		}
 
 		/// <summary>
@@ -822,7 +826,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.String that describes this Shader.</returns>
 		public override string ToString() {
-			return "Shader (handle " + name + ")";
+			return "Shader (handle " + id + ")";
 		}
 
 		/// <summary>
@@ -841,7 +845,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool Equals(Shader other) {
-			return other == null ? false : (name == other.name);
+			return other == null ? false : (id == other.id);
 		}
 
 		/// <summary>
@@ -860,20 +864,20 @@ namespace System.Graphics.Models {
 		/// Disposes of the shader program.
 		/// </summary>
 		public void Dispose() {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-				name = 0;
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 				return;
 			} else if (boundShader.Value == this)
 				boundShader.Value = Empty;
 			try {
-				GL.DeleteProgram(name);
+				GL.DeleteProgram(id);
 			} catch {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 			}
-			name = 0;
+			id = 0;
 			GC.SuppressFinalize(this);
 		}
 

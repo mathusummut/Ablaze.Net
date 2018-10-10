@@ -6,17 +6,17 @@ namespace System.Graphics.Models {
 	/// Manages an OpenGL vertex array buffer.
 	/// </summary>
 	public sealed class VertexArrayBuffer : IEquatable<VertexArrayBuffer>, IDisposable {
-		private int name, references = 1;
+		private int id, references = 1;
 
 		/// <summary>
 		/// Gets the native OpenGL name of the buffer.
 		/// </summary>
-		public int Name {
+		public int ID {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name;
+				return id;
 			}
 		}
 
@@ -28,7 +28,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name == 0;
+				return id == 0;
 			}
 		}
 
@@ -45,9 +45,9 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void Bind() {
-			if (name == 0)
-				GL.GenVertexArrays(1, out name);
-			GL.BindVertexArray(name);
+			if (id == 0)
+				GL.GenVertexArrays(1, out id);
+			GL.BindVertexArray(id);
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.Int32 containing the hashcode of this VertexArrayBuffer.</returns>
 		public override int GetHashCode() {
-			return name;
+			return id;
 		}
 
 		/// <summary>
@@ -73,7 +73,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.String that describes this VertexArrayBuffer.</returns>
 		public override string ToString() {
-			return "Vertex array buffer (handle " + name + ")";
+			return "Vertex array buffer (handle " + id + ")";
 		}
 
 		/// <summary>
@@ -102,7 +102,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool Equals(VertexArrayBuffer other) {
-			return other == null ? false : (name == other.name);
+			return other == null ? false : (id == other.id);
 		}
 
 		/// <summary>
@@ -129,21 +129,21 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed.</param>
 		public void Dispose(bool forceDispose) {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-				name = 0;
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 				return;
 			} else if (references > 0)
 				references--;
 			if (references <= 0 || forceDispose) {
 				try {
-					GL.DeleteVertexArrays(1, ref name);
+					GL.DeleteVertexArrays(1, ref id);
 				} catch {
-					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 				}
-				name = 0;
+				id = 0;
 				GC.SuppressFinalize(this);
 			}
 		}

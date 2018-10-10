@@ -24,14 +24,12 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="mesh">The stream containing the obj data</param>
 		/// <param name="textures">The textures for the model to use (can be null or empty)</param>
 		/// <returns>A list of models with all the parsed components</returns>
-		public static Model Parse(Stream mesh, ITexture[] textures) {
-			if (textures == null || textures.Length == 0)
-				textures = new Texture2D[0];
+		public static Model Parse(Stream mesh, TextureCollection textures) {
 			using (StreamReader reader = new StreamReader(mesh))
-				return Parse(reader, new List<ITexture>(), new List<ITexture>(textures));
+				return Parse(reader, new TextureCollection(), new TextureCollection(textures));
 		}
 
-		private static Model Parse(StreamReader reader, List<ITexture> textures, List<ITexture> loadedTextures) {
+		private static Model Parse(StreamReader reader, TextureCollection textures, TextureCollection loadedTextures) {
 			List<Model> models = new List<Model>();
 			List<MeshComponent> components = new List<MeshComponent>();
 			List<Vector3> vertices = new List<Vector3>();
@@ -43,16 +41,16 @@ namespace System.Graphics.Models.Parsers {
 			string name;
 			string[] indices;
 			Queue<string> names = new Queue<string>();
-			ITexture[] parsedTextures;
+			TextureCollection parsedTextures;
 			MeshComponent component;
 			ITexture currText;
 			MtlParser.Material material = null;
-			ITexture[] current = null;
+			TextureCollection current = null;
 			List<KeyValuePair<VertexIndex, Vertex>> vertexIndices;
 			VertexIndex temp1, temp2;
 			Vertex currentVertex;
 			int commentIndex, i;
-			Dictionary<string, ITexture[]> textureLookup = new Dictionary<string, ITexture[]>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<string, TextureCollection> textureLookup = new Dictionary<string, TextureCollection>(StringComparer.OrdinalIgnoreCase);
 			while ((line = reader.ReadLine()) != null) {
 				commentIndex = line.IndexOf('#');
 				if (commentIndex != -1)
@@ -228,7 +226,7 @@ namespace System.Graphics.Models.Parsers {
 							} else {
 								current = TextureParser.Parse(name);
 								textureLookup.Add(name, current);
-								if (current == null || current.Length == 0)
+								if (current == null || current.Count == 0)
 									current = null;
 								else {
 									try {
@@ -237,7 +235,7 @@ namespace System.Graphics.Models.Parsers {
 										name = string.Empty;
 									}
 									foreach (ITexture tex in current) {
-										tex.ID = name;
+										tex.Name = name;
 										tex.Tag = material;
 									}
 								}
@@ -270,11 +268,11 @@ namespace System.Graphics.Models.Parsers {
 				components.Add(component);
 			}
 			if (components.Count != 0)
-				models.Add(new Model(MeshExtensions.ToModelStructureArray(components)));
+				models.Add(new Model(components));
 			return new Model(models);
 		}
 
-		private static ITexture FindByMaterial(List<ITexture> textures, string name) {
+		private static ITexture FindByMaterial(TextureCollection textures, string name) {
 			if (name == null)
 				return null;
 			name = name.ToLower();

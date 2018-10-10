@@ -245,7 +245,7 @@ namespace Ablaze.ModelViewer {
 						InvalidateGL(false);
 					} else {
 						try {
-							ITexture[] loadedTextures = Texture2D.ToTextures(textures);
+							TextureCollection loadedTextures = Texture2D.ToTextures(textures);
 							Scene.Textures = loadedTextures;
 							InvalidateGL(false);
 						} catch (Exception ex) {

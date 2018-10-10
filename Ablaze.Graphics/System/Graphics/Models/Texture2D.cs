@@ -14,11 +14,7 @@ namespace System.Graphics.Models {
 		/// An empty texture.
 		/// </summary>
 		public static readonly Texture2D Empty = new Texture2D();
-		/// <summary>
-		/// A texture array containing one empty texture
-		/// </summary>
-		public static readonly ITexture[] EmptyTexture = new ITexture[] { Empty };
-		private int name, references;
+		private int id, references;
 		private bool init, loadedFromHandle, lastFilter = true, lastMipmap = true;
 		private Bitmap image, copy;
 		/// <summary>
@@ -58,7 +54,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets the texture name
 		/// </summary>
-		public string ID {
+		public string Name {
 			get;
 			set;
 		}
@@ -74,12 +70,12 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets the native OpenGL name of the texture (0 if not bound once yet)
 		/// </summary>
-		public int Name {
+		public int ID {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name;
+				return id;
 			}
 		}
 
@@ -115,9 +111,9 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				if (name == 0 && image != null)
+				if (id == 0 && image != null)
 					Bind();
-				return name;
+				return id;
 			}
 		}
 
@@ -134,7 +130,7 @@ namespace System.Graphics.Models {
 					return copy;
 				Bind(TextureWrapMode.ClampToEdge);
 				Bitmap bmp = new Bitmap(TextureSize.Width, TextureSize.Height);
-				BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, Premultiplied ? Drawing.Imaging.PixelFormat.Format32bppPArgb : Drawing.Imaging.PixelFormat.Format32bppArgb);
+				BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, Premultiplied ? PixelFormat.Format32bppPArgb : Drawing.Imaging.PixelFormat.Format32bppArgb);
 				GL.GetTexImage(TextureTarget.Texture2D, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 				bmp.UnlockBits(data);
 				return bmp;
@@ -149,7 +145,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name == 0 && image == null;
+				return id == 0 && image == null;
 			}
 		}
 
@@ -218,7 +214,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="handle">The handle of the texture.</param>
 		public Texture2D(int handle) {
-			name = handle;
+			id = handle;
 			loadedFromHandle = true;
 		}
 
@@ -226,17 +222,17 @@ namespace System.Graphics.Models {
 		/// Initializes textures from the specified file paths
 		/// </summary>
 		/// <param name="images">The paths to the image files to load</param>
-		public static ITexture[] ToTextures(params string[] images) {
+		public static TextureCollection ToTextures(params string[] images) {
 			if (images == null || images.Length == 0)
-				return new ITexture[0];
-			List<ITexture> textures = new List<ITexture>(images.Length);
-			ITexture[] temp;
+				return new TextureCollection();
+			TextureCollection textures = new TextureCollection();
+			TextureCollection temp;
 			for (int i = 0; i < images.Length; i++) {
 				temp = Parsers.TextureParser.Parse(images[i]);
 				if (temp != null)
 					textures.AddRange(temp);
 			}
-			return textures.ToArray();
+			return textures;
 		}
 
 		/// <summary>
@@ -244,10 +240,10 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
 		/// <param name="images">The bitmaps to create textures from</param>
-		public static ITexture[] ToTextures(ImageParameterAction bindAction, params Bitmap[] images) {
+		public static TextureCollection ToTextures(ImageParameterAction bindAction, params Bitmap[] images) {
 			if (images == null || images.Length == 0)
-				return new ITexture[0];
-			ITexture[] textures = new ITexture[images.Length];
+				return new TextureCollection();
+			TextureCollection textures = new TextureCollection();
 			for (int i = 0; i < images.Length; i++)
 				textures[i] = new Texture2D(images[i], NPotTextureScaleMode.ScaleUp, bindAction);
 			return textures;
@@ -280,8 +276,8 @@ namespace System.Graphics.Models {
 			}
 			if (image == null) {
 				if (init) {
-					GL.GenTextures(1, out name);
-					GL.BindTexture(TextureTarget.Texture2D, name);
+					GL.GenTextures(1, out id);
+					GL.BindTexture(TextureTarget.Texture2D, id);
 					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? TextureMinFilter.Linear : TextureMinFilter.Nearest));
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) (LinearScalingFilter ? TextureMagFilter.Linear : TextureMagFilter.Nearest));
@@ -289,7 +285,7 @@ namespace System.Graphics.Models {
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) mode);
 					init = false;
 				} else
-					GL.BindTexture(TextureTarget.Texture2D, name);
+					GL.BindTexture(TextureTarget.Texture2D, id);
 				if (!(LinearScalingFilter == lastFilter || UseMipmapping == lastMipmap)) {
 					lastFilter = LinearScalingFilter;
 					bool mipmap = UseMipmapping;
@@ -304,8 +300,8 @@ namespace System.Graphics.Models {
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) mode);
 				}
 			} else {
-				GL.GenTextures(1, out name);
-				GL.BindTexture(TextureTarget.Texture2D, name);
+				GL.GenTextures(1, out id);
+				GL.BindTexture(TextureTarget.Texture2D, id);
 				if (BitmapSize == TextureSize) {
 					BitmapData data = image.LockBits(new Rectangle(Point.Empty, TextureSize), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
@@ -388,7 +384,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool Equals(Texture2D texture) {
-			return texture != null && (name == texture.name && object.Equals(image, texture.image));
+			return texture != null && (id == texture.id && object.Equals(image, texture.image));
 		}
 
 		/// <summary>
@@ -418,9 +414,9 @@ namespace System.Graphics.Models {
 		/// <returns>The texture name</returns>
 		public override int GetHashCode() {
 			if (image == null)
-				return name;
+				return id;
 			else
-				return name << 5 ^ image.GetHashCode();
+				return id << 5 ^ image.GetHashCode();
 		}
 
 		/// <summary>
@@ -428,11 +424,13 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A string with the texture name</returns>
 		public override string ToString() {
-			string str = ID == null ? null : ID.Trim();
-			if (str == null || str.Length == 0)
-				return "Texture2D: { Handle: " + name + " }";
+			string name = Name;
+			if (name != null)
+				name = name.Trim();
+			if (name == null || name.Length == 0)
+				return "Texture2D: { Handle: " + id + " }";
 			else
-				return "Texture2D: { Handle: " + name + ", Name: " + str + " }";
+				return "Texture2D: { Handle: " + id + ", Name: " + name + " }";
 		}
 
 		/// <summary>
@@ -504,17 +502,17 @@ namespace System.Graphics.Models {
 					image = null;
 				}
 				copy = null;
-				if (name != 0) {
+				if (id != 0) {
 					if (GraphicsContext.IsFinalizer)
-						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
+						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
 					else {
 						try {
-							GL.DeleteTextures(1, ref name);
+							GL.DeleteTextures(1, ref id);
 						} catch {
-							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 						}
 					}
-					name = 0;
+					id = 0;
 				}
 				GC.SuppressFinalize(this);
 			}

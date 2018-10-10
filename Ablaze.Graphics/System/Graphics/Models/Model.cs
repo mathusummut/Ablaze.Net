@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Graphics.OGL;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
@@ -98,24 +97,31 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="index">The index of the mesh to return</param>
 		public IModel this[int index] {
-#if NET45
-			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 			get {
 				lock (SyncRoot)
 					return componentList[index];
 			}
 			set {
 				lock (SyncRoot) {
-					IModel val = componentList[index];
-					if (value == val)
+					IModel newModel = componentList[index];
+					if (value == newModel)
 						return;
-					vertices -= val.Vertices;
-					triangles -= val.Triangles;
+					newModel.Parent = null;
+					vertices -= newModel.Vertices;
+					triangles -= newModel.Triangles;
 					if (value == null)
 						componentList.RemoveAt(index);
 					else {
+						IModel parent = this;
+						do {
+							if (newModel == parent)
+								throw new InvalidOperationException("Cannot add parent models as children to the current model");
+							parent = parent.Parent;
+						} while (parent != null);
+						if (!newModel.KeepCopyInMemory && KeepCopyInMemory)
+							newModel.KeepCopyInMemory = true;
 						componentList[index] = value;
+						newModel.Parent = this;
 						vertices += value.Vertices;
 						triangles += value.Triangles;
 					}
@@ -192,72 +198,60 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the default textures of the model components when none is specified
+		/// Gets or sets the default textures of the model components when none is specified, one texture for every child component
 		/// </summary>
-		public ITexture[] DefaultTextures {
+		public TextureCollection DefaultTextures {
 			get {
 				if (componentList.Count == 0)
-					return Texture2D.EmptyTexture;
-				List<ITexture> defaultTextures = new List<ITexture>(componentList.Count);
+					return new TextureCollection();
+				TextureCollection collection = new TextureCollection();
 				lock (SyncRoot) {
 					for (int i = 0; i < componentList.Count; i++)
-						defaultTextures.AddRange(componentList[i].DefaultTextures);
+						collection.Add(componentList[i].DefaultTextures);
 				}
-				return defaultTextures.ToArray();
+				return collection;
 			}
 			set {
-				if (value == null || value.Length == 0)
-					value = Texture2D.EmptyTexture;
-				int index = 0;
-				MeshComponent model;
-				IModel component;
-				lock (SyncRoot) {
-					for (int i = 0; i < componentList.Count; i++) {
-						component = componentList[i];
-						model = component as MeshComponent;
-						if (model == null)
-							component.DefaultTextures = value;
-						else {
-							model.DefaultTextures = new ITexture[] { value[index] };
-							if (index != value.Length - 1)
-								index++;
-						}
+				if (value == null || value.Count == 0) {
+					lock (SyncRoot) {
+						for (int i = 0; i < componentList.Count; i++)
+							componentList[i].DefaultTextures = null;
+					}
+				} else {
+					int index = 0;
+					lock (SyncRoot) {
+						for (int i = 0; i < componentList.Count; i++)
+							componentList[i].DefaultTextures = new TextureCollection(value[index++ % value.Count]);
 					}
 				}
 			}
 		}
 
 		/// <summary>
-		/// Sets the textures of all components
+		/// Gets or sets the textures of all components, one texture for every child component
 		/// </summary>
-		public ITexture[] Textures {
+		public TextureCollection Textures {
 			get {
 				if (componentList.Count == 0)
-					return Texture2D.EmptyTexture;
-				List<ITexture> textures = new List<ITexture>(componentList.Count);
+					return new TextureCollection();
+				TextureCollection collection = new TextureCollection();
 				lock (SyncRoot) {
 					for (int i = 0; i < componentList.Count; i++)
-						textures.AddRange(componentList[i].Textures);
+						collection.Add(componentList[i].Textures);
 				}
-				return textures.ToArray();
+				return collection;
 			}
 			set {
-				if (value == null || value.Length == 0)
-					value = componentList.Count == 0 ? Texture2D.EmptyTexture : componentList[0].DefaultTextures;
-				int index = 0;
-				MeshComponent model;
-				IModel component;
-				lock (SyncRoot) {
-					for (int i = 0; i < componentList.Count; i++) {
-						component = componentList[i];
-						model = component as MeshComponent;
-						if (model == null)
-							component.Textures = value;
-						else {
-							model.Textures = new ITexture[] { value[index] };
-							if (index != value.Length - 1)
-								index++;
-						}
+				if (value == null || value.Count == 0) {
+					lock (SyncRoot) {
+						for (int i = 0; i < componentList.Count; i++)
+							componentList[i].Textures = null;
+					}
+				} else {
+					int index = 0;
+					lock (SyncRoot) {
+						for (int i = 0; i < componentList.Count; i++)
+							componentList[i].Textures = new TextureCollection(value[index++ % value.Count]);
 					}
 				}
 			}
@@ -639,40 +633,15 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Replaces the specified model
 		/// </summary>
-		/// <param name="oldModel">The index of the model to replace</param>
+		/// <param name="oldModel">The model to replace</param>
 		/// <param name="newModel">The model to replace with</param>
 		public void Replace(IModel oldModel, IModel newModel) {
-			if (oldModel == null || newModel == null)
-				return;
-			lock (SyncRoot)
-				Replace(componentList.IndexOf(oldModel), newModel);
-		}
-
-		/// <summary>
-		/// Replaces the model at the specified index
-		/// </summary>
-		/// <param name="index">The index of the model to replace</param>
-		/// <param name="newModel">The model to replace with</param>
-		public void Replace(int index, IModel newModel) {
-			if (newModel == null)
+			if (oldModel == null)
 				return;
 			lock (SyncRoot) {
-				IModel old = componentList[index];
-				old.Parent = null;
-				vertices -= old.Vertices;
-				triangles -= old.Triangles;
-				IModel parent = this;
-				do {
-					if (newModel == parent)
-						throw new InvalidOperationException("Cannot add parent models as children to the current model");
-					parent = parent.Parent;
-				} while (parent != null);
-				if (!newModel.KeepCopyInMemory && KeepCopyInMemory)
-					newModel.KeepCopyInMemory = true;
-				componentList[index] = newModel;
-				newModel.Parent = this;
-				vertices += newModel.Vertices;
-				triangles += newModel.Triangles;
+				int index = componentList.IndexOf(oldModel);
+				if (index != -1)
+					this[index] = newModel;
 			}
 		}
 
@@ -712,9 +681,6 @@ namespace System.Graphics.Models {
 		/// Adds the specified components to the model
 		/// </summary>
 		/// <param name="models">The components to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void AddRange(IEnumerable<IModel> models) {
 			if (models == null)
 				return;
@@ -726,9 +692,6 @@ namespace System.Graphics.Models {
 		/// Adds the specified components to the model
 		/// </summary>
 		/// <param name="models">The components to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void AddRange(IEnumerable<Model> models) {
 			if (models == null)
 				return;
@@ -740,9 +703,6 @@ namespace System.Graphics.Models {
 		/// Adds the specified components to the model
 		/// </summary>
 		/// <param name="models">The components to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void AddRange(IEnumerable<MeshComponent> models) {
 			if (models == null)
 				return;
@@ -754,9 +714,6 @@ namespace System.Graphics.Models {
 		/// Adds the specified components to the model
 		/// </summary>
 		/// <param name="models">The components to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void AddRange(params IModel[] models) {
 			if (models == null)
 				return;
@@ -768,9 +725,6 @@ namespace System.Graphics.Models {
 		/// Adds the specified components to the model
 		/// </summary>
 		/// <param name="models">The components to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void AddRange(params Model[] models) {
 			if (models == null)
 				return;
@@ -782,9 +736,6 @@ namespace System.Graphics.Models {
 		/// Adds the specified components to the model
 		/// </summary>
 		/// <param name="models">The components to add</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void AddRange(params MeshComponent[] models) {
 			if (models == null)
 				return;
@@ -796,27 +747,20 @@ namespace System.Graphics.Models {
 		/// Removes the specified component from the model
 		/// </summary>
 		/// <param name="index">The index of the component to remove</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public bool RemoveAt(int index) {
+		public void RemoveAt(int index) {
 			lock (SyncRoot) {
 				IModel model = componentList[index];
 				componentList.RemoveAt(index);
 				model.Parent = null;
 				vertices -= model.Vertices;
 				triangles -= model.Triangles;
-				return true;
 			}
 		}
 
 		/// <summary>
 		/// Removes the specified component from the model
 		/// </summary>
-		/// <param name="model">The components to remove</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
+		/// <param name="model">The component to remove</param>
 		public bool Remove(IModel model) {
 			if (model == null)
 				return false;
@@ -834,9 +778,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Removes all components from the model
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public void Clear() {
 			lock (SyncRoot) {
 				List<IModel> oldComponents = componentList;
@@ -901,9 +842,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Raises the LocationChanged event
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		protected void RaiseLocationChanged() {
 			Action handler = LocationChanged;
 			if (handler != null)
@@ -913,9 +851,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Raises the ScaleChanged event
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		protected void RaiseScaleChanged() {
 			Action handler = ScaleChanged;
 			if (handler != null)
@@ -925,9 +860,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Raises the RotationChanged event
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		protected void RaiseRotationChanged() {
 			Action handler = RotationChanged;
 			if (handler != null)
@@ -994,9 +926,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Returns an enumerator that iterates through the models
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		public IEnumerator<IModel> GetEnumerator() {
 			return componentList.GetEnumerator();
 		}
@@ -1004,9 +933,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Returns an enumerator that iterates through the models
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
 		IEnumerator IEnumerable.GetEnumerator() {
 			return componentList.GetEnumerator();
 		}

@@ -6,17 +6,17 @@ namespace System.Graphics.Models {
 	/// Manages an OpenGl framebuffer object
 	/// </summary>
 	public sealed class FrameBuffer : IEquatable<FrameBuffer>, IDisposable {
-		private int name;
+		private int id;
 
 		/// <summary>
 		/// Gets the native OpenGL name of the buffer
 		/// </summary>
-		public int Name {
+		public int ID {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name;
+				return id;
 			}
 		}
 
@@ -28,7 +28,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return name == 0;
+				return id == 0;
 			}
 		}
 
@@ -46,16 +46,16 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void Bind() {
-			if (name == 0) {
+			if (id == 0) {
 				if (GL.Delegates.glGenFramebuffers == null)
-					GL.Ext.GenFramebuffers(1, out name);
+					GL.Ext.GenFramebuffers(1, out id);
 				else
-					GL.GenFramebuffers(1, out name);
+					GL.GenFramebuffers(1, out id);
 			}
 			if (GL.Delegates.glBindFramebuffer == null)
-				GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, name);
+				GL.Ext.BindFramebuffer(FramebufferTarget.FramebufferExt, id);
 			else
-				GL.BindFramebuffer(FramebufferTarget.Framebuffer, name);
+				GL.BindFramebuffer(FramebufferTarget.Framebuffer, id);
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.Int32 containing the hashcode of this FrameBuffer</returns>
 		public override int GetHashCode() {
-			return name;
+			return id;
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <returns>A System.String that describes this FrameBuffer</returns>
 		public override string ToString() {
-			return "Frame buffer (handle " + name + ")";
+			return "Frame buffer (handle " + id + ")";
 		}
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public bool Equals(FrameBuffer other) {
-			return other == null ? false : (name == other.name);
+			return other == null ? false : (id == other.id);
 		}
 
 		/// <summary>
@@ -137,22 +137,22 @@ namespace System.Graphics.Models {
 		/// Disposes of the frame buffer
 		/// </summary>
 		public void Dispose() {
-			if (name == 0)
+			if (id == 0)
 				return;
 			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(name));
-				name = 0;
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 				return;
 			}
 			try {
 				if (GL.Delegates.glDeleteFramebuffers == null)
-					GL.Ext.DeleteFramebuffers(1, ref name);
+					GL.Ext.DeleteFramebuffers(1, ref id);
 				else
-					GL.DeleteFramebuffers(1, ref name);
+					GL.DeleteFramebuffers(1, ref id);
 			} catch {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(name));
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 			}
-			name = 0;
+			id = 0;
 			GC.SuppressFinalize(this);
 		}
 	}

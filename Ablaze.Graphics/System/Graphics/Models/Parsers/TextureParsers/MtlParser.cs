@@ -14,15 +14,15 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 		/// </summary>
 		/// <param name="source">The location of the file to parse the textures from.</param>
 		/// <returns>A list of the textures parsed.</returns>
-		public static ITexture[] Parse(Stream source) {
-			List<ITexture> textures = new List<ITexture>();
+		public static TextureCollection Parse(Stream source) {
+			TextureCollection textures = new TextureCollection();
 			Material material = null;
-			ITexture[] current = null;
+			TextureCollection current = null;
 			string[] indices;
 			string line;
 			string name;
 			int commentIndex;
-			Dictionary<string, ITexture[]> textureLookup = new Dictionary<string, ITexture[]>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<string, TextureCollection> textureLookup = new Dictionary<string, TextureCollection>(StringComparer.OrdinalIgnoreCase);
 			using (StreamReader reader = new StreamReader(source)) {
 				while ((line = reader.ReadLine()) != null) {
 					commentIndex = line.IndexOf('#');
@@ -105,7 +105,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 								} else {
 									current = TextureParser.Parse(name);
 									textureLookup.Add(name, current);
-									if (current == null || current.Length == 0)
+									if (current == null || current.Count == 0)
 										current = null;
 									else {
 										try {
@@ -114,7 +114,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 											name = string.Empty;
 										}
 										foreach (ITexture tex in current) {
-											tex.ID = name;
+											tex.Name = name;
 											tex.Tag = material;
 										}
 									}
@@ -131,7 +131,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 				};
 				textures.Add(empty);
 			}
-			return textures.ToArray();
+			return textures;
 		}
 
 		internal sealed class Material {

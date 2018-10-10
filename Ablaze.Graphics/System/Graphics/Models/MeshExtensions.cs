@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace System.Graphics.Models {
@@ -8,32 +7,6 @@ namespace System.Graphics.Models {
 	/// A collection of useful extension methods for mesh manipulation.
 	/// </summary>
 	public static class MeshExtensions {
-		/// <summary>
-		/// Converts a list of ModelComponent to a list of ModelStructure.
-		/// </summary>
-		/// <param name="components">The list to convert.</param>
-		/// <returns>A list of ModelStructure.</returns>
-		public static IModel[] ToModelStructureArray(this List<MeshComponent> components) {
-			IModel[] structures = new IModel[components.Count];
-			for (int i = 0; i < structures.Length; i++)
-				structures[i] = components[i];
-			return structures;
-		}
-
-		/// <summary>
-		/// Converts a list of Model to a list of ModelStructure.
-		/// </summary>
-		/// <param name="models">The list to convert.</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public static IModel[] ToModelStructureArray(this List<Model> models) {
-			IModel[] arr = new IModel[models.Count];
-			for (int i = 0; i < arr.Length; i++)
-				arr[i] = models[i];
-			return arr;
-		}
-
 		/// <summary>
 		/// Merges the specified vertex information into a single vertex array.
 		/// </summary>
@@ -69,30 +42,6 @@ namespace System.Graphics.Models {
 					array[i].Normal = Vector3.UnitY;
 			}
 			return array;
-		}
-
-		/// <summary>
-		/// Converts a list of ModelStructure to a list of ModelComponent.
-		/// </summary>
-		/// <param name="components">The list to convert.</param>
-		/// <returns>A list of ModelComponent.</returns>
-		public static List<MeshComponent> ToModelComponentList(this List<IModel> components) {
-			List<MeshComponent> structures = new List<MeshComponent>(components.Count);
-			foreach (IModel temp in components)
-				structures.Add(temp as MeshComponent);
-			return structures;
-		}
-
-		/// <summary>
-		/// Converts a list of ModelStructure to a list of Model.
-		/// </summary>
-		/// <param name="components">The list to convert.</param>
-		/// <returns>A list of Model.</returns>
-		public static List<Model> ToModelList(this List<IModel> components) {
-			List<Model> structures = new List<Model>(components.Count);
-			foreach (IModel temp in components)
-				structures.Add(temp as Model);
-			return structures;
 		}
 
 		/// <summary>

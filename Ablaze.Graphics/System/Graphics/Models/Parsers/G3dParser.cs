@@ -65,7 +65,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="mesh">The stream containing the G3D data</param>
 		/// <param name="textures">The textures for the model to use (can be null or empty)</param>
 		/// <returns>An animated model with all the parsed components</returns>
-		public static Model Parse(Stream mesh, ITexture[] textures) {
+		public static Model Parse(Stream mesh, TextureCollection textures) {
 			const float AnimationSpeed = 75f;
 			AnimatedModel model = new AnimatedModel(AnimationSpeed);
 			using (BinaryReader reader = new BinaryReader(mesh)) {
@@ -105,7 +105,7 @@ namespace System.Graphics.Models.Parsers {
 					opacity = reader.ReadSingle();
 					properties = (MeshPropertyFlag) reader.ReadUInt32();
 					associatedTextures = (MeshTexture) reader.ReadUInt32();
-					if (textures == null || textures.Length == 0) {
+					if (textures == null || textures.Count == 0) {
 						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) //has texture
 							diffuseTexture = TextureParser.Parse(Encoding.ASCII.GetString(reader.ReadBytes(64)).TruncateAtNull())[0];
 						else

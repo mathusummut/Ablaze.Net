@@ -12,8 +12,8 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 		/// </summary>
 		/// <param name="source">The location of the file to parse the texture from.</param>
 		/// <returns>A list of the textures parsed.</returns>
-		public static ITexture[] Parse(Stream source) {
-			return new ITexture[] { new Texture2D(new TargaImage(source).Image, NPotTextureScaleMode.ScaleUp, ImageParameterAction.Dispose) };
+		public static TextureCollection Parse(Stream source) {
+			return new TextureCollection(new Texture2D(new TargaImage(source).Image, NPotTextureScaleMode.ScaleUp, ImageParameterAction.Dispose));
 		}
 	}
 }

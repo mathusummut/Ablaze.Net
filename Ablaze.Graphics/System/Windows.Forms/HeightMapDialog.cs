@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 				return;
 			try {
 				MeshComponent component = HeightMapGenerator.GenerateHeightmap(ref param);
-				component.Textures = new ITexture[] { new Texture2D(param.Image, NPotTextureScaleMode.ScaleUp, ImageParameterAction.RemoveReference) };
+				component.Textures = new TextureCollection { new Texture2D(param.Image, NPotTextureScaleMode.ScaleUp, ImageParameterAction.RemoveReference) };
 				component.Location -= component.Bounds * 0.5f;
 				Action<MeshComponent> componentLoaded = ComponentLoaded;
 				if (componentLoaded != null)
