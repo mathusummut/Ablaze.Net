@@ -91,7 +91,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets or sets the index of the texture to bind, or -1 to mean that the last texture (at Count - 1) is bound
 		/// </summary>
-		public int BindIndex {
+		public virtual int BindIndex {
 			get;
 			set;
 		}
@@ -375,7 +375,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Binds the texture at the index specified by BindIndex for use with OpenGL operations
 		/// </summary>
-		public void Bind() {
+		public virtual void Bind() {
 			if (Count == 0)
 				Unbind();
 			else {
@@ -396,7 +396,7 @@ namespace System.Graphics.Models {
 		/// Binds the texture at the index specified by BindIndex for use with OpenGL operations
 		/// </summary>
 		/// <param name="mode">The texture wrap mode to use</param>
-		public void Bind(TextureWrapMode mode) {
+		public virtual void Bind(TextureWrapMode mode) {
 			if (Count == 0)
 				Unbind();
 			else {

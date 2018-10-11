@@ -244,7 +244,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return new MeshComponent(Texture2D.Empty, null, null, BufferUsageHint.StaticDraw, false);
+				return new MeshComponent(new TextureCollection(Texture2D.Empty), null, null, BufferUsageHint.StaticDraw, false);
 			}
 		}
 
@@ -316,7 +316,10 @@ namespace System.Graphics.Models {
 			set {
 				if (value == null || value.Count == 0)
 					value = new TextureCollection();
+				if (defaultTexture != null)
+					defaultTexture.Dispose();
 				defaultTexture = value;
+				value.AddReference();
 			}
 		}
 
@@ -331,6 +334,10 @@ namespace System.Graphics.Models {
 				if (value == null || value.Count == 0)
 					value = new TextureCollection(DefaultTextures);
 				texture = value;
+				if (texture != null)
+					texture.Dispose();
+				texture = value;
+				value.AddReference();
 			}
 		}
 
@@ -676,7 +683,7 @@ namespace System.Graphics.Models {
 		/// <param name="optimizeDuplicates">Whether to remove duplicates from the array (may take a long time to perform).</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
 		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public MeshComponent(ITexture texture, Vertex[] vertices, bool optimizeDuplicates, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(texture, MeshExtensions.GenerateIndices(vertices, optimizeDuplicates), optimization, flushBuffer) {
+		public MeshComponent(TextureCollection texture, Vertex[] vertices, bool optimizeDuplicates, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(texture, MeshExtensions.GenerateIndices(vertices, optimizeDuplicates), optimization, flushBuffer) {
 		}
 
 		/// <summary>
@@ -688,7 +695,7 @@ namespace System.Graphics.Models {
 		/// <param name="optimization">Configures what the mesh is optimized for.</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
 		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public MeshComponent(ITexture texture, Tuple<Vertex[], Array> bufferData, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(texture, bufferData == null ? null : bufferData.Item1, bufferData == null ? null : bufferData.Item2, optimization, flushBuffer) {
+		public MeshComponent(TextureCollection texture, Tuple<Vertex[], Array> bufferData, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(texture, bufferData == null ? null : bufferData.Item1, bufferData == null ? null : bufferData.Item2, optimization, flushBuffer) {
 		}
 
 		/// <summary>
@@ -700,7 +707,7 @@ namespace System.Graphics.Models {
 		/// <param name="indices">The indices that represent the vertex order (can be byte[], ushort[] or uint[]).</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
 		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public MeshComponent(ITexture texture, Vertex[] vertices, Array indices, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) {
+		public MeshComponent(TextureCollection texture, Vertex[] vertices, Array indices, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) {
 			if (vertices == null)
 				bufferData = new Vertex[0];
 			else
@@ -708,7 +715,7 @@ namespace System.Graphics.Models {
 			if (texture == null)
 				this.texture = new TextureCollection();
 			else {
-				this.texture = new TextureCollection(texture);
+				this.texture = texture;
 				texture.AddReference();
 			}
 			Optimization = optimization;

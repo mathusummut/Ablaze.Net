@@ -16,7 +16,7 @@ namespace System.Graphics.Models {
 		/// <param name="size">The size of the mesh.</param>
 		/// <param name="flipVertically">Whether to render the texture upside down.</param>
 		/// <param name="render2D">True if the mesh is meant to be rendered on an orthographic projection.</param>
-		public static MeshComponent MeshFromTexture(ITexture texture, Vector3 location, Vector2 size, bool flipVertically = false, bool render2D = true) {
+		public static MeshComponent MeshFromTexture(TextureCollection texture, Vector3 location, Vector2 size, bool flipVertically = false, bool render2D = true) {
 			if (flipVertically) {
 				return new MeshComponent(texture, MeshExtensions.TriangulateQuads(new Vertex[] {
 					new Vertex(location, Vector2.UnitY),
@@ -45,7 +45,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static MeshComponent CreateShared2DMeshRect() {
-			return MeshFromTexture(Texture2D.Empty, Vector3.Zero, Vector2.One);
+			return MeshFromTexture(new TextureCollection(Texture2D.Empty), Vector3.Zero, Vector2.One);
 		}
 
 		/// <summary>

@@ -9,7 +9,7 @@ namespace System.Graphics.Models {
 	/// </summary>
 	public class AnimatedModel : Model {
 		private PreciseStopwatch stopwatch = new PreciseStopwatch();
-		private bool firstRunning = true, restartOnNextRender = true;
+		private bool firstRunning = true;
 		private float frameInterval, frameOffset;
 
 		/// <summary>
@@ -25,7 +25,15 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the current frame, with an added decimal to represent the linear interpolation weight of the next frame
+		/// If set to true, restarts the model animation to the first frame on next render
+		/// </summary>
+		public bool RestartOnNextRender {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the current frame, with an added decimal to represent the linear interpolation weight of the next frame
 		/// </summary>
 		public float CurrentFramePosition {
 			get {
@@ -42,10 +50,14 @@ namespace System.Graphics.Models {
 					frame += frameCount;
 				return frame;
 			}
+			set {
+				frameOffset = value;
+				stopwatch.ElapsedTicks = 0.0;
+			}
 		}
 
 		/// <summary>
-		/// Gets the current frame
+		/// Gets or sets the current frame
 		/// </summary>
 		public int CurrentFrame {
 #if NET45
@@ -53,6 +65,9 @@ namespace System.Graphics.Models {
 #endif
 			get {
 				return (int) CurrentFramePosition;
+			}
+			set {
+				CurrentFramePosition = value;
 			}
 		}
 
@@ -94,6 +109,7 @@ namespace System.Graphics.Models {
 		/// <param name="loop">Whether the animation is looped continuously</param>
 		/// <param name="linearInterpolation">Whether linear interpolation between frames is performed for smoother animations</param>
 		public AnimatedModel(float frameInterval = 41.67f, bool loop = true, bool linearInterpolation = true) {
+			RestartOnNextRender = true;
 			FrameInterval = frameInterval;
 			Loop = loop;
 			LinearInterpolation = linearInterpolation;
@@ -111,9 +127,9 @@ namespace System.Graphics.Models {
 			RaiseRenderBegin();
 			IModel thisFrame = null;
 			float interpolate = 0f;
-			if (restartOnNextRender) {
-				restartOnNextRender = false;
-				GoToFrame(0f);
+			if (RestartOnNextRender) {
+				RestartOnNextRender = false;
+				CurrentFramePosition = 0f;
 				lock (SyncRoot) {
 					if (Count != 0)
 						thisFrame = this[0];
@@ -159,42 +175,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Goes to the specified frame index (0-based)
-		/// </summary>
-		/// <param name="frame">The index of the frame. The index wraps around the number of frames</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void GoToFrame(int frame) {
-			GoToFrame(frame);
-		}
-
-		/// <summary>
-		/// Goes to the specified frame index with linear interpolation granularity support (ex. 1.5 is halfway between the second and third frame (0-based))
-		/// </summary>
-		/// <param name="frame">The index of the frame. The index wraps around the number of frames</param>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void GoToFrame(float frame) {
-			frameOffset = frame;
-			stopwatch.ElapsedTicks = 0.0;
-		}
-
-		/// <summary>
-		/// Restarts the model animation to the first frame on next render
-		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void RestartOnNextRender() {
-			restartOnNextRender = true;
-		}
-
-		/// <summary>
 		/// Combines the frames of the specified animated model into the current animated model
 		/// </summary>
-		/// <param name="model">The animated model whoso frames to combine. The number of frames in the model must the same as in this one</param>
+		/// <param name="model">The animated model whose frames to combine. The number of frames in the model must the same as in this one</param>
 		public void CombineWith(AnimatedModel model) {
 			if (model == null)
 				return;
@@ -211,7 +194,7 @@ namespace System.Graphics.Models {
 							current = GetComponent(i);
 							modelList = current as Model;
 							if (modelList == null)
-								Replace(i, new Model(current, model.GetComponent(i)));
+								this[i] = new Model(current, model.GetComponent(i));
 							else
 								modelList.Add(model.GetComponent(i));
 						}

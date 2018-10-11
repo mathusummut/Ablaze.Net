@@ -127,7 +127,7 @@ namespace System.Graphics.Models.Parsers {
 								names.Enqueue(indices.Length == 1 ? string.Empty : line.Substring(line.IndexOf(indices[0], StringComparison.InvariantCultureIgnoreCase) + 2).Trim());
 							if (points.Count != 0) {
 								currText = textures == null || textures.Count == 0 ? null : (index < textures.Count ? textures[index] : textures[textures.Count - 1]);
-								component = new MeshComponent(currText, MeshExtensions.ToVertexArray(vertices.ToArray(), texCoords.ToArray(), normals.ToArray(), points.ToArray()), OptimizeVertexDuplicates);
+								component = new MeshComponent(new TextureCollection(currText), MeshExtensions.ToVertexArray(vertices.ToArray(), texCoords.ToArray(), normals.ToArray(), points.ToArray()), OptimizeVertexDuplicates);
 								if (names.Count != 0)
 									component.Name = names.Dequeue();
 								if (currText != null) {
@@ -253,7 +253,7 @@ namespace System.Graphics.Models.Parsers {
 			}
 			if (points.Count != 0) {
 				currText = textures == null || textures.Count == 0 ? null : (index < textures.Count ? textures[index] : textures[textures.Count - 1]);
-				component = new MeshComponent(currText, MeshExtensions.ToVertexArray(vertices.ToArray(), texCoords.ToArray(), normals.ToArray(), points.ToArray()), OptimizeVertexDuplicates);
+				component = new MeshComponent(new TextureCollection(currText), MeshExtensions.ToVertexArray(vertices.ToArray(), texCoords.ToArray(), normals.ToArray(), points.ToArray()), OptimizeVertexDuplicates);
 				if (names.Count != 0)
 					component.Name = names.Dequeue();
 				if (currText != null) {
