@@ -29,14 +29,14 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\Ablaze.Physics.xml</DocumentationFile>
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <NoWarn>IDE0017, IDE1006, CC0001, CC0003, CC0004, CC0008, CC0013, CC0014, CC0015, CC0017, CC0026, CC0031, CC0037, CC0048, CC0052, CC0060, CC0065, CC0072, CC0074, CC0090, CC0097, CC0105, CC0120</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -60,7 +60,6 @@
     <Compile Include="Physics2D\Exceptions\NoDirection.cs" />
     <Compile Include="Physics2D\Fundamentals\Particle2D.cs" />
     <Compile Include="Physics2D\Fundamentals\RigidBody2D.cs" />
-    <Compile Include="Physics2D\System2D.cs" />
     <Compile Include="Physics2D\Forces\Force2D.cs" />
     <Compile Include="PhysicsHandler\SystemSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

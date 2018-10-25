@@ -3,14 +3,15 @@ using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Manages an OpenGL data buffer.
+	/// Manages an OpenGL data buffer
 	/// </summary>
 	public sealed class DataBuffer : IEquatable<DataBuffer>, IDisposable {
-		private int id, references = 1;
+		private GraphicsContext parentContext;
 		private BufferTarget target;
+		private int id;
 
 		/// <summary>
-		/// Gets the native OpenGL name of the buffer.
+		/// Gets the native OpenGL name of the buffer
 		/// </summary>
 		public int ID {
 #if NET45
@@ -22,7 +23,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets whether the buffer is disposed.
+		/// Gets whether the buffer is disposed
 		/// </summary>
 		public bool IsDisposed {
 #if NET45
@@ -34,26 +35,28 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Initializes a new GL data buffer.
+		/// Initializes a new GL data buffer
 		/// </summary>
 		public DataBuffer() {
 		}
 
 		/// <summary>
-		/// Binds the data buffer object.
+		/// Binds the data buffer object
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void Bind(BufferTarget target) {
-			if (id == 0)
+			if (id == 0) {
 				GL.GenBuffers(1, out id);
+				parentContext = GraphicsContext.CurrentContext;
+			}
 			this.target = target;
 			GL.BindBuffer(target, id);
 		}
 
 		/// <summary>
-		/// Unbinds the current data buffer object.
+		/// Unbinds the current data buffer object
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -63,43 +66,31 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Calculates the hash code for this DataBuffer.
+		/// Calculates the hash code for this DataBuffer
 		/// </summary>
-		/// <returns>A System.Int32 containing the hashcode of this DataBuffer.</returns>
 		public override int GetHashCode() {
 			return id;
 		}
 
 		/// <summary>
-		/// Creates a System.String that describes this DataBuffer.
+		/// Creates a System.String that describes this DataBuffer
 		/// </summary>
-		/// <returns>A System.String that describes this DataBuffer.</returns>
 		public override string ToString() {
 			return "Data buffer (handle " + id + ")";
 		}
 
 		/// <summary>
-		/// Adds a reference to this data buffer.
+		/// Compares whether this DataBuffer is equal to the specified object
 		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void AddReference() {
-			references++;
-		}
-
-		/// <summary>
-		/// Compares whether this DataBuffer is equal to the specified object.
-		/// </summary>
-		/// <param name="obj">An object to compare to.</param>
+		/// <param name="obj">An object to compare to</param>
 		public override bool Equals(object obj) {
 			return Equals(obj as DataBuffer);
 		}
 
 		/// <summary>
-		/// Compares whether this DataBuffer is equal to the specified object.
+		/// Compares whether this DataBuffer is equal to the specified object
 		/// </summary>
-		/// <param name="other">The object to compare to.</param>
+		/// <param name="other">The object to compare to</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -108,47 +99,44 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the data buffer.
+		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		~DataBuffer() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose(true);
-			} finally {
-				GraphicsContext.IsFinalizer = false;
+			if (parentContext == null) {
+				if (id != 0) {
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+					id = 0;
+				}
+			} else {
+				int currentId = id;
+				if (currentId != 0) {
+					parentContext.InvokeOnGLThreadAsync(context => {
+						try {
+							GL.DeleteBuffers(1, ref currentId);
+						} catch {
+							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(currentId));
+						}
+					});
+					id = 0;
+				}
+				parentContext = null;
 			}
 		}
 
 		/// <summary>
-		/// Disposes of the buffer and the resources consumed by it.
+		/// Disposes of the buffer and the resources consumed by it. Do not dispose if still in use by other components
 		/// </summary>
 		public void Dispose() {
-			Dispose(false);
-		}
-
-		/// <summary>
-		/// Disposes of the buffer and the resources consumed by it.
-		/// </summary>
-		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed.</param>
-		/// 
-		public void Dispose(bool forceDispose) {
-			if (id == 0)
+			if (id == 0 || !(parentContext == null || parentContext.IsCurrent))
 				return;
-			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-				id = 0;
-				return;
-			} else if (references > 0)
-				references--;
-			if (references <= 0 || forceDispose) {
-				try {
-					GL.DeleteBuffers(1, ref id);
-				} catch {
-					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
-				}
-				id = 0;
-				GC.SuppressFinalize(this);
+			try {
+				GL.DeleteBuffers(1, ref id);
+			} catch {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
 			}
+			parentContext = null;
+			id = 0;
+			GC.SuppressFinalize(this);
 		}
 	}
 }

@@ -220,10 +220,7 @@ namespace System.Graphics.Models.Parsers {
 							break;
 						case "map_kd": //define texture mapping
 							name = line.Substring(line.IndexOf("map_kd", StringComparison.InvariantCultureIgnoreCase) + 7).Trim();
-							if (textureLookup.TryGetValue(name, out current)) {
-								foreach (ITexture tex in current)
-									tex.AddReference();
-							} else {
+							if (!textureLookup.TryGetValue(name, out current)) {
 								current = TextureParser.Parse(name);
 								textureLookup.Add(name, current);
 								if (current == null || current.Count == 0)

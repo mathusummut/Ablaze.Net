@@ -363,16 +363,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds a reference to every texture in the collection
-		/// </summary>
-		public void AddReference() {
-			lock (SyncRoot) {
-				for (int i = 0; i < textureList.Count; i++)
-					textureList[i].AddReference();
-			}
-		}
-
-		/// <summary>
 		/// Binds the texture at the index specified by BindIndex for use with OpenGL operations
 		/// </summary>
 		public virtual void Bind() {
@@ -470,29 +460,23 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Called every time Dispose() is called. It is not recommended to dispose if finalizer is true
+		/// Called every time Dispose() is called. Warning: may be called from inside finalizer
 		/// </summary>
-		/// <param name="finalizer">Whether the model is being disposed automatically by the garbage collector</param>
-		protected virtual void OnDisposing(bool finalizer) {
+		protected virtual void OnDisposing() {
 		}
 
 		/// <summary>
 		/// Disposes of the resources used collection
 		/// </summary>
 		~TextureCollection() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose(true);
-			} finally {
-				GraphicsContext.IsFinalizer = false;
-			}
+			Dispose(false);
 		}
 
 		/// <summary>
 		/// Disposes of the resources used by the collection
 		/// </summary>
 		public void Dispose() {
-			Dispose(true);
+			Dispose(false);
 		}
 
 		/// <summary>
@@ -500,7 +484,6 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="disposeChildren">Whether to dispose of the child components of the collection</param>
 		public void Dispose(bool disposeChildren) {
-			OnDisposing(GraphicsContext.IsFinalizer);
 			lock (SyncRoot) {
 				if (disposeChildren) {
 					for (int i = 0; i < textureList.Count; i++)

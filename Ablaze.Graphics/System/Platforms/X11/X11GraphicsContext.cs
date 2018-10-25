@@ -44,7 +44,7 @@ namespace System.Platforms.X11 {
 		/// <param name="window">The window on which to initialize the context.</param>
 		/// <param name="version">The requested OpenGL version.</param>
 		/// <param name="sharedContext">A context with which to share resources (textures, buffers...).</param>
-		public X11GraphicsContext(GraphicsMode mode, Window window, MajorMinorVersion version, GraphicsContext sharedContext = null) {
+		public X11GraphicsContext(GraphicsMode mode, Window window, MajorMinorVersion version, GraphicsContext sharedContext = null) : base(sharedContext) {
 			GraphicsMode = mode;
 			X11Window currentWindow = (X11Window) window;
 			display = currentWindow.Display;
@@ -109,6 +109,7 @@ namespace System.Platforms.X11 {
 			NativeApi.XLockDisplay(display);
 			Glx.SwapBuffers(display, WindowHandle);
 			NativeApi.XUnlockDisplay(display);
+			base.SwapBuffers();
 		}
 
 		/// <summary>

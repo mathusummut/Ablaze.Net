@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Manages an OpenGL RenderBuffer object.
-	/// This is similar to a FrameBuffer but the resources won't be accessable.
+	/// Manages an OpenGL RenderBuffer object. Similar to a FrameBuffer but the resources won't be accessable.
+	/// Remember to dispose the object on the OpenGL context thread after use
 	/// </summary>
 	public sealed class RenderBuffer : IDisposable {
 		private int id;
@@ -113,11 +113,9 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and its resources.
 		/// </summary>
 		~RenderBuffer() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose();
-			} finally {
-				GraphicsContext.IsFinalizer = false;
+			if (id != 0) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 			}
 		}
 
@@ -127,11 +125,6 @@ namespace System.Graphics.Models {
 		public void Dispose() {
 			if (id == 0)
 				return;
-			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-				id = 0;
-				return;
-			}
 			try {
 				GL.DeleteRenderbuffers(1, ref id);
 			} catch {

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Manages an OpenGl framebuffer object
+	/// Manages an OpenGL frame buffer object. Remember to dispose the object on the OpenGL context thread after use
 	/// </summary>
 	public sealed class FrameBuffer : IEquatable<FrameBuffer>, IDisposable {
 		private int id;
@@ -33,14 +33,13 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Initializes a new GL frame buffer
+		/// Initializes a new frame buffer
 		/// </summary>
 		public FrameBuffer() {
 		}
 
 		/// <summary>
-		/// Binds the framebuffer object
-		/// All fragment output that follows will be captured by it
+		/// Binds the framebuffer object. All fragment output that follows will be captured by it
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -89,7 +88,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Calculates the hash code for this FrameBuffer
 		/// </summary>
-		/// <returns>A System.Int32 containing the hashcode of this FrameBuffer</returns>
 		public override int GetHashCode() {
 			return id;
 		}
@@ -97,7 +95,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Creates a System.String that describes this FrameBuffer
 		/// </summary>
-		/// <returns>A System.String that describes this FrameBuffer</returns>
 		public override string ToString() {
 			return "Frame buffer (handle " + id + ")";
 		}
@@ -125,11 +122,9 @@ namespace System.Graphics.Models {
 		/// Disposes of the frame buffer
 		/// </summary>
 		~FrameBuffer() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose();
-			} finally {
-				GraphicsContext.IsFinalizer = false;
+			if (id != 0) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 			}
 		}
 
@@ -139,11 +134,6 @@ namespace System.Graphics.Models {
 		public void Dispose() {
 			if (id == 0)
 				return;
-			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-				id = 0;
-				return;
-			}
 			try {
 				if (GL.Delegates.glDeleteFramebuffers == null)
 					GL.Ext.DeleteFramebuffers(1, ref id);

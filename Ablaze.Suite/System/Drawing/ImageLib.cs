@@ -615,11 +615,11 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image to open morphologically.</param>
 		/// <param name="radius">The radius to open at.</param>
-		public static void Open(this Bitmap image, int radius) {
+		public static void OpenFilter(this Bitmap image, int radius) {
 			if (image == null || radius <= 0)
 				return;
 			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
-				Open(source, radius);
+				OpenFilter(source, radius);
 		}
 
 		/// <summary>
@@ -627,7 +627,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="source">The image to open morphologically. WriteChanges() is not called, that's on you.</param>
 		/// <param name="radius">The radius to open at.</param>
-		public static void Open(this PixelWorker source, int radius) {
+		public static void OpenFilter(this PixelWorker source, int radius) {
 			if (source == null || radius <= 0)
 				return;
 			using (PixelWorker buffer = new PixelWorker(source.Width, source.Height, source.Format)) {
@@ -641,11 +641,11 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image to open morphologically.</param>
 		/// <param name="radius">The radius to open at.</param>
-		public static void Open(this Bitmap image, float radius) {
+		public static void OpenFilter(this Bitmap image, float radius) {
 			if (image == null || radius <= 0)
 				return;
 			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
-				Open(source, radius);
+				OpenFilter(source, radius);
 		}
 
 		/// <summary>
@@ -653,7 +653,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="source">The image to open morphologically. WriteChanges() is not called, that's on you.</param>
 		/// <param name="radius">The radius to open at.</param>
-		public static void Open(this PixelWorker source, float radius) {
+		public static void OpenFilter(this PixelWorker source, float radius) {
 			if (source == null || radius <= 0)
 				return;
 			using (Bitmap bitmap = Dilate(source, radius)) {
@@ -667,11 +667,11 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image to close morphologically.</param>
 		/// <param name="radius">The radius to close at.</param>
-		public static void Close(this Bitmap image, int radius) {
+		public static void CloseFilter(this Bitmap image, int radius) {
 			if (image == null || radius <= 0)
 				return;
 			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
-				Close(source, radius);
+				CloseFilter(source, radius);
 		}
 
 		/// <summary>
@@ -679,7 +679,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="source">The image to close morphologically. WriteChanges() is not called, that's on you.</param>
 		/// <param name="radius">The radius to close at.</param>
-		public static void Close(this PixelWorker source, int radius) {
+		public static void CloseFilter(this PixelWorker source, int radius) {
 			if (source == null || radius <= 0)
 				return;
 			using (PixelWorker buffer = new PixelWorker(source.Width, source.Height, source.Format)) {
@@ -693,11 +693,11 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="image">The image to close morphologically.</param>
 		/// <param name="radius">The radius to close at.</param>
-		public static void Close(this Bitmap image, float radius) {
+		public static void CloseFilter(this Bitmap image, float radius) {
 			if (image == null || radius <= 0)
 				return;
 			using (PixelWorker source = PixelWorker.FromImage(image, false, true, ImageParameterAction.RemoveReference))
-				Close(source, radius);
+				CloseFilter(source, radius);
 		}
 
 		/// <summary>
@@ -705,7 +705,7 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="source">The image to close morphologically. WriteChanges() is not called, that's on you.</param>
 		/// <param name="radius">The radius to close at.</param>
-		public static void Close(this PixelWorker source, float radius) {
+		public static void CloseFilter(this PixelWorker source, float radius) {
 			if (source == null || radius <= 0)
 				return;
 			using (Bitmap bitmap = Erode(source, radius)) {

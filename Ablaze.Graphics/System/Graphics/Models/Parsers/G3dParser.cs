@@ -87,7 +87,7 @@ namespace System.Graphics.Models.Parsers {
 				float opacity; //the model opacity
 				MeshPropertyFlag properties;
 				MeshTexture associatedTextures;
-				ITexture diffuseTexture; //the texture used by the model
+				TextureCollection diffuseTexture; //the texture used by the model
 				int vertex, frame, index;
 				Vertex[][] bufferData;
 				Vertex[] frameBufferData, coords;
@@ -106,14 +106,12 @@ namespace System.Graphics.Models.Parsers {
 					properties = (MeshPropertyFlag) reader.ReadUInt32();
 					associatedTextures = (MeshTexture) reader.ReadUInt32();
 					if (textures == null || textures.Count == 0) {
-						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) { //has texture
-							ITexture text = TextureParser.Parse(Encoding.ASCII.GetString(reader.ReadBytes(64)).TruncateAtNull())[0];
-							diffuseTexture = new AnimatedTexture(500f);
-							((AnimatedTexture) diffuseTexture).AddRange(text, Texture2D.Empty);
-						} else
+						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) //has texture
+							diffuseTexture = TextureParser.Parse(Encoding.ASCII.GetString(reader.ReadBytes(64)).TruncateAtNull());
+						else
 							diffuseTexture = null;
 					} else
-						diffuseTexture = textures[0];
+						diffuseTexture = textures;
 					bufferData = new Vertex[frameCount][];
 					if (frameCount != 0) {
 						for (frame = 0; frame < frameCount; frame++) {
@@ -143,7 +141,7 @@ namespace System.Graphics.Models.Parsers {
 						indices[index] = reader.ReadUInt32();
 					animatedComponent = new AnimatedModel(AnimationSpeed);
 					for (frame = 0; frame < frameCount; frame++) {
-						animatedComponent.Add(new MeshComponent(new TextureCollection(diffuseTexture), bufferData[frame], indices) {
+						animatedComponent.Add(new MeshComponent(diffuseTexture, bufferData[frame], indices) {
 							Cull = (properties & MeshPropertyFlag.TwoSided) != MeshPropertyFlag.TwoSided,
 							Alpha = opacity,
 							MaterialHue = diffuseColor,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Timers;
@@ -11,33 +12,27 @@ namespace PixelArtEffector {
 	/// The main application window.
 	/// </summary>
 	public class PixelArtEffectorForm : StyledForm {
+		private IContainer components;
 		private StyledMenuStrip menuStrip1;
+		private FilePrompt fileDialog;
+		private StyledContextMenu contextMenuStrip1;
+		private Bitmap background, background2, background3, background4, savedBackground;
+		private SliderDialog sliderDialog;
+		private StyledLabel aboutLabel;
+		private bool isMouseDown, isAboutShown, recess;
+		private float zoom = 1f;
+		private string loadedPath;
+		private Point oldMouseLoc;
+		private PointF offset, cumulativeDiff;
+		private Timer aboutTimer;
 		private StyledItem editToolStripMenuItem, undoMenuItem, styledItem1, toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3,
 			toolStripMenuItem4, toolStripMenuItem5, toolStripMenuItem6, toolStripMenuItem7, toolStripMenuItem8, medianToolStripMenuItem,
 			sharpenToolStripMenuItem, unsharpMaskToolStripMenuItem, ditheredThresholdToolStripMenuItem, brightnessToolStripMenuItem,
 			contrastToolStripMenuItem, gammaToolStripMenuItem, lightnessToolStripMenuItem, dilateToolStripMenuItem, erodeToolStripMenuItem,
 			openToolStripMenuItem, closeMorphologicalToolStripMenuItem, normalizeToolStripMenuItem, saltAndPepperNoiseToolStripMenuItem,
 			grayscaleToolStripMenuItem, sobelEdgeDetectionToolStripMenuItem, prewittEdgeDetectionToolStripMenuItem, premultiplyAlpha,
-			xbrMenuItem, saveMenuItem, toolStripMenuItem9;
-		private FilePrompt fileDialog;
-		private StyledContextMenu contextMenuStrip1;
-		private System.ComponentModel.IContainer components;
-		private Bitmap background, background2, background3, background4, savedBackground;
-		private StyledItem antialiasItem;
-		private StyledItem medianEnhance;
-		private StyledItem smoothStretching;
-		private SliderDialog sliderDialog;
-		private StyledLabel aboutLabel;
-		private bool isMouseDown, isAboutShown, recess;
-		private float zoom = 1f;
-		private Point oldMouseLoc;
-		private PointF offset, cumulativeDiff;
-		private StyledItem ungrayscale;
-		private StyledItem signedDistanceField;
-		private StyledItem scaleItem;
-		private StyledItem highPassFilter;
-		private StyledItem lowPassFilter;
-		private Timer aboutTimer;
+			xbrMenuItem, saveMenuItem, saveAsMenuItem, toolStripMenuItem9, antialiasItem, medianEnhance, smoothStretching, ungrayscale,
+			signedDistanceField, scaleItem, highPassFilter, lowPassFilter;
 
 		/// <summary>
 		/// The entry point of the application.
@@ -297,6 +292,7 @@ namespace PixelArtEffector {
 				fileDialog.FileName = Path.GetFileName(filename);
 				UpdateBackground(Extensions.ImageFromFile(filename));
 				savedBackground = background;
+				loadedPath = filename;
 				Invalidate(false);
 			} catch (Exception ex) {
 				StyledMessageBox.Show("An error occurred while trying to open to the specified image:\n" + ex.Message, "Error", true, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -573,7 +569,7 @@ namespace PixelArtEffector {
 			sliderDialog.StyledSlider.Reset(0f, 20f, 0f, 0f);
 			if (MessageLoop.ShowDialog(sliderDialog, false) == DialogResult.OK) {
 				Bitmap newBitmap = background.FastCopy();
-				newBitmap.Open((int) sliderDialog.Value);
+				newBitmap.OpenFilter((int) sliderDialog.Value);
 				UpdateBackground(newBitmap);
 			}
 			sliderDialog.AllowValuesOutsideRange = false;
@@ -587,7 +583,7 @@ namespace PixelArtEffector {
 			sliderDialog.StyledSlider.Reset(0f, 20f, 0f, 0f);
 			if (MessageLoop.ShowDialog(sliderDialog, false) == DialogResult.OK) {
 				Bitmap newBitmap = background.FastCopy();
-				newBitmap.Close((int) sliderDialog.Value);
+				newBitmap.CloseFilter((int) sliderDialog.Value);
 				UpdateBackground(newBitmap);
 			}
 			sliderDialog.AllowValuesOutsideRange = false;
@@ -751,6 +747,20 @@ namespace PixelArtEffector {
 		private void SaveMenuItem_Click(object sender, EventArgs e) {
 			if (background == null)
 				return;
+			else if (!string.IsNullOrWhiteSpace(loadedPath)) {
+				try {
+					background.Save(loadedPath);
+					savedBackground = background;
+					return;
+				} catch (Exception) {
+				}
+			}
+			SaveAsMenuItem_Click(this, EventArgs.Empty);
+		}
+
+		private void SaveAsMenuItem_Click(object sender, EventArgs e) {
+			if (background == null)
+				return;
 			fileDialog.Open = false;
 			fileDialog.Title = "Choose where to save image file...";
 			if (MessageLoop.ShowDialog(fileDialog, false) == DialogResult.OK) {
@@ -759,6 +769,7 @@ namespace PixelArtEffector {
 					savedBackground = background;
 				} catch (Exception ex) {
 					StyledMessageBox.Show("An error occurred while trying to save the specified image:\n" + ex.Message, "Error", true, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					SaveAsMenuItem_Click(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -774,7 +785,7 @@ namespace PixelArtEffector {
 			if (background != null && savedBackground != background) {
 				switch (StyledMessageBox.Show("Do you want to save the current image?", "Confirm", true, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)) {
 					case DialogResult.Yes:
-						SaveMenuItem_Click(null, null);
+						SaveMenuItem_Click(this, EventArgs.Empty);
 						break;
 					case DialogResult.Cancel:
 						return false;
@@ -836,6 +847,7 @@ namespace PixelArtEffector {
 			this.medianEnhance = new System.Windows.Forms.StyledItem();
 			this.xbrMenuItem = new System.Windows.Forms.StyledItem();
 			this.saveMenuItem = new System.Windows.Forms.StyledItem();
+			this.saveAsMenuItem = new System.Windows.Forms.StyledItem();
 			this.smoothStretching = new System.Windows.Forms.StyledItem();
 			this.fileDialog = new System.Windows.Forms.FilePrompt();
 			this.contextMenuStrip1 = new System.Windows.Forms.StyledContextMenu(this.components);
@@ -898,7 +910,8 @@ namespace PixelArtEffector {
 			this.antialiasItem,
 			this.medianEnhance,
 			this.xbrMenuItem,
-			this.saveMenuItem});
+			this.saveMenuItem,
+			this.saveAsMenuItem});
 			this.editToolStripMenuItem.Icon = null;
 			this.editToolStripMenuItem.Image = null;
 			this.editToolStripMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
@@ -1358,10 +1371,23 @@ namespace PixelArtEffector {
 			this.saveMenuItem.Name = "saveMenuItem";
 			this.saveMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
 			this.saveMenuItem.Size = new System.Drawing.Size(57, 25);
-			this.saveMenuItem.Text = "Save As";
+			this.saveMenuItem.Text = "Save";
 			this.saveMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.saveMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.saveMenuItem.Click += new System.EventHandler(this.SaveMenuItem_Click);
+			// 
+			// saveAsMenuItem
+			// 
+			this.saveAsMenuItem.Icon = null;
+			this.saveAsMenuItem.Image = null;
+			this.saveAsMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
+			this.saveAsMenuItem.Name = "saveAsMenuItem";
+			this.saveAsMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
+			this.saveAsMenuItem.Size = new System.Drawing.Size(57, 25);
+			this.saveAsMenuItem.Text = "Save As";
+			this.saveAsMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.saveAsMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+			this.saveAsMenuItem.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
 			// 
 			// smoothStretching
 			// 
@@ -1401,7 +1427,7 @@ namespace PixelArtEffector {
 			this.toolStripMenuItem9.Size = new System.Drawing.Size(57, 25);
 			this.toolStripMenuItem9.Text = "Save As";
 			this.toolStripMenuItem9.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-			this.toolStripMenuItem9.Click += new System.EventHandler(this.SaveMenuItem_Click);
+			this.toolStripMenuItem9.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
 			// 
 			// sliderDialog
 			// 

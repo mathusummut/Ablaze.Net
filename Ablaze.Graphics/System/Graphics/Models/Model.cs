@@ -974,29 +974,23 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Called every time Dispose() is called. It is not recommended to dispose if finalizer is true
+		/// Called every time Dispose() is called. Warning: may be called from inside finalizer
 		/// </summary>
-		/// <param name="finalizer">Whether the model is being disposed automatically by the garbage collector</param>
-		protected virtual void OnDisposing(bool finalizer) {
+		protected virtual void OnDisposing() {
 		}
 
 		/// <summary>
 		/// Disposes of the resources used model
 		/// </summary>
 		~Model() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose(false, true);
-			} finally {
-				GraphicsContext.IsFinalizer = false;
-			}
+			Dispose(false, false);
 		}
 
 		/// <summary>
 		/// Disposes of the resources used by the model
 		/// </summary>
 		public void Dispose() {
-			Dispose(true, true);
+			Dispose(false, true);
 		}
 
 		/// <summary>
@@ -1013,7 +1007,7 @@ namespace System.Graphics.Models {
 		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
 		/// <param name="removeFromParent">Always set to true. Except in the Dispose() function of the parent, as all child components are removed automatically</param>
 		public void Dispose(bool disposeChildren, bool removeFromParent) {
-			OnDisposing(GraphicsContext.IsFinalizer);
+			OnDisposing();
 			lock (SyncRoot) {
 				if (removeFromParent) {
 					Model tentativeParent = parent as Model;

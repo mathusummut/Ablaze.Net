@@ -316,10 +316,7 @@ namespace System.Graphics.Models {
 			set {
 				if (value == null || value.Count == 0)
 					value = new TextureCollection();
-				if (defaultTexture != null)
-					defaultTexture.Dispose();
 				defaultTexture = value;
-				value.AddReference();
 			}
 		}
 
@@ -334,10 +331,6 @@ namespace System.Graphics.Models {
 				if (value == null || value.Count == 0)
 					value = new TextureCollection(DefaultTextures);
 				texture = value;
-				if (texture != null)
-					texture.Dispose();
-				texture = value;
-				value.AddReference();
 			}
 		}
 
@@ -654,19 +647,11 @@ namespace System.Graphics.Models {
 			triangles = modelComponent.triangles;
 			vertices = modelComponent.vertices;
 			defaultTexture = modelComponent.defaultTexture;
-			if (defaultTexture != null)
-				defaultTexture.AddReference();
 			texture = modelComponent.texture;
 			if (texture == null)
 				texture = new TextureCollection();
-			else
-				texture.AddReference();
 			indexBuffer = modelComponent.indexBuffer;
-			if (indexBuffer != null)
-				indexBuffer.AddReference();
 			DataBuffer = modelComponent.DataBuffer;
-			if (DataBuffer != null)
-				DataBuffer.AddReference();
 			VertexArrayBuffer = modelComponent.VertexArrayBuffer;
 			if (VertexArrayBuffer != null)
 				VertexArrayBuffer.AddReference();
@@ -714,10 +699,8 @@ namespace System.Graphics.Models {
 				bufferData = vertices;
 			if (texture == null)
 				this.texture = new TextureCollection();
-			else {
+			else
 				this.texture = texture;
-				texture.AddReference();
-			}
 			Optimization = optimization;
 			Visible = true;
 			Cull = true;
@@ -1045,6 +1028,8 @@ namespace System.Graphics.Models {
 				}
 			}
 			hasBufferUpdated |= BindAndUpdateDataBuffer();
+			if (nextModel == this)
+				nextModel = null;
 			if (vab == null || hasBufferUpdated || nextModel != lastNextModel) {
 				lastNextModel = nextModel;
 				GL.EnableVertexAttribArray(0);
@@ -1107,8 +1092,6 @@ namespace System.Graphics.Models {
 				Vertex[] newBuffer = new Vertex[v.Length];
 				Array.Copy(v, newBuffer, v.Length);
 				bufferData = newBuffer;
-				if (DataBuffer != null)
-					DataBuffer.Dispose();
 				DataBuffer = new DataBuffer();
 				VertexArrayBuffer vab = VertexArrayBuffer;
 				if (vab != null)
@@ -1222,52 +1205,47 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates a copy of the model.
+		/// Creates a copy of the model
 		/// </summary>
-		/// <returns>A copy of the model.</returns>
+		/// <returns>A copy of the model</returns>
 		public object Clone() {
 			return new MeshComponent(this);
 		}
 
 		/// <summary>
-		/// Creates a copy of the model.
+		/// Creates a copy of the model
 		/// </summary>
-		/// <param name="components">Ignored.</param>
-		/// <returns>A copy of the model.</returns>
+		/// <param name="components">Ignored</param>
+		/// <returns>A copy of the model</returns>
 		public IModel Clone(bool components) {
 			return new MeshComponent(this);
 		}
 
 		/// <summary>
-		/// If this is called, then there is a memory leak because Dispose() is not called.
-		/// Disposes of the OpenGL resources used by the model.
+		/// If this is called, then there is a potential memory leak because Dispose() is not called.
+		/// Disposes of the OpenGL resources used by the model
 		/// </summary>
 		~MeshComponent() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose();
-			} finally {
-				GraphicsContext.IsFinalizer = false;
-			}
+			Dispose(false, false);
 		}
 
 		/// <summary>
-		/// Called when the mesh component is being disposed.
+		/// Called when the mesh component is being disposed
 		/// </summary>
 		protected virtual void OnDisposing() {
 		}
 
 		/// <summary>
-		/// Disposes of the OpenGL resources used by the model.
+		/// Disposes of the OpenGL resources used by the model
 		/// </summary>
 		public void Dispose() {
-			Dispose(true, true);
+			Dispose(false, true);
 		}
 
 		/// <summary>
-		/// Disposes of the resources used by the model.
+		/// Disposes of the resources used by the model
 		/// </summary>
-		/// <param name="disposeChildren">Whether to dispose of the child components of the model.</param>
+		/// <param name="disposeChildren">Whether to dispose of the child components of the model</param>
 		public void Dispose(bool disposeChildren) {
 			Dispose(disposeChildren, true);
 		}
@@ -1289,18 +1267,9 @@ namespace System.Graphics.Models {
 			}
 			parent = null;
 			lastNextModel = null;
-			if (texture != null) {
-				texture.Dispose();
-				texture = null;
-			}
-			if (defaultTexture != null) {
-				defaultTexture.Dispose();
-				defaultTexture = null;
-			}
-			if (DataBuffer != null) {
-				DataBuffer.Dispose();
-				DataBuffer = null;
-			}
+			texture = null;
+			defaultTexture = null;
+			DataBuffer = null;
 			if (indexBuffer != null) {
 				indexBuffer.Dispose();
 				indexBuffer = null;

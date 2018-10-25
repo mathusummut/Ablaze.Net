@@ -8,41 +8,41 @@ using System.Threading;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Represents a shader compilation state.
+	/// Represents a shader compilation state
 	/// </summary>
 	public enum ShaderState {
 		/// <summary>
-		/// The shader compiled and linked successfully, and was bound.
+		/// The shader compiled and linked successfully, and was bound
 		/// </summary>
 		Bound,
 		/// <summary>
-		/// The shader source code did not compile successfully.
+		/// The shader source code did not compile successfully
 		/// </summary>
 		CompilationFailed,
 		/// <summary>
-		/// The shader components failed to link.
+		/// The shader components failed to link
 		/// </summary>
 		LinkingFailed
 	}
 
 	/// <summary>
-	/// Contains a shader source.
+	/// Contains a shader source
 	/// </summary>
 	public struct ShaderSource {
 		/// <summary>
-		/// The type of shader component the source code represents.
+		/// The type of shader component the source code represents
 		/// </summary>
 		public ShaderType Type;
 		/// <summary>
-		/// The shader component source code.
+		/// The shader component source code
 		/// </summary>
 		public string SourceCode;
 
 		/// <summary>
 		/// Initializes a new shader source.
 		/// </summary>
-		/// <param name="type">The type of shader component the source code represents.</param>
-		/// <param name="sourceCode">The shader component source code. DO NOT INCLUDE VERSION QUALIFIER IN SOURCE.</param>
+		/// <param name="type">The type of shader component the source code represents</param>
+		/// <param name="sourceCode">The shader component source code. DO NOT INCLUDE VERSION QUALIFIER IN SOURCE</param>
 		public ShaderSource(ShaderType type, string sourceCode) {
 			Type = type;
 			SourceCode = sourceCode;
@@ -50,36 +50,36 @@ namespace System.Graphics.Models {
 	}
 
 	/// <summary>
-	/// Represents the mode used to set the value to the shader variable.
+	/// Represents the mode used to set the value to the shader variable
 	/// </summary>
 	public enum ShaderSetMode {
 		/// <summary>
-		/// The value is set immediately. This assumes that the shader is currently bound.
+		/// The value is set immediately. This assumes that the shader is currently bound
 		/// </summary>
 		SetImmediately = 0,
 		/// <summary>
 		/// Sets the value immediately if the shader is currently bound on a graphics context that is available on this thread,
-		/// otherwise the modification is queued to be performed on next bind. Probably slow.
+		/// otherwise the modification is queued to be performed on next bind. Probably slow
 		/// </summary>
 		SetIfContextAvailable,
 		/// <summary>
-		/// Queues the modification to be performed on next bind.
+		/// Queues the modification to be performed on next bind
 		/// </summary>
 		SetOnNextBind
 	}
 
 	/// <summary>
-	/// Represents an OpenGL shader composed of a vertex shader and/or fragment shader.
+	/// Represents an OpenGL shader composed of a vertex shader and/or fragment shader
 	/// </summary>
 	public class Shader : IDisposable {
 		/// <summary>
-		/// An empty shader program.
+		/// An empty shader program
 		/// </summary>
 		public static readonly Shader Empty = new Shader() {
 			Tag = "Empty"
 		};
 		/// <summary>
-		/// If true, shader compilation logs are printed to console.
+		/// If true, shader compilation logs are printed to console
 		/// </summary>
 		public static bool DebugMode;
 		private static Dictionary<Type, Action<int, object>> uniformSetters = new Dictionary<Type, Action<int, object>>(),
@@ -90,7 +90,7 @@ namespace System.Graphics.Models {
 		private object uniformsSyncRoot = new object(), attributesSyncRoot = new object();
 		private HashSet<string> uniformAssignments = new HashSet<string>(), attributeAssignments = new HashSet<string>();
 		/// <summary>
-		/// The source codes of the shaders. Upon first binding, they are set to null.
+		/// The source codes of the shaders. Upon first binding, they are set to null
 		/// </summary>
 		protected ShaderSource[] ShaderSources;
 		private bool boundAtLeastOnce;
@@ -100,12 +100,12 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public string Name;
 		/// <summary>
-		/// Available for your personal use.
+		/// Available for your personal use
 		/// </summary>
 		public object Tag;
 
 		/// <summary>
-		/// Gets the currently bound shader.
+		/// Gets the currently bound shader
 		/// </summary>
 		public static Shader CurrentShader {
 			get {
@@ -118,7 +118,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the native OpenGL name of the shader.
+		/// Gets the native OpenGL name of the shader
 		/// </summary>
 		public int ID {
 #if NET45
@@ -130,7 +130,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets whether the shader program is disposed.
+		/// Gets whether the shader program is disposed
 		/// </summary>
 		public bool IsDisposed {
 #if NET45
@@ -173,19 +173,19 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Initializes a new shader. The shader sources are in order of compilation.
+		/// Initializes a new shader. The shader sources are in order of compilation
 		/// </summary>
-		/// <param name="sources">The shader sources.</param>
+		/// <param name="sources">The shader sources</param>
 		public Shader(params ShaderSource[] sources) {
 			if (!(sources == null || sources.Length == 0))
 				ShaderSources = sources;
 		}
 
 		/// <summary>
-		/// Gets the uniform variable location in the shader. If the uniform variable is not found and throwIfNotFound is false, then -1 is returned.
+		/// Gets the uniform variable location in the shader. If the uniform variable is not found and throwIfNotFound is false, then -1 is returned
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="throwIfNotFound">If true and the uniform variable is not found, then an ArgumentException is thrown.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="throwIfNotFound">If true and the uniform variable is not found, then an ArgumentException is thrown</param>
 		public int GetUniformIndex(string varName, bool throwIfNotFound = false) {
 			if (string.IsNullOrEmpty(varName)) {
 				if (throwIfNotFound)
@@ -214,10 +214,10 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the attribute location in the shader. If the attribute is not found and throwIfNotFound is false, then -1 is returned.
+		/// Gets the attribute location in the shader. If the attribute is not found and throwIfNotFound is false, then -1 is returned
 		/// </summary>
-		/// <param name="varName">The attribute name.</param>
-		/// <param name="throwIfNotFound">If true and the attribute is not found, then an ArgumentException is thrown.</param>
+		/// <param name="varName">The attribute name</param>
+		/// <param name="throwIfNotFound">If true and the attribute is not found, then an ArgumentException is thrown</param>
 		public int GetAttributeIndex(string varName, bool throwIfNotFound = false) {
 			if (string.IsNullOrEmpty(varName)) {
 				if (throwIfNotFound)
@@ -246,9 +246,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the uniform variable value in the shader. Null is returned if the value is not found.
+		/// Gets the uniform variable value in the shader. Null is returned if the value is not found
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
+		/// <param name="varName">The uniform variable name</param>
 		public T? GetUniformValue<T>(string varName) where T : struct {
 			if (string.IsNullOrEmpty(varName))
 				throw new ArgumentException("The uniform variable name cannot be null or empty.", nameof(varName));
@@ -287,9 +287,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the attribute value in the shader. Null is returned if the value is not found.
+		/// Gets the attribute value in the shader. Null is returned if the value is not found
 		/// </summary>
-		/// <param name="varName">The attribute name.</param>
+		/// <param name="varName">The attribute name</param>
 		public T? GetAttributeValue<T>(string varName) where T : struct {
 			if (string.IsNullOrEmpty(varName))
 				throw new ArgumentException("The attribute name cannot be null or empty.", nameof(varName));
@@ -303,11 +303,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, int value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -328,11 +328,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, float value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -353,11 +353,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, double value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -378,11 +378,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, Vector2 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -403,11 +403,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, Vector3 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -428,11 +428,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, Vector4 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -453,11 +453,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of a uniform variable within the shader.
+		/// Sets the value of a uniform variable within the shader
 		/// </summary>
-		/// <param name="varName">The uniform variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The uniform variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public virtual void SetUniformValue(string varName, ref Matrix4 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -478,11 +478,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of an attribute variable within the shader.
+		/// Sets the value of an attribute variable within the shader
 		/// </summary>
-		/// <param name="varName">The attribute variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The attribute variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public void SetAttributeValue(string varName, int value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -503,11 +503,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of an attribute variable within the shader.
+		/// Sets the value of an attribute variable within the shader
 		/// </summary>
-		/// <param name="varName">The attribute variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The attribute variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public void SetAttributeValue(string varName, float value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -528,11 +528,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of an attribute variable within the shader.
+		/// Sets the value of an attribute variable within the shader
 		/// </summary>
-		/// <param name="varName">The attribute variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The attribute variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public void SetAttributeValue(string varName, double value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -553,11 +553,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of an attribute variable within the shader.
+		/// Sets the value of an attribute variable within the shader
 		/// </summary>
-		/// <param name="varName">The attribute variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The attribute variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public void SetAttributeValue(string varName, Vector2 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -578,11 +578,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of an attribute variable within the shader.
+		/// Sets the value of an attribute variable within the shader
 		/// </summary>
-		/// <param name="varName">The attribute variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The attribute variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public void SetAttributeValue(string varName, Vector3 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -603,11 +603,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Sets the value of an attribute variable within the shader.
+		/// Sets the value of an attribute variable within the shader
 		/// </summary>
-		/// <param name="varName">The attribute variable name.</param>
-		/// <param name="value">The target value.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="varName">The attribute variable name</param>
+		/// <param name="value">The target value</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public void SetAttributeValue(string varName, Vector4 value, ShaderSetMode mode) {
 			if (id == 0)
 				return;
@@ -628,16 +628,16 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Bind the shader for rendering.
+		/// Bind the shader for rendering
 		/// </summary>
 		public void Bind() {
 			Bind(true);
 		}
 
 		/// <summary>
-		/// Bind the shader for rendering, and returns whether binding was successful.
+		/// Bind the shader for rendering, and returns whether binding was successful
 		/// </summary>
-		/// <param name="throwOnError">Whether to throw on compilation error.</param>
+		/// <param name="throwOnError">Whether to throw on compilation error</param>
 		public virtual ShaderState Bind(bool throwOnError) {
 			int status;
 			bool needsLink = false;
@@ -803,7 +803,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Unbinds any shader.
+		/// Unbinds any shader
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -814,33 +814,33 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Returns the buffer name.
+		/// Returns the buffer name
 		/// </summary>
-		/// <returns>The buffer name.</returns>
+		/// <returns>The buffer name</returns>
 		public override int GetHashCode() {
 			return id;
 		}
 
 		/// <summary>
-		/// Creates a System.String that describes this Shader.
+		/// Creates a System.String that describes this Shader
 		/// </summary>
-		/// <returns>A System.String that describes this Shader.</returns>
+		/// <returns>A System.String that describes this Shader</returns>
 		public override string ToString() {
 			return "Shader (handle " + id + ")";
 		}
 
 		/// <summary>
-		/// Compares whether this Shader is equal to the specified object.
+		/// Compares whether this Shader is equal to the specified object
 		/// </summary>
-		/// <param name="obj">An object to compare to.</param>
+		/// <param name="obj">An object to compare to</param>
 		public override bool Equals(object obj) {
 			return Equals(obj as Shader);
 		}
 
 		/// <summary>
-		/// Compares whether this Shader is equal to the specified object.
+		/// Compares whether this Shader is equal to the specified object
 		/// </summary>
-		/// <param name="other">The object to compare to.</param>
+		/// <param name="other">The object to compare to</param>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -849,28 +849,22 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Disposes of the shader program.
+		/// Disposes of the shader program
 		/// </summary>
 		~Shader() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose();
-			} finally {
-				GraphicsContext.IsFinalizer = false;
+			if (id != 0) {
+				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+				id = 0;
 			}
 		}
 
 		/// <summary>
-		/// Disposes of the shader program.
+		/// Disposes of the shader program
 		/// </summary>
 		public void Dispose() {
 			if (id == 0)
 				return;
-			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-				id = 0;
-				return;
-			} else if (boundShader.Value == this)
+			else if (boundShader.Value == this)
 				boundShader.Value = Empty;
 			try {
 				GL.DeleteProgram(id);

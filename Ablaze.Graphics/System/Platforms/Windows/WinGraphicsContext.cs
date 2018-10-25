@@ -46,7 +46,7 @@ namespace System.Platforms.Windows {
 		/// <param name="window">The window on which to initialize the context.</param>
 		/// <param name="version">The requested OpenGL version.</param>
 		/// <param name="sharedContext">A context with which to share resources (textures, buffers...).</param>
-		public WinGraphicsContext(GraphicsMode mode, WinWindow window, MajorMinorVersion version, GraphicsContext sharedContext = null) {
+		public WinGraphicsContext(GraphicsMode mode, WinWindow window, MajorMinorVersion version, GraphicsContext sharedContext = null) : base(sharedContext) {
 			lock (SyncRoot) {
 				if (!mode.Index.HasValue)
 					mode = GraphicsPlatform.Factory.SelectClosestGraphicsMode(mode, window.Handle);
@@ -99,6 +99,7 @@ namespace System.Platforms.Windows {
 		/// </summary>
 		public override void SwapBuffers() {
 			NativeApi.SwapBuffers(Wgl.GetCurrentDC());
+			base.SwapBuffers();
 		}
 
 		/// <summary>

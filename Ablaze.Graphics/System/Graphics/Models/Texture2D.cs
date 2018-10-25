@@ -13,9 +13,10 @@ namespace System.Graphics.Models {
 		/// An empty texture.
 		/// </summary>
 		public static readonly Texture2D Empty = new Texture2D();
-		private int id, references;
+		private int id;
 		private bool init, loadedFromHandle, lastFilter = true, lastMipmap = true;
 		private Bitmap image, copy;
+		private GraphicsContext parentContext;
 		/// <summary>
 		/// Increases texture interpolation quality by reducing shimmering caused by aliasing, but uses more memory
 		/// </summary>
@@ -276,6 +277,7 @@ namespace System.Graphics.Models {
 			if (image == null) {
 				if (init) {
 					GL.GenTextures(1, out id);
+					parentContext = GraphicsContext.CurrentContext;
 					GL.BindTexture(TextureTarget.Texture2D, id);
 					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? TextureMinFilter.Linear : TextureMinFilter.Nearest));
@@ -300,6 +302,7 @@ namespace System.Graphics.Models {
 				}
 			} else {
 				GL.GenTextures(1, out id);
+				parentContext = GraphicsContext.CurrentContext;
 				GL.BindTexture(TextureTarget.Texture2D, id);
 				if (BitmapSize == TextureSize) {
 					BitmapData data = image.LockBits(new Rectangle(Point.Empty, TextureSize), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
@@ -433,36 +436,14 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds a reference to this texture
-		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void AddReference() {
-			references++;
-		}
-
-		/// <summary>
-		/// Disposes of the texture and the resources consumed by it
-		/// </summary>
-		~Texture2D() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose(true, true);
-			} finally {
-				GraphicsContext.IsFinalizer = false;
-			}
-		}
-
-		/// <summary>
-		/// Returns a copy of the current texture (avoid, use AddReference instead)
+		/// Returns a copy of the current texture
 		/// </summary>
 		public object Clone() {
 			return Clone(true);
 		}
 
 		/// <summary>
-		/// Returns a copy of the current texture (avoid, use AddReference instead)
+		/// Returns a copy of the current texture
 		/// </summary>
 		/// <param name="components">Whether to clone the internal components too</param>
 		public ITexture Clone(bool components) {
@@ -472,8 +453,41 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Disposes of the texture and the resources consumed by it
 		/// </summary>
+		~Texture2D() {
+			if (image != null) {
+				if (BindAction == ImageParameterAction.Dispose) {
+					BindAction = ImageParameterAction.RemoveReference;
+					image.Dispose();
+				}
+				image = null;
+			}
+			copy = null;
+			if (parentContext == null) {
+				if (id != 0) {
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+					id = 0;
+				}
+			} else {
+				int currentId = id;
+				if (currentId != 0) {
+					parentContext.InvokeOnGLThreadAsync(context => {
+						try {
+							GL.DeleteTextures(1, ref currentId);
+						} catch {
+							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(currentId));
+						}
+					});
+					id = 0;
+				}
+				parentContext = null;
+			}
+		}
+
+		/// <summary>
+		/// Disposes of the texture and the resources consumed by it
+		/// </summary>
 		public void Dispose() {
-			Dispose(true, false);
+			Dispose(false);
 		}
 
 		/// <summary>
@@ -481,40 +495,24 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="disposeChildren">Whether to dispose of the child components of the texture</param>
 		public void Dispose(bool disposeChildren) {
-			Dispose(disposeChildren, false);
-		}
-
-		/// <summary>
-		/// Disposes of the texture and the resources consumed by it
-		/// </summary>
-		/// <param name="disposeChildren">Whether to dispose of the child components of the texture</param>
-		/// <param name="forceDispose">If true, the reference count is ignored, forcing the texture to be disposed, unless it is already disposed</param>
-		public void Dispose(bool disposeChildren, bool forceDispose) {
-			if (references > 0)
-				references--;
-			if (references <= 0 || forceDispose) {
-				if (image != null) {
-					if (BindAction == ImageParameterAction.Dispose) {
-						BindAction = ImageParameterAction.RemoveReference;
-						image.Dispose();
-					}
-					image = null;
+			if (image != null) {
+				if (BindAction == ImageParameterAction.Dispose) {
+					BindAction = ImageParameterAction.RemoveReference;
+					image.Dispose();
 				}
-				copy = null;
-				if (id != 0) {
-					if (GraphicsContext.IsFinalizer)
-						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-					else {
-						try {
-							GL.DeleteTextures(1, ref id);
-						} catch {
-							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
-						}
-					}
-					id = 0;
-				}
-				GC.SuppressFinalize(this);
+				image = null;
 			}
+			copy = null;
+			if (id != 0 && (parentContext == null || parentContext.IsCurrent)) {
+				try {
+					GL.DeleteTextures(1, ref id);
+				} catch {
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
+				}
+				id = 0;
+				parentContext = null;
+			}
+			GC.SuppressFinalize(this);
 		}
 	}
 }

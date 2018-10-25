@@ -2,7 +2,7 @@
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Renders the buffer output into the specified texture(s)
+	/// Renders the buffer output into the specified texture(s). Typical usage is within a using statement
 	/// </summary>
 	public sealed class RenderToTexture : IDisposable {
 		private FrameBuffer fbo;
@@ -38,10 +38,14 @@ namespace System.Graphics.Models {
 		/// Signifies a resource leak
 		/// </summary>
 		~RenderToTexture() {
-			if (fbo != null)
+			if (fbo != null) {
 				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(fbo.GetHashCode()));
-			if (rbo != null)
+				fbo = null;
+			}
+			if (rbo != null) {
 				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(rbo.GetHashCode()));
+				rbo = null;
+			}
 		}
 
 		/// <summary>

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// A managed wrapper for an index buffer
+	/// A managed wrapper for an index buffer. Remember to dispose the object on the OpenGL context thread after use
 	/// </summary>
 	public sealed class IndexBuffer : IEquatable<IndexBuffer>, IDisposable {
 		/// <summary>
@@ -16,6 +16,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool KeepCopyInMemory;
 		private static ConcurrentDictionary<Array, IndexBuffer> buffers = new ConcurrentDictionary<Array, IndexBuffer>();
+		private GraphicsContext parentContext;
 		private int id, count, references = 1;
 		private Array indices, copy;
 		private DrawElementsType format;
@@ -146,7 +147,7 @@ namespace System.Graphics.Models {
 			if (!(array == null || array.Length == 0)) {
 				IndexBuffer buffer;
 				if (buffers.TryGetValue(array, out buffer)) {
-					buffer.AddReference();
+					buffer.references++;
 					return buffer;
 				}
 			}
@@ -160,15 +161,17 @@ namespace System.Graphics.Models {
 			if (indices == null)
 				GL.BindBuffer(BufferTarget.ElementArrayBuffer, id);
 			else {
-				if (id == 0 && indices.Length != 0)
+				if (id == 0 && indices.Length != 0) {
 					GL.GenBuffers(1, out id);
+					parentContext = GraphicsContext.CurrentContext;
+				}
 				GL.BindBuffer(BufferTarget.ElementArrayBuffer, id);
 				if (format == DrawElementsType.UnsignedByte)
-					GL.BufferData<byte>(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(byte)), (byte[]) indices, BufferUsageHint.StaticDraw);
+					GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(byte)), (byte[]) indices, BufferUsageHint.StaticDraw);
 				else if (format == DrawElementsType.UnsignedShort)
-					GL.BufferData<ushort>(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(ushort)), (ushort[]) indices, BufferUsageHint.StaticDraw);
+					GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(ushort)), (ushort[]) indices, BufferUsageHint.StaticDraw);
 				else
-					GL.BufferData<uint>(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(uint)), (uint[]) indices, BufferUsageHint.StaticDraw);
+					GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indices.Length * sizeof(uint)), (uint[]) indices, BufferUsageHint.StaticDraw);
 				if (!KeepCopyInMemory) {
 					IndexBuffer temp;
 					buffers.TryRemove(copy, out temp);
@@ -213,19 +216,8 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds a reference to this index buffer
-		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void AddReference() {
-			references++;
-		}
-
-		/// <summary>
 		/// Returns the buffer name
 		/// </summary>
-		/// <returns>The buffer name</returns>
 		public override int GetHashCode() {
 			return id;
 		}
@@ -233,7 +225,6 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Creates a System.String that describes this IndexBuffer
 		/// </summary>
-		/// <returns>A System.String that describes this IndexBuffer</returns>
 		public override string ToString() {
 			return "Index buffer (handle " + id + ")";
 		}
@@ -261,12 +252,26 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		~IndexBuffer() {
-			GraphicsContext.IsFinalizer = true;
-			try {
-				Dispose(true);
-			} finally {
-				GraphicsContext.IsFinalizer = false;
+			if (parentContext == null) {
+				if (id != 0) {
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+					id = 0;
+				}
+			} else {
+				int currentId = id;
+				if (currentId != 0) {
+					parentContext.InvokeOnGLThreadAsync(context => {
+						try {
+							GL.DeleteBuffers(1, ref currentId);
+						} catch {
+							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(currentId));
+						}
+					});
+					id = 0;
+				}
+				parentContext = null;
 			}
+			count = 0;
 		}
 
 		/// <summary>
@@ -279,34 +284,33 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
-		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed</param>
+		/// <param name="forceDispose">Default value is false. If true, the reference count is ignored, forcing the buffer to be disposed</param>
 		public void Dispose(bool forceDispose) {
-			if (id == 0 || count == 0)
+			if (count == 0)
 				return;
-			else if (GraphicsContext.IsFinalizer) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-				id = 0;
-				count = 0;
-				return;
-			}
-			if (references > 0)
-				references--;
-			if (references <= 0 || forceDispose) {
-				try {
-					GL.DeleteBuffers(1, ref id);
-				} catch {
-					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
-				}
-				id = 0;
-				count = 0;
+			int currentRef = references;
+			if (currentRef > 0)
+				currentRef = references--;
+			if (currentRef <= 0 || forceDispose) {
 				IndexBuffer temp;
 				if (copy != null) {
 					buffers.TryRemove(copy, out temp);
 					copy = null;
-				} else if (indices != null)
+				} else if (indices != null) {
 					buffers.TryRemove(indices, out temp);
-				indices = null;
-				GC.SuppressFinalize(this);
+					indices = null;
+				}
+				count = 0;
+				if (id != 0 && (parentContext == null || parentContext.IsCurrent)) {
+					try {
+						GL.DeleteBuffers(1, ref id);
+					} catch {
+						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
+					}
+					parentContext = null;
+					id = 0;
+					GC.SuppressFinalize(this);
+				}
 			}
 		}
 	}

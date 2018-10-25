@@ -38,7 +38,7 @@ namespace System.Platforms.MacOS {
 		/// <param name="window">The window on which to initialize the context.</param>
 		/// <param name="version">The requested OpenGL version.</param>
 		/// <param name="sharedContext">A context with which to share resources (textures, buffers...).</param>
-		public MacOSGraphicsContext(GraphicsMode mode, Window window, MajorMinorVersion version, GraphicsContext sharedContext = null) {
+		public MacOSGraphicsContext(GraphicsMode mode, Window window, MajorMinorVersion version, GraphicsContext sharedContext = null) : base(sharedContext) {
             GraphicsMode = mode;
             IntPtr shareContextRef = sharedContext == null ? IntPtr.Zero : sharedContext.Handle;
             bool fullscreen = true;
@@ -110,6 +110,7 @@ namespace System.Platforms.MacOS {
 		/// </summary>
 		public override void SwapBuffers() {
 			Agl.SwapBuffers(Handle);
+			base.SwapBuffers();
 		}
 
 		/// <summary>

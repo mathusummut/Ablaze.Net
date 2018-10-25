@@ -46,11 +46,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds a reference to this texture
-		/// </summary>
-		void AddReference();
-
-		/// <summary>
 		/// Binds the texture for use with OpenGL operations
 		/// </summary>
 		void Bind();

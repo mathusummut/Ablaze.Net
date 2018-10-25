@@ -35,7 +35,7 @@ namespace System.Platforms.EGL {
 		/// <param name="window">The window on which to initialize the context.</param>
 		/// <param name="version">The requested OpenGL version.</param>
 		/// <param name="sharedContext">A context with which to share resources (textures, buffers...).</param>
-		public EglContext(GraphicsMode mode, EglWindow window, MajorMinorVersion version, GraphicsContext sharedContext = null) {
+		public EglContext(GraphicsMode mode, EglWindow window, MajorMinorVersion version, GraphicsContext sharedContext = null) : base(sharedContext) {
 			EglContext shared = sharedContext as EglContext;
 			int dummy_major, dummy_minor;
 			if (!Graphics.EGL.Egl.Initialize(window.Display, out dummy_major, out dummy_minor))
@@ -75,6 +75,7 @@ namespace System.Platforms.EGL {
 		public override void SwapBuffers() {
 			if (WindowInfo != null)
 				Graphics.EGL.Egl.SwapBuffers(WindowInfo.Display, WindowInfo.Surface);
+			base.SwapBuffers();
 		}
 
 		/// <summary>

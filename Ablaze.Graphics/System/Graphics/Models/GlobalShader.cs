@@ -137,11 +137,6 @@ void main() {
 			vec3 temp = transform.xyz / transform.w;
 			lightDir = normalize(temp - worldPos);
 			diffuse = dot(lightDir, normal);
-			/*vec4 camera = ModelViewMatrix[3];
-			if (dot(LightPosition, camera.xyz / camera.w) >= 0 && dot(normal, temp) >= 0) {
-				diffuse = -diffuse;
-				normal = -normal;
-			}*/
 		} else {
 			lightDir = normalize(LightPosition - worldPos);
 			diffuse = dot(lightDir, normal);
