@@ -31,11 +31,8 @@ namespace GDITest {
 			GdiControls.Add(statusLabel);
 			StyledButton button = new StyledButton();
 			button.Click += Button_Click;
-			//button.Location = new Point(100, 100);
 			statusLabel.Controls.Add(button);
-			//button = new StyledButton();
 			button.Location = new Point(100, 200);
-			//GdiControls.Add(button);
 			StyledCheckBox checkBox = new StyledCheckBox();
 			checkBox.Location = new Point(110, 250);
 			checkBox.Text = "checkBox1";
@@ -74,7 +71,7 @@ namespace GDITest {
 			base.OnGLInitialized();
 			MeshComponent.SetupGLEnvironment();
 			GL.Enable(EnableCap.Light0);
-			GL.Light(LightName.Light0, LightParameter.Ambient, Color4.White);
+			GL.Light(LightName.Light0, LightParameter.Ambient, ColorF.White);
 		}
 
 		protected override void OnPaintGL() {
@@ -148,7 +145,7 @@ namespace GDITest {
 		}
 
 		private void checkBox2_CheckedChanged(object sender, EventArgs e) {
-			//BorderOnGdiLayer = checkBox2.Checked;
+			RenderBorderOnGdiLayer = checkBox2.Checked;
 		}
 	}
 }

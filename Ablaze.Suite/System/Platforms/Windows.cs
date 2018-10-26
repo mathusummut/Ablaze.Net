@@ -857,9 +857,21 @@ namespace System.Platforms.Windows {
 		ACCENT_POLICY = 19
 	}
 
+	[CLSCompliant(false)]
+	public enum MessageFilter : uint {
+		Reset,
+		Allow,
+		Disallow
+	}
+
 	[SuppressUnmanagedCodeSecurity]
 	public static class NativeApi {
 		public delegate void WaitOrTimerDelegate(IntPtr lpParameter, bool timerOrWaitFired);
+
+		[DllImport("user32.dll")]
+		[SuppressUnmanagedCodeSecurity]
+		[CLSCompliant(false)]
+		public static extern bool ChangeWindowMessageFilter(WindowMessage message, MessageFilter dwFlag);
 
 		[DllImport("user32.dll")]
 		[SuppressUnmanagedCodeSecurity]

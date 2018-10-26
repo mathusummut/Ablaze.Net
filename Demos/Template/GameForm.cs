@@ -30,7 +30,7 @@ namespace Template {
 			MeshComponent.SetupGLEnvironment();
 			GL.Enable(EnableCap.Light0);
 			GL.ClearColor(Color.MidnightBlue);
-			GL.Light(LightName.Light0, LightParameter.Ambient, Color4.White);
+			GL.Light(LightName.Light0, LightParameter.Ambient, ColorF.White);
 		}
 
 		/// <summary>

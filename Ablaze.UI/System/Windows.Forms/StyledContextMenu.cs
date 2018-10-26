@@ -8,7 +8,7 @@ using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms {
 	/// <summary>
-	/// A customizable styled context menu.
+	/// A customizable styled context menu
 	/// </summary>
 	[ToolboxItem(true)]
 	[ToolboxItemFilter("System.Windows.Forms")]
@@ -20,7 +20,7 @@ namespace System.Windows.Forms {
 		private static StyledContextMenu lastContextMenu;
 		private static object contextMenuSyncRoot = new object();
 		/// <summary>
-		/// Fired when the background of the control is about to be painted.
+		/// Fired when the background of the control is about to be painted
 		/// </summary>
 		[Description("Fired when the background of the control is about to be painted.")]
 		public event PaintEventHandler PaintBackground;
@@ -413,6 +413,7 @@ namespace System.Windows.Forms {
 						EventListener.MouseDown += Menu_MouseDown;
 						EventListener.CursorMove += Menu_CursorMove;
 						EventListener.MouseUp += Menu_MouseUp;
+						Capture = true;
 					}
 				}
 			}

@@ -202,7 +202,7 @@ namespace StarterKit {
 			base.OnGLInitialized();
 			drawing = new QFontDrawing();
 			controlsDrawing = new QFontDrawing();
-			controlsTextOpts = new QFontRenderOptions() { Colour = Color.FromArgb(new Color4(0.8f, 0.1f, 0.1f, 1.0f).ToArgb()), DropShadowActive = true };
+			controlsTextOpts = new QFontRenderOptions() { Colour = Color.FromArgb(new ColorF(0.8f, 0.1f, 0.1f, 1.0f).ToArgb()), DropShadowActive = true };
 
 			heading2 = new QFont("woodenFont.qfont", new QFontConfiguration(addDropShadow: true), 1.0f);
 			heading2Options = new QFontRenderOptions() { Colour = Color.White, DropShadowActive = true };
@@ -223,13 +223,13 @@ namespace StarterKit {
 
 			codeText = new QFont("Fonts/Comfortaa-Regular.ttf", 12, new QFontBuilderConfiguration());
 
-			heading1Options = new QFontRenderOptions() { Colour = Color.FromArgb(new Color4(0.2f, 0.2f, 0.2f, 1.0f).ToArgb()), DropShadowActive = true };
+			heading1Options = new QFontRenderOptions() { Colour = Color.FromArgb(new ColorF(0.2f, 0.2f, 0.2f, 1.0f).ToArgb()), DropShadowActive = true };
 			_processedText = QFontDrawingPrimitive.ProcessText(mainText, mainTextOptions, preProcessed, new SizeF(ViewSize.Width - 40, -1), QFontAlignment.Justify);
-			codeTextOptions = new QFontRenderOptions() { Colour = Color.FromArgb(new Color4(0.0f, 0.0f, 0.4f, 1.0f).ToArgb()) };
+			codeTextOptions = new QFontRenderOptions() { Colour = Color.FromArgb(new ColorF(0.0f, 0.0f, 0.4f, 1.0f).ToArgb()) };
 
 			monoSpaced = new QFont("Fonts/Anonymous.ttf", 10, new QFontBuilderConfiguration());
-			monoSpacedOptions = new QFontRenderOptions() { Colour = Color.FromArgb(new Color4(0.1f, 0.1f, 0.1f, 1.0f).ToArgb()), DropShadowActive = true };
-			GL.ClearColor(Color4.CornFlowerBlue);
+			monoSpacedOptions = new QFontRenderOptions() { Colour = Color.FromArgb(new ColorF(0.1f, 0.1f, 0.1f, 1.0f).ToArgb()), DropShadowActive = true };
+			GL.ClearColor(ColorF.CornFlowerBlue);
 			UpdateTimerRunning = true;
 		}
 

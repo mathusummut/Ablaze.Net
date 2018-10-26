@@ -85,8 +85,8 @@ namespace System.Graphics.Models.Parsers {
 				ColorF specularColor; //the specular hue of the model
 				float specularPower; //the strength of the specular highlights
 				float opacity; //the model opacity
-				MeshPropertyFlag properties;
-				MeshTexture associatedTextures;
+				MeshPropertyFlag properties; //specifies property flags for the mesh
+				MeshTexture associatedTextures; //specifies which textures are used by the mesh
 				TextureCollection diffuseTexture; //the texture used by the model
 				int vertex, frame, index;
 				Vertex[][] bufferData;

@@ -1585,7 +1585,11 @@ namespace System.Windows.Forms {
 			}
 			typeof(Control).GetField("UseCompatibleTextRenderingDefault", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, false); //Application.SetCompatibleTextRenderingDefault(false);
 			typeof(NativeWindow).GetField("userSetProcFlagsForApp", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, (byte) 1); //Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-																																			//Disable SystemEvents due to buggy behaviour
+			if (Platform.IsWindowsVistaOrNewer) {
+				NativeApi.ChangeWindowMessageFilter(WindowMessage.DROPFILES, MessageFilter.Allow);
+				NativeApi.ChangeWindowMessageFilter(WindowMessage.COPYGLOBALDATA, MessageFilter.Allow);
+			}
+			//Disable SystemEvents due to buggy behaviour
 			Type systemEvents = typeof(Stack<>).Assembly.GetType("Microsoft.Win32.SystemEvents");
 			if (systemEvents == null)
 				return true;
@@ -1698,6 +1702,8 @@ namespace System.Windows.Forms {
 					disposed = DisposeOptions.None;
 					this.SetState(2048, false);
 					base.CreateHandle();
+					if (Platform.IsWindowsXPOrNewer)
+						NativeApi.DragAcceptFiles(Handle, allowDrop);
 					if (!(DesignMode || updateLayered == null))
 						updateLayered();
 					UpdateAeroBlur();
@@ -1758,7 +1764,10 @@ namespace System.Windows.Forms {
 				bool wasVisible = Visible;
 				if (wasVisible)
 					SetVisibleNoAnimation(false);
-				base.ShowInTaskbar = true;
+				try {
+					base.ShowInTaskbar = true;
+				} catch {
+				}
 				if (wasVisible)
 					SetVisibleNoAnimation(true);
 			} else

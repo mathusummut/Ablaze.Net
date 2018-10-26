@@ -33,7 +33,7 @@ namespace Particles {
 			points.RemoveAt(0);
 			concentricPoints = points.ToArray();
 			particles = new Particle[NumberOfParticles];
-			Texture2D texture = new Texture2D(Properties.Resources.Particle, NPotTextureScaleMode.ScaleUp, true, true, false);
+			TextureCollection texture = new TextureCollection(new Texture2D(Properties.Resources.Particle, NPotTextureScaleMode.ScaleUp, ImageParameterAction.Dispose, true, false));
 			for (int i = 0; i < NumberOfParticles; i++) {
 				Particle particle = new Particle(texture, new Vector2(UniformRandom.RandomFloat * 2f - 1f, UniformRandom.RandomFloat * 2f - 1f), new Vector2(0.2f, 0.2f));
 				particle.Name = "Particle " + i;
