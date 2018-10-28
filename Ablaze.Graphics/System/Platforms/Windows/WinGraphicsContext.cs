@@ -55,12 +55,12 @@ namespace System.Platforms.Windows {
 				int maxIndex = NativeApi.DescribePixelFormat(window.DeviceContext, (int) mode.Index.Value, (uint) PixelFormatDescriptor.StructSize, ref pfd);
 				if (maxIndex == 0) {
 					int errorCode = Marshal.GetLastWin32Error();
-					throw new InvalidOperationException(string.Format("Requested GraphicsMode not available. DescribePixelFormat error {0}: {1}", errorCode, new ComponentModel.Win32Exception(errorCode).Message));
+					throw new InvalidOperationException(string.Format("Requested GraphicsMode not available. DescribePixelFormat error {0}: {1}", errorCode, errorCode.Win32ErrorToString()));
 				} else if ((int) mode.Index.Value > maxIndex)
 					NativeApi.DescribePixelFormat(window.DeviceContext, maxIndex, (uint) PixelFormatDescriptor.StructSize, ref pfd);
 				if (!NativeApi.SetPixelFormat(window.DeviceContext, (int) mode.Index.Value, ref pfd)) {
 					int errorCode = Marshal.GetLastWin32Error();
-					throw new InvalidOperationException(string.Format("Requested GraphicsMode not available. SetPixelFormat error {0}: {1}", errorCode, new ComponentModel.Win32Exception(errorCode).Message));
+					throw new InvalidOperationException(string.Format("Requested GraphicsMode not available. SetPixelFormat error {0}: {1}", errorCode, errorCode.Win32ErrorToString()));
 				}
 				if (Wgl.Delegates.wglCreateContextAttribsARB != null) {
 					try {
@@ -86,7 +86,7 @@ namespace System.Platforms.Windows {
 					Handle = Wgl.CreateContext(window.DeviceContext);
 					if (Handle == IntPtr.Zero) {
 						int errorCode = Marshal.GetLastWin32Error();
-						throw new InvalidOperationException(string.Format("Failed to create graphics context. Error {0}: {1}", errorCode, new ComponentModel.Win32Exception(errorCode).Message));
+						throw new InvalidOperationException(string.Format("Failed to create graphics context. Error {0}: {1}", errorCode, errorCode.Win32ErrorToString()));
 					}
 				}
 				if (sharedContext != null)

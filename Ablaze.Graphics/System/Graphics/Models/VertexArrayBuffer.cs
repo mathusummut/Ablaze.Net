@@ -7,7 +7,7 @@ namespace System.Graphics.Models {
 	/// </summary>
 	public sealed class VertexArrayBuffer : IEquatable<VertexArrayBuffer>, IDisposable {
 		private GraphicsContext parentContext;
-		private int id, references = 1;
+		private int id;
 
 		/// <summary>
 		/// Gets the native OpenGL name of the buffer
@@ -97,16 +97,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds a reference to this buffer.
-		/// </summary>
-#if NET45
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-		public void AddReference() {
-			references++;
-		}
-
-		/// <summary>
 		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		~VertexArrayBuffer() {
@@ -135,19 +125,7 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and the resources consumed by it
 		/// </summary>
 		public void Dispose() {
-			Dispose(false);
-		}
-
-		/// <summary>
-		/// Disposes of the buffer and the resources consumed by it
-		/// </summary>
-		/// <param name="forceDispose">If true, the reference count is ignored, forcing the buffer to be disposed, unless it is already disposed</param>
-		public void Dispose(bool forceDispose) {
-			if (id == 0)
-				return;
-			else if (references > 0)
-				references--;
-			if ((references <= 0 || forceDispose) && (parentContext == null || parentContext.IsCurrent)) {
+			if (id != 0 && (parentContext == null || parentContext.IsCurrent)) {
 				try {
 					GL.DeleteVertexArrays(1, ref id);
 				} catch {

@@ -493,7 +493,6 @@ namespace System.Windows.Forms {
 			base.OnConstructorStarted();
 			RenderBorderOnGdiLayer = true;
 			ReduceFlickerOnResize = true;
-			EnableAeroBlur = false;
 			callDrawBorder = CallDrawBorder;
 			paintControl = Control_Paint;
 			GdiControlInvalidate = Ctrl_Invalidated;
@@ -891,7 +890,7 @@ namespace System.Windows.Forms {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void InitializeGL(bool onSeparateThread) {
-			InitializeGL(onSeparateThread, GraphicsMode.Empty, new MajorMinorVersion(3));
+			InitializeGL(onSeparateThread, true, GraphicsMode.Empty, new MajorMinorVersion(3));
 		}
 
 		/// <summary>
@@ -900,9 +899,10 @@ namespace System.Windows.Forms {
 		/// <param name="onSeparateThread">Whether to dedicate a new thread specifically for issuing OpenGL commands (recommended).</param>
 		/// <param name="mode">The graphics mode to use.</param>
 		/// <param name="version">The generation of the OpenGL context to try to create.</param>
+		/// <param name="disableAeroBlur">Some drivers cause the window to flicker if aero blur is enabled for the window</param>
 		/// <param name="shareResources">Optionally sets a graphics context to share resources with.</param>
-		public void InitializeGL(bool onSeparateThread, GraphicsMode mode, MajorMinorVersion version, GraphicsContext shareResources = null) {
-			InitializeGL(this, onSeparateThread, mode, version, shareResources);
+		public void InitializeGL(bool onSeparateThread, bool disableAeroBlur, GraphicsMode mode, MajorMinorVersion version, GraphicsContext shareResources = null) {
+			InitializeGL(this, onSeparateThread, disableAeroBlur, mode, version, shareResources);
 		}
 
 		/// <summary>
@@ -910,14 +910,17 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="control">The control on which to initialize the OpenGL context.</param>
 		/// <param name="onSeparateThread">Whether to dedicate a new thread specifically for issuing OpenGL commands (recommended).</param>
+		///  <param name="disableAeroBlur">Some drivers cause the window to flicker if aero blur is enabled for the window</param>
 		/// <param name="mode">The graphics mode to use.</param>
 		/// <param name="version">The generation of the OpenGL context to try to create.</param>
 		/// <param name="shareResources">Optionally sets a graphics context to share resources with.</param>
-		public void InitializeGL(Control control, bool onSeparateThread, GraphicsMode mode, MajorMinorVersion version, GraphicsContext shareResources = null) {
+		public void InitializeGL(Control control, bool onSeparateThread, bool disableAeroBlur, GraphicsMode mode, MajorMinorVersion version, GraphicsContext shareResources = null) {
 			if (DesignMode || IsGLEnabled)
 				return;
 			FullscreenGdiGLWorkaround = true;
 			rpsStopwatch.Running = true;
+			if (disableAeroBlur)
+				EnableAeroBlur = false;
 			ReinitializeGL(control, onSeparateThread ? new DispatcherSlim(nameof(GLDispatcher), true, ExceptionMode.Log) : null, mode, version, shareResources);
 		}
 

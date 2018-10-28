@@ -39,26 +39,17 @@ namespace System.Graphics {
 		private static ConcurrentDictionary<Thread, bool> isFinalizer = new ConcurrentDictionary<Thread, bool>();
 		private static bool isExiting;
 		/// <summary>
-		/// Defines how to handle exceptions
-		/// </summary>
-		public static ExceptionMode ExceptionMode = ExceptionMode.Log;
-		/// <summary>
 		/// Whether errors are ignored when the application is about to exit
 		/// </summary>
 		public static bool SuppressOnExit;
 		/// <summary>
+		/// Defines how to handle exceptions
+		/// </summary>
+		public static ExceptionMode ExceptionMode = ExceptionMode.Log;
+		/// <summary>
 		/// Fired when an OpenGL resource has leaked out of garbage collection
 		/// </summary>
 		public static event ResourceLeakedEventHandler ResourceLeaked = HandleLeak;
-
-		/// <summary>
-		/// Gets whether a graphics context is currently available
-		/// </summary>
-		public static bool IsGraphicsContextAvailable {
-			get {
-				return GraphicsPlatform.Factory.GetCurrentContext() != IntPtr.Zero;
-			}
-		}
 
 		private ConcurrentQueue<Tuple<Action<GraphicsContext>, bool>> QueueToInvoke {
 			get {
@@ -69,9 +60,17 @@ namespace System.Graphics {
 						if (context.Item2)
 							toInvoke.Enqueue(context);
 					}
-					sharedContext = null;
 				}
 				return toInvoke;
+			}
+		}
+
+		/// <summary>
+		/// Gets whether a graphics context is currently available
+		/// </summary>
+		public static bool IsGraphicsContextAvailable {
+			get {
+				return GraphicsPlatform.Factory.GetCurrentContext() != IntPtr.Zero;
 			}
 		}
 

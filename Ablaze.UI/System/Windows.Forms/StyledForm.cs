@@ -1729,26 +1729,28 @@ namespace System.Windows.Forms {
 		}
 
 		private void UpdateAeroBlur() {
-			if (!Extensions.IsAeroEnabled)
-				return;
-			IntPtr handle = Handle;
-			if (useSetWindowComposition) {
-				AccentPolicy accent = new AccentPolicy();
-				accent.AccentState = enableAeroBlur ? AccentState.ENABLE_BLURBEHIND : AccentState.DISABLED;
-				WindowCompositionAttributeData data = new WindowCompositionAttributeData();
-				data.Attribute = DwmWindowAttribute.ACCENT_POLICY;
-				data.SizeOfData = AccentPolicy.Size;
-				unsafe
-				{
-					data.Data = new IntPtr(&accent);
+			if (Extensions.IsAeroEnabled) {
+				IntPtr handle = Handle;
+				if (useSetWindowComposition) {
+					AccentPolicy accent = new AccentPolicy();
+					accent.AccentState = enableAeroBlur ? AccentState.ENABLE_BLURBEHIND : AccentState.DISABLED;
+					WindowCompositionAttributeData data = new WindowCompositionAttributeData();
+					data.Attribute = DwmWindowAttribute.ACCENT_POLICY;
+					data.SizeOfData = AccentPolicy.Size;
+					unsafe
+					{
+						data.Data = new IntPtr(&accent);
+					}
+					NativeApi.SetWindowCompositionAttribute(handle, ref data);
 				}
-				NativeApi.SetWindowCompositionAttribute(handle, ref data);
-			}
-			DWM_BLURBEHIND style = new DWM_BLURBEHIND() {
-				dwFlags = DWM_BB.Enable,
-				fEnable = enableAeroBlur
-			};
-			NativeApi.DwmEnableBlurBehindWindow(handle, ref style);
+				DWM_BLURBEHIND style = new DWM_BLURBEHIND() {
+					dwFlags = DWM_BB.Enable,
+					fEnable = enableAeroBlur
+				};
+				if (NativeApi.DwmEnableBlurBehindWindow(handle, ref style) != IntPtr.Zero)
+					enableAeroBlur = false;
+			} else
+				enableAeroBlur = false;
 		}
 
 		/// <summary>

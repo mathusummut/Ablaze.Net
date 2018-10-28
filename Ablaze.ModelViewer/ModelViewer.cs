@@ -68,7 +68,7 @@ namespace Ablaze.ModelViewer {
 			} catch {
 			}
 			BackColor = Color.MidnightBlue;
-			InitializeGL(true, new GraphicsMode(ColorFormat.Bit32, 24, 8, msaa, ColorFormat.Empty, true, false), new MajorMinorVersion(1));
+			InitializeGL(true, true, new GraphicsMode(ColorFormat.Bit32, 24, 8, msaa, ColorFormat.Empty, true, false), new MajorMinorVersion(1));
 			statusLabel = new StyledLabel() {
 				BackColor = Color.Transparent,
 				Blur = 2,

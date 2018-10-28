@@ -653,8 +653,6 @@ namespace System.Graphics.Models {
 			indexBuffer = modelComponent.indexBuffer;
 			DataBuffer = modelComponent.DataBuffer;
 			VertexArrayBuffer = modelComponent.VertexArrayBuffer;
-			if (VertexArrayBuffer != null)
-				VertexArrayBuffer.AddReference();
 			FlushBufferOnNextRender = true;
 			isClone = true;
 		}
@@ -1274,10 +1272,7 @@ namespace System.Graphics.Models {
 				indexBuffer.Dispose();
 				indexBuffer = null;
 			}
-			if (VertexArrayBuffer != null) {
-				VertexArrayBuffer.Dispose();
-				VertexArrayBuffer = null;
-			}
+			VertexArrayBuffer = null;
 			bufferData = null;
 			GC.SuppressFinalize(this);
 		}

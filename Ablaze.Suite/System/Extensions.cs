@@ -78,6 +78,14 @@ namespace System {
 		}
 
 		/// <summary>
+		/// Gets the error message associated with the specified Win32 error
+		/// </summary>
+		/// <param name="errorCode">The error code collected from <see cref="Runtime.InteropServices.Marshal.GetLastWin32Error()"/></param>
+		public static string Win32ErrorToString(this int errorCode) {
+			return new Win32Exception(errorCode).Message;
+		}
+
+		/// <summary>
 		/// Calles the WndProc method of the specified control, and returns the result.
 		/// </summary>
 		/// <param name="ctrl">The control to send the specified message to.</param>

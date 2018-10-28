@@ -1088,12 +1088,12 @@ namespace System.Platforms.Windows {
 		public static extern IntPtr GetProcAddress(IntPtr handle, string funcname);
 
 		[SuppressUnmanagedCodeSecurity]
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		[DllImport("user32.dll")]
 		public static extern bool EnableWindow(IntPtr hWnd, bool enable);
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("dwmapi.dll")]
-		public static extern void DwmEnableBlurBehindWindow(IntPtr hwnd, ref DWM_BLURBEHIND blurBehind);
+		public static extern IntPtr DwmEnableBlurBehindWindow(IntPtr hwnd, ref DWM_BLURBEHIND blurBehind);
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("user32.dll")]
@@ -1640,11 +1640,13 @@ namespace System.Platforms.Windows {
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("kernel32.dll")]
-		public static extern void SetLastError(Int32 dwErrCode);
+		[CLSCompliant(false)]
+		public static extern void SetLastError(uint dwErrCode);
 
-
-
-
+		[SuppressUnmanagedCodeSecurity]
+		[DllImport("kernel32.dll")]
+		[CLSCompliant(false)]
+		public static extern uint GetLastError();
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("kernel32.dll")]
