@@ -302,39 +302,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified textures to the collection
-		/// </summary>
-		/// <param name="textures">The textures to add</param>
-		public void AddRange(params ITexture[] textures) {
-			if (textures == null)
-				return;
-			foreach (ITexture texture in textures)
-				Add(texture);
-		}
-
-		/// <summary>
-		/// Adds the specified textures to the collection
-		/// </summary>
-		/// <param name="textures">The textures to add</param>
-		public void AddRange(params TextureCollection[] textures) {
-			if (textures == null)
-				return;
-			foreach (TextureCollection texture in textures)
-				Add(texture);
-		}
-
-		/// <summary>
-		/// Adds the specified textures to the collection
-		/// </summary>
-		/// <param name="textures">The textures to add</param>
-		public void AddRange(params Texture2D[] textures) {
-			if (textures == null)
-				return;
-			foreach (Texture2D texture in textures)
-				Add(texture);
-		}
-
-		/// <summary>
 		/// Removes the specified texture from the collection
 		/// </summary>
 		/// <param name="index">The index of the texture to remove</param>

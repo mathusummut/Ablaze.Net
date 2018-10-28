@@ -186,7 +186,7 @@ namespace System.Graphics.Models {
 					if (model.Count == 0)
 						return;
 					else if (Count == 0)
-						AddRange((IEnumerable<IModel>) model);
+						AddRange(model);
 					else {
 						IModel current;
 						Model modelList;

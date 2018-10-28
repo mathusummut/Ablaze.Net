@@ -310,11 +310,11 @@ namespace Ablaze.ModelViewer {
 					if (mesh.Length >= 4 && mesh.Substring(mesh.Length - 4) == ".mtl") {
 						substring = mesh.Substring(0, mesh.Length - 4) + ".obj";
 						if (FileUtils.FileExists(substring))
-							Scene.AddRange(ModelParser.Parse(substring, null as string[]));
+							Scene.Add(ModelParser.Parse(substring, null as string[]));
 						else
-							Scene.AddRange(ModelParser.Parse(mesh, null as string[]));
+							Scene.Add(ModelParser.Parse(mesh, null as string[]));
 					} else
-						Scene.AddRange(ModelParser.Parse(mesh, null as string[]));
+						Scene.Add(ModelParser.Parse(mesh, null as string[]));
 				} catch (Exception ex) {
 					try {
 						loaded = TextureParser.Parse(mesh)[0];

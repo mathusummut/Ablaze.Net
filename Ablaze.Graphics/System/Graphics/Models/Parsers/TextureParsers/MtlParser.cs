@@ -31,7 +31,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 					indices = line.Trim().Split(ObjParser.SplitChar, StringSplitOptions.RemoveEmptyEntries);
 					if (indices.Length != 0) {
 						switch (indices[0].ToLower()) {
-							case "newmtl":
+							case "newmtl": //define a new material
 								if (current == null && material != null) {
 									ITexture empty = new Texture2D() {
 										Tag = material
@@ -43,11 +43,11 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 									Name = line.Substring(line.IndexOf("newmtl", StringComparison.InvariantCultureIgnoreCase) + 7).Trim()
 								};
 								break;
-							case "ns":
+							case "ns": //define material shininess
 								if (material != null && indices.Length >= 2)
 									material.Shininess = float.Parse(indices[1], NumberStyles.Float);
 								break;
-							case "ka":
+							case "ka": //define material ambient hue
 								if (material != null) {
 									if (indices.Length == 4)
 										material.AmbientHue = new ColorF(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
@@ -60,7 +60,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 									}
 								}
 								break;
-							case "kd":
+							case "kd": //define material hue
 								if (material != null) {
 									if (indices.Length == 4) {
 										material.MaterialHue.R = float.Parse(indices[1], NumberStyles.Float);
@@ -75,7 +75,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 									}
 								}
 								break;
-							case "ks":
+							case "ks": //define material shine hue
 								if (material != null) {
 									if (indices.Length == 4)
 										material.ShineHue = new ColorF(1f, float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
@@ -83,21 +83,21 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 										material.ShineHue = new ColorF(float.Parse(indices[4], NumberStyles.Float), float.Parse(indices[1], NumberStyles.Float), float.Parse(indices[2], NumberStyles.Float), float.Parse(indices[3], NumberStyles.Float));
 								}
 								break;
-							case "d":
+							case "d": //define material opacity
 								if (material != null && indices.Length >= 2) {
 									material.MaterialHue.A = float.Parse(indices[1], NumberStyles.Float);
 									if (material.MaterialHue.A == 0f)
 										material.MaterialHue.A = 1f;
 								}
 								break;
-							case "tr":
+							case "tr": //define inverted material opacity
 								if (material != null && indices.Length >= 2) {
 									material.MaterialHue.A = 1f - float.Parse(indices[1], NumberStyles.Float);
 									if (material.MaterialHue.A == 0f)
 										material.MaterialHue.A = 1f;
 								}
 								break;
-							case "map_kd":
+							case "map_kd": //define texture mapping
 								name = line.Substring(line.IndexOf("map_kd", StringComparison.InvariantCultureIgnoreCase) + 7).Trim();
 								if (!textureLookup.TryGetValue(name, out current)) {
 									current = TextureParser.Parse(name);

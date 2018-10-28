@@ -230,7 +230,7 @@ namespace System.Graphics.Models {
 			for (int i = 0; i < images.Length; i++) {
 				temp = Parsers.TextureParser.Parse(images[i]);
 				if (temp != null)
-					textures.AddRange(temp);
+					textures.Add(temp);
 			}
 			return textures;
 		}

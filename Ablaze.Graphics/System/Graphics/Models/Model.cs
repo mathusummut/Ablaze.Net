@@ -711,39 +711,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Adds the specified components to the model
-		/// </summary>
-		/// <param name="models">The components to add</param>
-		public void AddRange(params IModel[] models) {
-			if (models == null)
-				return;
-			foreach (IModel model in models)
-				Add(model);
-		}
-
-		/// <summary>
-		/// Adds the specified components to the model
-		/// </summary>
-		/// <param name="models">The components to add</param>
-		public void AddRange(params Model[] models) {
-			if (models == null)
-				return;
-			foreach (Model model in models)
-				Add(model);
-		}
-
-		/// <summary>
-		/// Adds the specified components to the model
-		/// </summary>
-		/// <param name="models">The components to add</param>
-		public void AddRange(params MeshComponent[] models) {
-			if (models == null)
-				return;
-			foreach (MeshComponent model in models)
-				Add(model);
-		}
-
-		/// <summary>
 		/// Removes the specified component from the model
 		/// </summary>
 		/// <param name="index">The index of the component to remove</param>

@@ -30,8 +30,8 @@ namespace System.Graphics.Models.Parsers {
 		}
 
 		private static Model Parse(StreamReader reader, TextureCollection textures, TextureCollection loadedTextures) {
-			List<Model> models = new List<Model>();
-			List<MeshComponent> components = new List<MeshComponent>();
+			Model model = new Model();
+			Model currentModel = new Model();
 			List<Vector3> vertices = new List<Vector3>();
 			List<Vector2> texCoords = new List<Vector2>();
 			List<Vector3> normals = new List<Vector3>();
@@ -139,7 +139,7 @@ namespace System.Graphics.Models.Parsers {
 										component.Shininess = material.Shininess;
 									}
 								}
-								components.Add(component);
+								currentModel.Add(component);
 								index++;
 								points = new List<VertexIndex>();
 							}
@@ -150,7 +150,7 @@ namespace System.Graphics.Models.Parsers {
 								loadedTextures.AddRange(parsedTextures);
 							break;
 						case "new": //define new model
-							models.AddRange(Parse(reader, textures, loadedTextures));
+							model.Add(Parse(reader, textures, loadedTextures));
 							break;
 						case "newmtl": //define a new material
 							if (current == null && material != null) {
@@ -262,11 +262,10 @@ namespace System.Graphics.Models.Parsers {
 						component.Shininess = material.Shininess;
 					}
 				}
-				components.Add(component);
+				currentModel.Add(component);
 			}
-			if (components.Count != 0)
-				models.Add(new Model(components));
-			return new Model(models);
+			model.Add(currentModel);
+			return model;
 		}
 
 		private static ITexture FindByMaterial(TextureCollection textures, string name) {
