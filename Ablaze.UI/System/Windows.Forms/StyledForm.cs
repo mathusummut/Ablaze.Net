@@ -1562,11 +1562,14 @@ namespace System.Windows.Forms {
 
 		/// <summary>
 		/// Called when the constructor is about to start. This is called only once.
-		/// Don't do anything fancy, almost everything is null or uninitialized.
+		/// Don't do anything fancy, almost everything is null or uninitialized
 		/// </summary>
 		protected virtual void OnConstructorStarted() {
 		}
 
+		/// <summary>
+		/// Only here for designer compatibility
+		/// </summary>
 		private void InitializeComponent() {
 		}
 
