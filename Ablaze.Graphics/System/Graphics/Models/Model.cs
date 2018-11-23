@@ -558,7 +558,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(IEnumerable<Model> components) : this() {
-			AddRange((IEnumerable<Model>) components);
+			AddRange(components);
 		}
 
 		/// <summary>
@@ -566,7 +566,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(IEnumerable<MeshComponent> components) : this() {
-			AddRange((IEnumerable<MeshComponent>) components);
+			AddRange(components);
 		}
 
 		/// <summary>
@@ -582,7 +582,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(params Model[] components) : this() {
-			AddRange(components);
+			AddRange((IEnumerable<Model>) components);
 		}
 
 		/// <summary>
@@ -590,7 +590,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="components">The components that are to make up the model structure</param>
 		public Model(params MeshComponent[] components) : this() {
-			AddRange(components);
+			AddRange((IEnumerable<MeshComponent>) components);
 		}
 
 		/// <summary>

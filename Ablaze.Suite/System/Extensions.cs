@@ -404,6 +404,20 @@ namespace System {
 		}
 
 		/// <summary>
+		/// Returns true if the string is null or consists of exclusively whitespace characters, else false
+		/// </summary>
+		/// <param name="str">The string to check</param>
+		public static bool IsNullOrWhiteSpace(this string str) {
+			if (str == null)
+				return true;
+			for (int i = 0; i < str.Length; i++) {
+				if (!char.IsWhiteSpace(str[i]))
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
 		/// Removes all characters from the string after and including the first '\0' null character
 		/// </summary>
 		/// <param name="str">The string whose duplicate consecutive characters to remove</param>

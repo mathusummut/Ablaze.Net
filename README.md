@@ -54,6 +54,7 @@ Use the Ablaze.Convert tool to change the target platform.
 	Parallel.For -> ParallelLoop.For
 	Random -> UniformRandom (unless using a particular seed)
 	Buffer.BlockCopy -> Extensions.MemoryCopy
+	string.IsNullOrWhitespace() -> Extensions.IsNullOrWhitespace()
 
 Enjoy the open-source privilege!
 

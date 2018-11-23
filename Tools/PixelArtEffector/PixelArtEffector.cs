@@ -747,7 +747,7 @@ namespace PixelArtEffector {
 		private void SaveMenuItem_Click(object sender, EventArgs e) {
 			if (background == null)
 				return;
-			else if (!string.IsNullOrWhiteSpace(loadedPath)) {
+			else if (!Extensions.IsNullOrWhiteSpace(loadedPath)) {
 				try {
 					background.Save(loadedPath);
 					savedBackground = background;
