@@ -31,7 +31,7 @@ namespace Ablaze.Convert {
 		public static void Main() {
 			do {
 				Console.WriteLine("Please enter path to Ablaze solution directory (the folder that contains Ablaze.sln):");
-				SolutionRoot = FileUtils.ResolvePath(Console.ReadLine().Trim());
+				SolutionRoot = FileUtils.ResolvePath(Console.ReadLine().Trim().Trim('\"').Trim());
 				if (SolutionRoot.Length == 0)
 					Console.WriteLine("Path cannot be empty.\n");
 				else if (!FileUtils.FolderExists(SolutionRoot))
@@ -71,8 +71,8 @@ Choose a target platform (1-" + TargetCount + "): ");
 			Console.Write("\nEnter path that contains projects that need to be retargeted (or leave empty to retarget Ablaze itself): ");
 			string directory;
 			do {
-				directory = Console.ReadLine().Trim();
-				if (string.IsNullOrEmpty(directory)) {
+				directory = Console.ReadLine().Trim().Trim('\"').Trim();
+				if (directory.Length == 0) {
 					directory = SolutionRoot;
 					break;
 				} else if (FileUtils.FolderExists(directory))

@@ -187,7 +187,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="textures">The textures that are to form the collection</param>
 		public TextureCollection(params TextureCollection[] textures) : this() {
-			AddRange(textures);
+			AddRange((IEnumerable<TextureCollection>) textures);
 		}
 
 		/// <summary>
@@ -195,7 +195,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="textures">The textures that are to form the collection</param>
 		public TextureCollection(params Texture2D[] textures) : this() {
-			AddRange(textures);
+			AddRange((IEnumerable<Texture2D>) textures);
 		}
 
 		/// <summary>

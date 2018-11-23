@@ -37,16 +37,15 @@ namespace System.IO {
 		private static HashSet<char> PathSeparatorSet = new HashSet<char>(PathSeparators);
 		private static char[] DriveMarker = new char[] { ':' };
 		private static string parentDir = ".." + Path.DirectorySeparatorChar;
+		private static MD5 md5Calculator = MD5.Create();
 
 		/// <summary>
 		/// Returns the MD5 checksum of the specified file in hexadecimal. The letters are uppercase.
 		/// </summary>
 		/// <param name="stream">The stream whose checksum to calculate</param>
 		public static string CalculateMD5(Stream stream) {
-			using (BufferedStream buffer = new BufferedStream(stream, 1200000)) {
-				using (MD5Cng md5 = new MD5Cng())
-					return BitConverter.ToString(md5.ComputeHash(buffer)).Replace("-", string.Empty);
-			}
+			using (BufferedStream buffer = new BufferedStream(stream, 1200000))
+				return BitConverter.ToString(md5Calculator.ComputeHash(buffer)).Replace("-", string.Empty);
 		}
 
 		/// <summary>

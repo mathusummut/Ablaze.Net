@@ -292,14 +292,14 @@ namespace System.Graphics {
 			string st8 = state.ToString().ToLower();
 			if (ExceptionMode == ExceptionMode.Throw) {
 				if (sender == null)
-					throw new ResourceLeakException(handle, "Resource leaked while " + st8 + ": { Identifier: " + handle.ToString() + " }");
+					throw new ResourceLeakException(handle, "Resource leaked while " + st8 + ": { Identifier: " + handle + " }");
 				else
-					throw new ResourceLeakException(sender, "Resource leaked while " + st8 + ": { Type: " + sender.GetType().Name + ", identifier: " + sender + ", handle: " + handle.ToString() + " }");
+					throw new ResourceLeakException(sender, "Resource leaked while " + st8 + ": { Type: " + sender.GetType().Name + ", identifier: " + sender + ", handle: " + handle + " }");
 			} else {
 				if (sender == null)
-					ErrorHandler.LogException(new ResourceLeakException(handle, "Resource leaked while " + st8 + ": { Identifier: " + handle.ToString() + " }"));
+					ErrorHandler.LogException(new ResourceLeakException(handle, "Resource leaked while " + st8 + ": { Identifier: " + handle + " }"));
 				else
-					ErrorHandler.LogException(new ResourceLeakException(sender, "Resource leaked while " + st8 + ": { Type: " + sender.GetType().Name + ", identifier: " + sender + ", handle: " + handle.ToString() + " }"));
+					ErrorHandler.LogException(new ResourceLeakException(sender, "Resource leaked while " + st8 + ": { Type: " + sender.GetType().Name + ", identifier: " + sender + ", handle: " + handle + " }"));
 			}
 		}
 
