@@ -660,7 +660,10 @@ namespace System.Graphics.Models {
 							id = GL.CreateProgram();
 						shader = GL.CreateShader(source.Type);
 						GL.ShaderSource(shader, source.SourceCode);
-						GL.CompileShader(shader);
+						try {
+							GL.CompileShader(shader);
+						} catch {
+						}
 						GL.GetShader(shader, ShaderParameter.CompileStatus, out status);
 						if (status != 1 || DebugMode) {
 							GL.GetShaderInfoLog(shader, out info);
