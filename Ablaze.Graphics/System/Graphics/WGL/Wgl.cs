@@ -49,12 +49,11 @@ namespace System.Graphics.WGL {
 		}
 
 		/// <summary>
-		/// CALL THIS FIRST IF YOU NEED OPENGL.
+		/// CALL THIS FIRST IF YOU NEED OPENGL. Returns true if OpenGL was loaded properly
 		/// </summary>
-		public static void LoadOpenGL() {
-			GLHandle = System.Platforms.Windows.NativeApi.LoadLibrary(Library);
-			if (GLHandle == IntPtr.Zero)
-				throw new DllNotFoundException(Library + " was not found.");
+		public static bool LoadOpenGL() {
+			GLHandle = NativeApi.LoadLibrary(Library);
+			return GLHandle != IntPtr.Zero;
 		}
 
 

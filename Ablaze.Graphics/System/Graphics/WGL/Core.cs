@@ -42,7 +42,7 @@ namespace System.Graphics.WGL {
 				IntPtr address = wglGetProcAddress(functionName);
 				long addr = address.ToInt64();
 				if (addr < 3L && addr > -1L)
-					return System.Platforms.Windows.NativeApi.GetProcAddress(GLHandle, functionName);
+					return NativeApi.GetProcAddress(GLHandle, functionName);
 				else
 					return address;
 			}
