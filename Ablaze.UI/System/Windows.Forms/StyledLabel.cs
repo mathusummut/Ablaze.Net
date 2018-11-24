@@ -18,8 +18,8 @@ namespace System.Windows.Forms {
 	[Description("A label that supports custom styling and background shadow.")]
 	[DisplayName(nameof(StyledLabel))]
 	public class StyledLabel : Label, ISmartControl {
-		private static char[] LinkSplitter = new char[] { ' ', '\t', '\n', '\r', '\v', '\0' };
-		/*/// <summary>
+		/*private static char[] LinkSplitter = new char[] { ' ', '\t', '\n', '\r', '\v', '\0' };
+		/// <summary>
 		/// Called when a link is clicked.
 		/// </summary>
 		public event LinkLabelLinkClickedEventHandler LinkClicked;

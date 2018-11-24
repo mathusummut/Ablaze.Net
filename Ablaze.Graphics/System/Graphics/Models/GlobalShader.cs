@@ -13,7 +13,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Gets the current GLSL version qualifier that is used (can be an empty string).
 		/// </summary>
-		public string GLSLVersionQualifier {
+		public static string GLSLVersionQualifier {
 			get {
 				string versionString = VersionQualifier;
 				return versionString == null ? string.Empty : versionString;
@@ -244,7 +244,7 @@ void main() {
 					VersionQualifier = string.Empty;
 					for (i = 0; i < sources.Length; i++)
 						ShaderSources[i].SourceCode = sources[i];
-				} else if (VersionQualifier != string.Empty) {
+				} else if (VersionQualifier.Length != 0) {
 					for (int i = 0; i < ShaderSources.Length; i++)
 						ShaderSources[i].SourceCode = VersionQualifier + ShaderSources[i].SourceCode;
 				}

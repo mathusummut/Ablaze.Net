@@ -961,7 +961,7 @@ namespace System.Platforms.Windows {
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("ole32.dll", CharSet = CharSet.None, ExactSpelling = true, SetLastError = true)]
-		public static extern int OleInitialize(int val);
+		public static extern IntPtr OleInitialize(IntPtr val);
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("ole32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
@@ -1235,12 +1235,12 @@ namespace System.Platforms.Windows {
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		[Security.SuppressUnmanagedCodeSecurity]
-		public static extern short UnregisterClass([MarshalAs(UnmanagedType.LPTStr)] String className, IntPtr instance);
+		public static extern bool UnregisterClass([MarshalAs(UnmanagedType.LPTStr)] String className, IntPtr instance);
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		[Security.SuppressUnmanagedCodeSecurity]
-		public static extern short UnregisterClass(IntPtr className, IntPtr instance);
+		public static extern bool UnregisterClass(IntPtr className, IntPtr instance);
 
 
 
@@ -1967,7 +1967,7 @@ namespace System.Platforms.Windows {
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		[SuppressUnmanagedCodeSecurity]
 		[CLSCompliant(false)]
-		public static extern bool InsertMenu(IntPtr hMenu, uint uPosition, uint uFlags, uint uIDNewItem, string lpNewItem);
+		public static extern bool InsertMenu(IntPtr hMenu, uint uPosition, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		[SuppressUnmanagedCodeSecurity]
@@ -2685,7 +2685,7 @@ namespace System.Platforms.Windows {
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "mouse_event", CallingConvention = CallingConvention.StdCall)]
 		[CLSCompliant(false)]
-		public static extern void MouseEvent(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+		public static extern void MouseEvent(uint dwFlags, uint dx, uint dy, uint cButtons, UIntPtr dwExtraInfo);
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]

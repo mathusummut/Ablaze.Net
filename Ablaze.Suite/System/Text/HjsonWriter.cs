@@ -172,7 +172,7 @@ namespace System.Text {
 		}
 
 		static void writeString(string value, TextWriter tw, int level, bool hasComment, string separator) {
-			if (value == "") {
+			if (value.Length == 0) {
 				tw.Write(separator + "\"\"");
 				return;
 			}
