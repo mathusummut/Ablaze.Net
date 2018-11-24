@@ -140,7 +140,7 @@ void main() {
 		} else {
 			lightDir = normalize(LightPosition - worldPos);
 			diffuse = dot(lightDir, normal);
-			if (diffuse < 0) {
+			if (diffuse < 0.0) {
 				diffuse = -diffuse;
 				normal = -normal;
 			}
