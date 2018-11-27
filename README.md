@@ -1,6 +1,8 @@
 # Ablaze.Net
 
-An open-source C# framework for multithreaded 3D graphics and game development
+An open-source C# framework for multithreaded 3D graphics and game development.
+
+![Model Viewer Screenshot](https://cdn.discordapp.com/attachments/414768095832571907/497155192438128650/Screenshot_1.png)
 
 ## Manual Plaform Retarget:
 
