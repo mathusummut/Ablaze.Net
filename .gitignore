@@ -5,6 +5,7 @@
 *.[Cc]ache
 *.resources
 *.force
+*.swp
 Thumbs.db
 [Dd]esktop.ini
 *.vshost.exe
