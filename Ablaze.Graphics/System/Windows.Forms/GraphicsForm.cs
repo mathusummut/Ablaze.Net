@@ -511,6 +511,12 @@ namespace System.Windows.Forms {
 			gdiControlAdded = GdiControlAdded;
 		}
 
+		/// <summary>
+		/// Only here for designer compatibility
+		/// </summary>
+		private void InitializeComponent() {
+		}
+
 		private object CallPaintGL(object param) {
 			globalShader.Bind();
 			lock (RenderLock) {
