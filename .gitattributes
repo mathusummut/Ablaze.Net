@@ -11,6 +11,7 @@
 *.log eol=crlf
 *.config eol=crlf
 *.hjson eol=crlf
+*.resx eol=crlf
 *.obj eol=lf
 *.mtl eol=lf
 *.qfont eol=lf
