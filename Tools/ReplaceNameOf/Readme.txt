@@ -1,1 +1,0 @@
-This tool is useful for getting Ablaze.Net to compile on Visual Studio 2010.
