@@ -6,6 +6,10 @@
 *.resources
 *.force
 *.swp
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
 Thumbs.db
 [Dd]esktop.ini
 *.vshost.exe
