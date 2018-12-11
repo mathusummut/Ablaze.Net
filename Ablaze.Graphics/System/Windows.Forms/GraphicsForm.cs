@@ -433,7 +433,6 @@ namespace System.Windows.Forms {
 		/// Gets or sets whether the border should be rendered on the GDI layer of the form. Preferably disabled.
 		/// </summary>
 		[Description("Gets or sets whether the border should be rendered on the GDI layer of the form")]
-		[DefaultValue(true)]
 		public bool RenderBorderOnGdiLayer {
 			get;
 			set;
@@ -491,7 +490,6 @@ namespace System.Windows.Forms {
 		/// </summary>
 		protected override void OnConstructorStarted() {
 			base.OnConstructorStarted();
-			RenderBorderOnGdiLayer = true;
 			ReduceFlickerOnResize = true;
 			callDrawBorder = CallDrawBorder;
 			paintControl = Control_Paint;
@@ -1082,6 +1080,13 @@ namespace System.Windows.Forms {
 		/// and that the current graphics context of the border is the same as the one it was created).
 		/// </summary>
 		public virtual void DrawBorderGL() {
+			globalShader.Bind();
+			Mesh2D.Setup2D(GLViewport.Size);
+			Size clientSize = ClientSize;
+			Mesh2D.DrawTexture2D(
+			//GL.Scissor(0, 0, clientSize.Width, TitleBarHeight);
+
+			//GL.Scissor(0, 0, clientSize.Width, clientSize.Height);
 		}
 
 		/// <summary>

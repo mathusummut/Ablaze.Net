@@ -81,7 +81,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// If true, shader compilation logs are printed to console
 		/// </summary>
-		public static bool DebugMode;
+		public static bool DebugMode = true;
 		private static Dictionary<Type, Action<int, object>> uniformSetters = new Dictionary<Type, Action<int, object>>(),
 			attributeSetters = new Dictionary<Type, Action<int, object>>();
 		private static ThreadLocal<Shader> boundShader = new ThreadLocal<Shader>();
