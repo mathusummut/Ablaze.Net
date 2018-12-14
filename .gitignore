@@ -11,6 +11,7 @@
 *.ide-shm
 *.ide-wal
 *.lnk
+*.orig
 Thumbs.db
 [Dd]esktop.ini
 *.vshost.exe
