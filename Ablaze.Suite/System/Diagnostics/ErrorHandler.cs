@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -207,15 +208,15 @@ namespace System.Diagnostics {
 					text.Append("\nNo further details are available.");
 				else {
 					List<Exception> extracted;
-					int stackLevel, j;
+					int stackLevel, j, i = 0;
 					Exception currentException;
 					string temp;
-					for (int i = 0; i < exceptions.Count; i++) {
+					foreach (Exception current in exceptions.Distinct()) {
 						text.Append("\nException number ");
 						text.Append(i);
 						text.AppendLine(":");
 						stackLevel = 0;
-						extracted = ExtractFromException(exceptions[i]);
+						extracted = ExtractFromException(current);
 						for (j = extracted.Count - 1; j >= 0; j--) {
 							currentException = extracted[j];
 							text.Append("\nException stack level ");
@@ -248,6 +249,7 @@ namespace System.Diagnostics {
 							}
 							stackLevel++;
 						}
+						i++;
 					}
 				}
 			}
@@ -292,7 +294,9 @@ namespace System.Diagnostics {
 		/// <param name="ex">The exception to extract inner exceptions from.</param>
 		public static List<Exception> ExtractFromException(Exception ex) {
 			List<Exception> list = new List<Exception>();
-			while (!(ex == null || list.Contains(ex))) {
+			HashSet<Exception> set = new HashSet<Exception>();
+			while (!(ex == null || set.Contains(ex))) {
+				set.Add(ex);
 				list.Add(ex);
 				ex = ex.InnerException;
 			}
