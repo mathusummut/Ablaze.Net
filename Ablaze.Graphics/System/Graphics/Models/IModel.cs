@@ -113,9 +113,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the default textures of the components when none is specified
+		/// Gets or sets the default texture of the components when none is specified
 		/// </summary>
-		TextureCollection DefaultTextures {
+		ITexture DefaultTexture {
 			get;
 			set;
 		}

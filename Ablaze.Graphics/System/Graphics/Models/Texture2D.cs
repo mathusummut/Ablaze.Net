@@ -5,18 +5,21 @@ using System.Graphics.OGL;
 using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
+	using Graphics = Drawing.Graphics;
+
 	/// <summary>
 	/// A managed wrapper for an OpenGL texture
 	/// </summary>
 	public sealed class Texture2D : ITexture, IEquatable<Texture2D> {
 		/// <summary>
-		/// An empty texture.
+		/// An empty texture
 		/// </summary>
 		public static readonly Texture2D Empty = new Texture2D();
 		private int id;
 		private bool init, loadedFromHandle, lastFilter = true, lastMipmap = true;
 		private Bitmap image, copy;
 		private GraphicsContext parentContext;
+		private TextureWrapMode lastTextureWrapModeX = TextureWrapMode.Repeat, lastTextureWrapModeY = TextureWrapMode.Repeat;
 		/// <summary>
 		/// Increases texture interpolation quality by reducing shimmering caused by aliasing, but uses more memory
 		/// </summary>
@@ -80,6 +83,15 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Gets the current texture that will be bound upon calling Bind(), which in this case is simply "return this;"
+		/// </summary>
+		public ITexture Current {
+			get {
+				return this;
+			}
+		}
+
+		/// <summary>
 		/// Gets the size of the source bitmap
 		/// </summary>
 		public Size BitmapSize {
@@ -96,11 +108,19 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the last texture wrap mode used
+		/// Gets or sets the texture wrap mode used for the X-axis of the image
 		/// </summary>
-		public TextureWrapMode LastTextureWrapMode {
+		public TextureWrapMode TextureWrapModeX {
 			get;
-			private set;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the texture wrap mode used for the Y-axis of the image
+		/// </summary>
+		public TextureWrapMode TextureWrapModeY {
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -138,6 +158,15 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Gets whether the texture is empty
+		/// </summary>
+		public bool IsEmpty {
+			get {
+				return id == 0 && image == null;
+			}
+		}
+
+		/// <summary>
 		/// Gets whether the texture is disposed
 		/// </summary>
 		public bool IsDisposed {
@@ -145,7 +174,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return id == 0 && image == null;
+				return IsEmpty;
 			}
 		}
 
@@ -165,6 +194,8 @@ namespace System.Graphics.Models {
 		/// An empty texture
 		/// </summary>
 		public Texture2D() {
+			TextureWrapModeX = TextureWrapMode.Repeat;
+			TextureWrapModeY = TextureWrapMode.Repeat;
 		}
 
 		/// <summary>
@@ -176,7 +207,7 @@ namespace System.Graphics.Models {
 		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
 		/// <param name="linearScalingFilter">Whether to use a linear scaling filter or no filter on the texture</param>
 		/// <param name="useMipmapping">Increases texture interpolation quality by reducing shimmering caused by aliasing, but uses more memory</param>
-		public Texture2D(Bitmap image, NPotTextureScaleMode mode, ImageParameterAction bindAction = ImageParameterAction.RemoveReference, bool linearScalingFilter = true, bool useMipmapping = true) {
+		public Texture2D(Bitmap image, NPotTextureScaleMode mode, ImageParameterAction bindAction = ImageParameterAction.RemoveReference, bool linearScalingFilter = true, bool useMipmapping = true) : this() {
 			if (image == null)
 				return;
 			this.image = image;
@@ -199,7 +230,7 @@ namespace System.Graphics.Models {
 		/// <param name="height">The height of the texture</param>
 		/// <param name="linearScalingFilter">Whether to use a linear scaling filter or no filter on the texture</param>
 		/// <param name="useMipmapping">Increases texture interpolation quality by reducing shimmering caused by aliasing, but uses more memory</param>
-		public Texture2D(int width, int height, bool linearScalingFilter = true, bool useMipmapping = true) {
+		public Texture2D(int width, int height, bool linearScalingFilter = true, bool useMipmapping = true) : this() {
 			BitmapSize = new Size(width, height);
 			TextureSize = BitmapSize;
 			LinearScalingFilter = linearScalingFilter;
@@ -210,10 +241,10 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Initializes a texture wrapper using the specified handle.
+		/// Initializes a texture wrapper using the specified handle
 		/// </summary>
-		/// <param name="handle">The handle of the texture.</param>
-		public Texture2D(int handle) {
+		/// <param name="handle">The handle of the texture</param>
+		public Texture2D(int handle) : this() {
 			id = handle;
 			loadedFromHandle = true;
 		}
@@ -256,16 +287,23 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public void Bind() {
-			Bind(LastTextureWrapMode);
+			Bind(TextureWrapModeX, TextureWrapModeY);
 		}
 
 		/// <summary>
 		/// Binds the texture for use with OpenGL operations
 		/// </summary>
-		/// <param name="mode">The texture wrap mode to use</param>
+		/// <param name="mode">The texture wrap mode to use for the X and Y axes of the image</param>
 		public void Bind(TextureWrapMode mode) {
-			if (mode == 0 && LastTextureWrapMode == 0)
-				mode = TextureWrapMode.Repeat;
+			Bind(mode, mode);
+		}
+
+		/// <summary>
+		/// Binds the texture for use with OpenGL operations
+		/// </summary>
+		/// <param name="modeX">The texture wrap mode to use for the X-axis of the image</param>
+		/// <param name="modeY">The texture wrap mode to use for the Y-axis of the image</param>
+		public void Bind(TextureWrapMode modeX, TextureWrapMode modeY) {
 			if (loadedFromHandle) {
 				loadedFromHandle = false;
 				int width, height;
@@ -282,8 +320,8 @@ namespace System.Graphics.Models {
 					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? TextureMinFilter.Linear : TextureMinFilter.Nearest));
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) (LinearScalingFilter ? TextureMagFilter.Linear : TextureMagFilter.Nearest));
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) mode);
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) mode);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) modeX);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) modeY);
 					init = false;
 				} else
 					GL.BindTexture(TextureTarget.Texture2D, id);
@@ -295,10 +333,13 @@ namespace System.Graphics.Models {
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? (mipmap ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear) : (mipmap ? TextureMinFilter.NearestMipmapLinear : TextureMinFilter.Nearest)));
 					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) (LinearScalingFilter ? TextureMagFilter.Linear : TextureMagFilter.Nearest));
 				}
-				if (LastTextureWrapMode != mode) {
-					LastTextureWrapMode = mode;
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) mode);
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) mode);
+				if (lastTextureWrapModeX != modeX) {
+					lastTextureWrapModeX = modeX;
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) modeX);
+				}
+				if (lastTextureWrapModeY != modeY) {
+					lastTextureWrapModeY = modeY;
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) modeY);
 				}
 			} else {
 				GL.GenTextures(1, out id);
@@ -311,7 +352,7 @@ namespace System.Graphics.Models {
 				} else {
 					using (Bitmap tempImage = new Bitmap(TextureSize.Width, TextureSize.Height, PixelFormat.Format32bppArgb)) {
 						Rectangle rect = new Rectangle(Point.Empty, pad ? BitmapSize : TextureSize);
-						using (Drawing.Graphics g = Drawing.Graphics.FromImage(tempImage)) {
+						using (Graphics g = Graphics.FromImage(tempImage)) {
 							g.CompositingMode = CompositingMode.SourceCopy;
 							g.CompositingQuality = CompositingQuality.HighQuality;
 							g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -336,9 +377,10 @@ namespace System.Graphics.Models {
 					mipmap = false;
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) (LinearScalingFilter ? (mipmap ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear) : (mipmap ? TextureMinFilter.NearestMipmapLinear : TextureMinFilter.Nearest)));
 				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) (LinearScalingFilter ? TextureMagFilter.Linear : TextureMagFilter.Nearest));
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) mode);
-				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) mode);
-				LastTextureWrapMode = mode;
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) modeX);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) modeY);
+				lastTextureWrapModeX = modeX;
+				lastTextureWrapModeY = modeY;
 				if (mipmap) {
 					try {
 						GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
@@ -354,9 +396,16 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Unbinds the (any) texture
+		/// Unbinds the (any) texture (same as UnbindTexture2D())
 		/// </summary>
 		public void Unbind() {
+			UnbindTexture2D();
+		}
+
+		/// <summary>
+		/// Unbinds the (any) texture
+		/// </summary>
+		public static void UnbindTexture2D() {
 			GL.BindTexture(TextureTarget.Texture2D, 0);
 		}
 
@@ -375,6 +424,14 @@ namespace System.Graphics.Models {
 			GL.TexSubImage2D(TextureTarget.Texture2D, 0, textureRectLoc.X, textureRectLoc.Y, srcRegion.Width, srcRegion.Height, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 			source.UnlockBits(data);
 			GL.PixelStore(PixelStoreParameter.UnpackRowLength, 0);
+		}
+
+		/// <summary>
+		/// Creates a TextureCollection instance containing the specified texture
+		/// </summary>
+		/// <param name="texture">The texture to initialize the collection from</param>
+		public static implicit operator TextureCollection(Texture2D texture) {
+			return new TextureCollection(texture);
 		}
 
 		/// <summary>
@@ -512,7 +569,8 @@ namespace System.Graphics.Models {
 				id = 0;
 				parentContext = null;
 			}
-			GC.SuppressFinalize(this);
+			if (id == 0)
+				GC.SuppressFinalize(this);
 		}
 	}
 }

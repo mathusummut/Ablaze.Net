@@ -44,7 +44,6 @@ namespace System.Graphics.Models {
 		/// Called when the rotation of the model has changed
 		/// </summary>
 		public event Action RotationChanged;
-		private TextureCollection defaultTexture = new TextureCollection();
 		/// <summary>
 		/// The vertex data of the mesh
 		/// </summary>
@@ -147,14 +146,6 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Configures the way textures are wrapped to polygons
-		/// </summary>
-		public TextureWrapMode WrapMode {
-			get;
-			set;
-		}
-
-		/// <summary>
 		/// Gets the number of components in the model
 		/// </summary>
 		public int Count {
@@ -244,7 +235,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return new MeshComponent(new TextureCollection(Texture2D.Empty), null, null, BufferUsageHint.StaticDraw, false);
+				return new MeshComponent(null, null, null, BufferUsageHint.StaticDraw, false);
 			}
 		}
 
@@ -307,17 +298,11 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the default texture of the model when none is specified
+		/// Gets or sets the default texture of the model components when none is specified
 		/// </summary>
-		public TextureCollection DefaultTextures {
-			get {
-				return defaultTexture;
-			}
-			set {
-				if (value == null || value.Count == 0)
-					value = new TextureCollection();
-				defaultTexture = value;
-			}
+		public ITexture DefaultTexture {
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -329,7 +314,7 @@ namespace System.Graphics.Models {
 			}
 			set {
 				if (value == null || value.Count == 0)
-					value = new TextureCollection(DefaultTextures);
+					value = new TextureCollection();
 				texture = value;
 			}
 		}
@@ -637,7 +622,6 @@ namespace System.Graphics.Models {
 			ShineHue = modelComponent.ShineHue;
 			Transformation = modelComponent.Transformation;
 			UseCustomTransformation = modelComponent.UseCustomTransformation;
-			WrapMode = modelComponent.WrapMode;
 			Optimization = modelComponent.Optimization;
 			currentLoc = modelComponent.currentLoc;
 			currentRot = modelComponent.currentRot;
@@ -646,7 +630,6 @@ namespace System.Graphics.Models {
 			Visible = modelComponent.Visible;
 			triangles = modelComponent.triangles;
 			vertices = modelComponent.vertices;
-			defaultTexture = modelComponent.defaultTexture;
 			texture = modelComponent.texture;
 			if (texture == null)
 				texture = new TextureCollection();
@@ -729,7 +712,6 @@ namespace System.Graphics.Models {
 			ShineHue = Light.DefaultShineHue;
 			Shininess = Light.DefaultShininess;
 			Transformation = Matrix4.Identity;
-			WrapMode = TextureWrapMode.Repeat;
 		}
 
 		/// <summary>
@@ -919,7 +901,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Renders the mesh (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
+		/// Renders the mesh with the assigned texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// </summary>
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -931,7 +913,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Renders the mesh with the specified texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// </summary>
-		/// <param name="texture">The texture to bind instead of the default (can be null)</param>
+		/// <param name="texture">The texture to bind instead of the default. If null, the assigned texture is used. To use the empty texture, use Texture2D.Empty</param>
 		public void Render(ITexture texture) {
 			Render(texture, null);
 		}
@@ -947,7 +929,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Renders the mesh with the specified texture (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// </summary>
-		/// <param name="texture">The texture to bind instead of the default</param>
+		/// <param name="texture">The texture to bind instead of the default. If null, the assigned texture is used. To use the empty texture, use Texture2D.Empty</param>
 		/// <param name="nextModel">The next mesh component to interpolate with (can be null)</param>
 		public virtual void Render(ITexture texture, MeshComponent nextModel) {
 			if (!Visible || vertices == 0 || DataBuffer == null)
@@ -983,18 +965,21 @@ namespace System.Graphics.Models {
 			}
 			shader.SetUniformValue(GlobalShaderParams.MaterialHue.ToString(), materialHue, ShaderSetMode.SetImmediately);
 			bool premultiplied = false;
-			if (texture == null)
-				texture = this.texture;
 			if (texture == null) {
-				GL.BindTexture(TextureTarget.Texture2D, 0);
+				texture = this.texture;
+				if (texture == null)
+					texture = DefaultTexture;
+			}
+			if (texture != null)
+				texture = texture.GetDeepestCurrent();
+			if (texture == null || texture.IsEmpty)
 				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), 0f, ShaderSetMode.SetImmediately);
-			} else {
+			else {
 				premultiplied = texture.Premultiplied;
 				if (premultiplied)
 					GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
-				texture.Bind(WrapMode);
-				Texture2D temp = texture as Texture2D;
-				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), temp == null || temp.ID != 0 ? 1f : 0f, ShaderSetMode.SetImmediately);
+				texture.Bind();
+				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), 1f, ShaderSetMode.SetImmediately);
 			}
 			shader.SetUniformValue(GlobalShaderParams.AmbientHue.ToString(), AmbientHue, ShaderSetMode.SetImmediately);
 			shader.SetUniformValue(GlobalShaderParams.ShineHue.ToString(), ShineHue, ShaderSetMode.SetImmediately);
@@ -1266,7 +1251,7 @@ namespace System.Graphics.Models {
 			parent = null;
 			lastNextModel = null;
 			texture = null;
-			defaultTexture = null;
+			DefaultTexture = null;
 			DataBuffer = null;
 			if (indexBuffer != null) {
 				indexBuffer.Dispose();

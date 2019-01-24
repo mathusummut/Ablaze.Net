@@ -34,32 +34,16 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool Premultiplied {
 			get {
-				if (Count == 0)
+				ITexture current = Current;
+				if (current == null)
 					return false;
-				lock (SyncRoot) {
-					if (Count == 0)
-						return false;
-					else {
-						int index = BindIndex;
-						if (index == -1)
-							index = textureList.Count - 1;
-						return textureList[index].Premultiplied;
-					}
-				}
+				else
+					return current.Premultiplied;
 			}
 			set {
-				if (Count == 0)
-					return;
-				lock (SyncRoot) {
-					if (Count == 0)
-						return;
-					else {
-						int index = BindIndex;
-						if (index == -1)
-							index = textureList.Count - 1;
-						textureList[index].Premultiplied = value;
-					}
-				}
+				ITexture current = Current;
+				if (current != null)
+					current.Premultiplied = value;
 			}
 		}
 
@@ -89,7 +73,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the index of the texture to bind, or -1 to mean that the last texture (at Count - 1) is bound
+		/// Gets or sets the index of the texture to bind, or negative numbers to mean relative to the current Count value (ex. -1 to mean that the last texture at Count - 1 is bound)
 		/// </summary>
 		public virtual int BindIndex {
 			get;
@@ -97,9 +81,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the texture at the specified index
+		/// Gets or sets the texture at the specified index. Setting to null removes the texture at the specified index
 		/// </summary>
-		/// <param name="index">The index of the texture to return</param>
+		/// <param name="index">The index of the texture to modify</param>
 		public ITexture this[int index] {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -119,11 +103,48 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Gets the current texture pointed by BindIndex (can be null)
+		/// </summary>
+		public ITexture Current {
+			get {
+				if (Count == 0)
+					return null;
+				lock (SyncRoot) {
+					if (Count == 0)
+						return null;
+					else {
+						int index = BindIndex;
+						if (index < 0)
+							index = textureList.Count + index;
+						return textureList[index];
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets whether the texture collection is empty
+		/// </summary>
+		public bool IsEmpty {
+			get {
+				if (Count != 0) {
+					lock (SyncRoot) {
+						for (int i = 0; i < textureList.Count; i++) {
+							if (!textureList[i].IsEmpty)
+								return false;
+						}
+					}
+				}
+				return true;
+			}
+		}
+
+		/// <summary>
 		/// Gets whether the collection is disposed
 		/// </summary>
 		public bool IsDisposed {
 			get {
-				return textureList.Count == 0;
+				return IsEmpty;
 			}
 		}
 
@@ -212,6 +233,7 @@ namespace System.Graphics.Models {
 			bindAction = collection.BindAction;
 			Name = collection.Name;
 			Tag = collection.Tag;
+			BindIndex = collection.BindIndex;
 		}
 
 		/// <summary>
@@ -333,20 +355,11 @@ namespace System.Graphics.Models {
 		/// Binds the texture at the index specified by BindIndex for use with OpenGL operations
 		/// </summary>
 		public virtual void Bind() {
-			if (Count == 0)
+			ITexture current = Current;
+			if (Current == null)
 				Unbind();
-			else {
-				lock (SyncRoot) {
-					if (Count == 0)
-						Unbind();
-					else {
-						int index = BindIndex;
-						if (index == -1)
-							index = textureList.Count - 1;
-						textureList[index].Bind();
-					}
-				}
-			}
+			else
+				current.Bind();
 		}
 
 		/// <summary>
@@ -354,27 +367,18 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="mode">The texture wrap mode to use</param>
 		public virtual void Bind(TextureWrapMode mode) {
-			if (Count == 0)
+			ITexture current = Current;
+			if (Current == null)
 				Unbind();
-			else {
-				lock (SyncRoot) {
-					if (Count == 0)
-						Unbind();
-					else {
-						int index = BindIndex;
-						if (index == -1)
-							index = textureList.Count - 1;
-						textureList[index].Bind(mode);
-					}
-				}
-			}
+			else
+				current.Bind(mode);
 		}
 
 		/// <summary>
 		/// Unbinds the (any) texture
 		/// </summary>
 		public void Unbind() {
-			GL.BindTexture(TextureTarget.Texture2D, 0);
+			Texture2D.UnbindTexture2D();
 		}
 
 		/// <summary>

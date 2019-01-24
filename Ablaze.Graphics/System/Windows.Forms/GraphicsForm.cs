@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Dispatch;
 
 namespace System.Windows.Forms {
+	using Graphics = Drawing.Graphics;
+
 	/// <summary>
 	/// A styled window that is packed with features including automatic OpenGL context handling.
 	/// </summary>
@@ -27,24 +29,23 @@ namespace System.Windows.Forms {
 		private InvalidateEventHandler GdiControlInvalidate;
 		private ThreadLocal<bool> reentrant = new ThreadLocal<bool>();
 		private object GdiSyncRoot = new object(), GLTransferSync = new object();
-		private Func<object, object> invalidateGdiInner, callDrawBorder, makeCurrent, viewSizeChanged, unload;
+		private Func<object, object> PaintGL, invalidateGdiInner, callDrawBorder, makeCurrent, viewSizeChanged, unload;
 		private ControlEventHandler controlAdded, controlRemoved;
-		private MeshComponent rectMesh;
+		private MeshComponent gdiRectMesh, borderRectMesh;
 		private GlobalShader globalShader;
 		private Padding glMargin;
 		private GraphicsComponent graphicsComponent;
 		private GraphicsContext glContext;
 		private Bitmap gdiMask;
-		private Drawing.Graphics gdiCanvas;
-		private Texture2D GdiTexture;
+		private Graphics gdiCanvas;
+		private Texture2D GdiTexture, BorderTexture;
 		private Rectangle invalidatedRect, gdiBounds = new Rectangle(0, 0, 200, 200);
-		private Func<object, object> PaintGL;
 		private PreciseStopwatch rpsStopwatch = new PreciseStopwatch(), upsStopwatch = new PreciseStopwatch();
 		private Size maskSize, clientSize;
 		private AsyncTimer updateTimer;
 		private DispatcherSlim GLDispatcher, GdiDispatcher;
 		private int glQueueCount, gdiQueueCount, forceRedraw, rpsCounter, upsCounter, rendersPerSecond, updatesPerSecond, defaultInterval = 6;
-		private bool gdiEnabled, isPausedBecauseOfMinimize, dontWaitForInterval, gdiCoordinateRelativeToGL = true;
+		private bool gdiEnabled, isPausedBecauseOfMinimize, dontWaitForInterval, updateBorderTexture = true, gdiCoordinateRelativeToGL = true;
 		private double cumulativeUpdate, sampleIntervalInMs = 1000.0;
 		private PaintEventHandler paintControl;
 		/// <summary>
@@ -558,7 +559,9 @@ namespace System.Windows.Forms {
 						GdiTexture.Bind();
 					globalShader.Bind();
 					Mesh2D.Setup2D(GLViewport.Size);
-					Mesh2D.DrawTexture2D(GdiTexture, Vector3.Zero, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, rectMesh);
+					if (gdiRectMesh == null)
+						gdiRectMesh = Mesh2D.CreateShared2DMeshRect();
+					Mesh2D.DrawQuad2D(GdiTexture, Vector3.Zero, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, 1, gdiRectMesh);
 				}
 				if (!RenderBorderOnGdiLayer)
 					DrawBorderGL();
@@ -971,83 +974,6 @@ namespace System.Windows.Forms {
 			InvalidateGL();
 		}
 
-		/// <summary>
-		/// Disposes of the OpenGL context.
-		/// </summary>
-		/// <param name="callOnUnload">Whether to unload the OpenGL resources along with the context.</param>
-		public void DisposeGLContext(bool callOnUnload = true) {
-			if (IsGLEnabled) {
-				Unloading = true;
-				DispatcherSlim dispatcher = GLDispatcher;
-				GLDispatcher = null;
-				Control ctrl = Control.FromHandle(graphicsComponent.Control);
-				if (ctrl == null)
-					ctrl = this;
-				if (ctrl != this)
-					ctrl.Paint -= paintControl;
-				if (dispatcher == null)
-					InvokeOnGLThreadSync(new InvocationData(unload, callOnUnload), 2500, false);
-				else {
-					dispatcher.Invoke(new InvocationData(unload, callOnUnload), 2500, false);
-					dispatcher.Dispose();
-				}
-				Unloading = false;
-				ctrl.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-				ctrl.Invalidate(false);
-			}
-		}
-
-		private object CallUnload(object param) {
-			if ((bool) param) {
-				OnUnload();
-				if (rectMesh != null) {
-					rectMesh.Dispose();
-					rectMesh = null;
-				}
-				if (globalShader != null) {
-					globalShader.Dispose();
-					globalShader = null;
-				}
-				if (GdiTexture != null) {
-					GdiTexture.Dispose();
-					GdiTexture = null;
-				}
-			}
-			if (glContext != null) {
-				try {
-					glContext.Dispose();
-					glContext = null;
-				} catch {
-				}
-			}
-			if (graphicsComponent != null) {
-				try {
-					graphicsComponent.Dispose();
-					graphicsComponent = null;
-				} catch {
-				}
-			}
-			return null;
-		}
-
-		/// <summary>
-		/// Called when the window is now starting to close.
-		/// </summary>
-		protected override void OnClosing() {
-			if (updateTimer != null)
-				UpdateTimerRunning = false;
-			base.OnClosing();
-		}
-
-		/// <summary>
-		/// Called when the form is closed.
-		/// </summary>
-		/// <param name="e">The close reason.</param>
-		protected override void OnFormClosed(FormClosedEventArgs e) {
-			DisposeGLContext(true);
-			base.OnFormClosed(e);
-		}
-
 		private object InitGLInner(object param) {
 			try {
 				GraphicsContext shareContext = param as GraphicsContext;
@@ -1056,7 +982,6 @@ namespace System.Windows.Forms {
 				glContext.MakeCurrent(graphicsComponent);
 				if (shareContext != null && shareContext == oldGLContext)
 					oldGLContext.Dispose();
-				rectMesh = Mesh2D.CreateShared2DMeshRect();
 				globalShader = new GlobalShader();
 				globalShader.Bind();
 				GL.ClearColor(BackColor);
@@ -1067,6 +992,13 @@ namespace System.Windows.Forms {
 				ErrorHandler.Show("GL failed to initialize.", e);
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Called when the border texture has been updated. Be sure to call the base border texture
+		/// </summary>
+		protected override void OnBorderTextureChanged() {
+			base.OnBorderTextureChanged();
 		}
 
 		/// <summary>
@@ -1081,12 +1013,47 @@ namespace System.Windows.Forms {
 		/// </summary>
 		public virtual void DrawBorderGL() {
 			globalShader.Bind();
+			if (borderRectMesh == null)
+				borderRectMesh = Mesh2D.CreateShared2DMeshRect();
 			Mesh2D.Setup2D(GLViewport.Size);
+			if (BorderTexture == null || updateBorderTexture) {
+				if (BorderTexture != null)
+					BorderTexture.Dispose();
+				Bitmap border = Border;
+				if (border != null)
+					BorderTexture = new Texture2D(Border, NPotTextureScaleMode.None, ImageParameterAction.RemoveReference, false, false);
+				updateBorderTexture = false;
+			}
 			Size clientSize = ClientSize;
-			Mesh2D.DrawTexture2D(
-			//GL.Scissor(0, 0, clientSize.Width, TitleBarHeight);
+			if (BorderTexture != null) {
+				GL.Enable(EnableCap.StencilTest);
+				GL.ColorMask(false, false, false, false);
+				GL.StencilFunc(StencilFunction.Never, 1, 255);
+				GL.StencilOp(StencilOp.Replace, StencilOp.Keep, StencilOp.Keep);
+				GL.StencilMask(255);
+				GL.Clear(ClearBufferMask.StencilBufferBit);
+				Rectangle viewport = ViewPort;
+				Mesh2D.DrawQuad2D(null, Vector3.Zero, viewport.Location.ToVector3(), viewport.Size.ToVector2(), borderRectMesh);
+				GL.ColorMask(true, true, true, true);
+				GL.StencilMask(0);
+				GL.StencilFunc(StencilFunction.Equal, 0, 255);
+				Mesh2D.UpdateTextureCoordinatesForRepeat(borderRectMesh, BorderTexture, clientSize.ToVector2());
+				Mesh2D.DrawQuad2D(BorderTexture, Vector3.Zero, Vector3.Zero, clientSize.ToVector2(), Vector3.Zero, CurrentBorderOpacity, borderRectMesh);
 
-			//GL.Scissor(0, 0, clientSize.Width, clientSize.Height);
+				Rectangle closeBounds = CloseBounds;
+				MeshComponent closeButton = new MeshComponent(null, MeshExtensions.TriangulateQuads(new Vertex[] {
+					new Vertex(closeBounds.Location.ToVector3(), Vector2.Zero),
+					new Vertex(new Vector3(closeBounds.Right, closeBounds.Y, 0), Vector2.UnitX),
+					new Vertex(new Vector3(closeBounds.Right, closeBounds.Bottom, 0), Vector2.One),
+					new Vertex(new Vector3(closeBounds.X, closeBounds.Bottom, 0), Vector2.UnitY)
+				}), false, BufferUsageHint.StaticDraw, false) {
+					LowOpacity = true
+				};
+				closeButton.MaterialHue = (ColorF) CloseButtonRenderer.CurrentBackgroundTop;
+				closeButton.Render();
+
+				GL.Disable(EnableCap.StencilTest);
+			}
 		}
 
 		/// <summary>
@@ -1505,6 +1472,87 @@ namespace System.Windows.Forms {
 		/// Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here.
 		/// </summary>
 		protected virtual void OnUnload() {
+		}
+
+		/// <summary>
+		/// Disposes of the OpenGL context.
+		/// </summary>
+		/// <param name="callOnUnload">Whether to unload the OpenGL resources along with the context.</param>
+		public void DisposeGLContext(bool callOnUnload = true) {
+			if (IsGLEnabled) {
+				Unloading = true;
+				DispatcherSlim dispatcher = GLDispatcher;
+				GLDispatcher = null;
+				Control ctrl = Control.FromHandle(graphicsComponent.Control);
+				if (ctrl == null)
+					ctrl = this;
+				if (ctrl != this)
+					ctrl.Paint -= paintControl;
+				if (dispatcher == null)
+					InvokeOnGLThreadSync(new InvocationData(unload, callOnUnload), 2500, false);
+				else {
+					dispatcher.Invoke(new InvocationData(unload, callOnUnload), 2500, false);
+					dispatcher.Dispose();
+				}
+				Unloading = false;
+				ctrl.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+				ctrl.Invalidate(false);
+			}
+		}
+
+		private object CallUnload(object param) {
+			if ((bool) param) {
+				OnUnload();
+				if (gdiRectMesh != null) {
+					gdiRectMesh.Dispose();
+					gdiRectMesh = null;
+				}
+				if (globalShader != null) {
+					globalShader.Dispose();
+					globalShader = null;
+				}
+				if (BorderTexture != null) {
+					BorderTexture.Dispose();
+					BorderTexture = null;
+				}
+				if (GdiTexture != null) {
+					GdiTexture.Dispose();
+					GdiTexture = null;
+				}
+			}
+			if (glContext != null) {
+				try {
+					glContext.Dispose();
+					glContext = null;
+				} catch {
+				}
+			}
+			if (graphicsComponent != null) {
+				try {
+					graphicsComponent.Dispose();
+					graphicsComponent = null;
+				} catch {
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Called when the window is now starting to close.
+		/// </summary>
+		protected override void OnClosing() {
+			if (updateTimer != null)
+				UpdateTimerRunning = false;
+			base.OnClosing();
+		}
+
+		/// <summary>
+		/// Called when the form is closed.
+		/// </summary>
+		/// <param name="e">The close reason.</param>
+		protected override void OnFormClosed(FormClosedEventArgs e) {
+			DisposeGLContext(true);
+			base.OnFormClosed(e);
 		}
 
 		/// <summary>

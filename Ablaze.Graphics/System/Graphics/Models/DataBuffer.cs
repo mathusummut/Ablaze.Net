@@ -127,16 +127,17 @@ namespace System.Graphics.Models {
 		/// Disposes of the buffer and the resources consumed by it. Do not dispose if still in use by other components
 		/// </summary>
 		public void Dispose() {
-			if (id == 0 || !(parentContext == null || parentContext.IsCurrent))
-				return;
-			try {
-				GL.DeleteBuffers(1, ref id);
-			} catch {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
+			if (id != 0 && (parentContext == null || parentContext.IsCurrent)) {
+				try {
+					GL.DeleteBuffers(1, ref id);
+				} catch {
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
+				}
+				id = 0;
+				parentContext = null;
 			}
-			parentContext = null;
-			id = 0;
-			GC.SuppressFinalize(this);
+			if (id == 0)
+				GC.SuppressFinalize(this);
 		}
 	}
 }

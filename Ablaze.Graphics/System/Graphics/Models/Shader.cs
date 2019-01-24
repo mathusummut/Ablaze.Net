@@ -89,6 +89,7 @@ namespace System.Graphics.Models {
 			attributes = new Dictionary<string, Parameters>(StringComparer.Ordinal);
 		private object uniformsSyncRoot = new object(), attributesSyncRoot = new object();
 		private HashSet<string> uniformAssignments = new HashSet<string>(), attributeAssignments = new HashSet<string>();
+		private GraphicsContext parentContext;
 		/// <summary>
 		/// The source codes of the shaders. Upon first binding, they are set to null
 		/// </summary>
@@ -639,6 +640,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="throwOnError">Whether to throw on compilation error</param>
 		public virtual ShaderState Bind(bool throwOnError) {
+			parentContext = GraphicsContext.CurrentContext;
 			int status;
 			bool needsLink = false;
 			if (ShaderSources != null) {
@@ -855,9 +857,24 @@ namespace System.Graphics.Models {
 		/// Disposes of the shader program
 		/// </summary>
 		~Shader() {
-			if (id != 0) {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
-				id = 0;
+			if (parentContext == null) {
+				if (id != 0) {
+					GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Finalizing, new IntPtr(id));
+					id = 0;
+				}
+			} else {
+				int currentId = id;
+				if (currentId != 0) {
+					parentContext.InvokeOnGLThreadAsync(context => {
+						try {
+							GL.DeleteProgram(currentId);
+						} catch {
+							GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(currentId));
+						}
+					});
+					id = 0;
+				}
+				parentContext = null;
 			}
 		}
 
@@ -865,17 +882,21 @@ namespace System.Graphics.Models {
 		/// Disposes of the shader program
 		/// </summary>
 		public void Dispose() {
-			if (id == 0)
-				return;
-			else if (boundShader.Value == this)
-				boundShader.Value = Empty;
-			try {
-				GL.DeleteProgram(id);
-			} catch {
-				GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
+			if (id != 0) {
+				if (boundShader.Value == this)
+					boundShader.Value = Empty;
+				if (id != 0 && (parentContext == null || parentContext.IsCurrent)) {
+					try {
+						GL.DeleteProgram(id);
+					} catch {
+						GraphicsContext.RaiseResourceLeakedEvent(this, LeakedWhile.Disposing, new IntPtr(id));
+					}
+					id = 0;
+					parentContext = null;
+				}
 			}
-			id = 0;
-			GC.SuppressFinalize(this);
+			if (id == 0)
+				GC.SuppressFinalize(this);
 		}
 
 		private sealed class Parameters {

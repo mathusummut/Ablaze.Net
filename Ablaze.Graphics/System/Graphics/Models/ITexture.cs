@@ -31,11 +31,25 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Gets the current texture that will be bound upon calling Bind()
+		/// </summary>
+		ITexture Current {
+			get;
+		}
+
+		/// <summary>
 		/// Gets or sets what to do with the passed image after binding the texture into GPU memory
 		/// </summary>
 		ImageParameterAction BindAction {
 			get;
 			set;
+		}
+		
+		/// <summary>
+		/// Gets whether the texture is empty
+		/// </summary>
+		bool IsEmpty {
+			get;
 		}
 
 		/// <summary>

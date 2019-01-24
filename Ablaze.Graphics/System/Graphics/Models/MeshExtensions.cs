@@ -8,6 +8,28 @@ namespace System.Graphics.Models {
 	/// </summary>
 	public static class MeshExtensions {
 		/// <summary>
+		/// Gets the last element in this collection's Current.Current.Current... hierarchy, to find the texture that is actually rendered upon Bind().
+		/// It keeps traversing until it finds a texture element than returns itself in its Current property. If it does not find it, null is returned
+		/// </summary>
+		/// <param name="texture">The texture to traverse</param>
+		public static ITexture GetDeepestCurrent(this ITexture texture) {
+			HashSet<ITexture> set = new HashSet<ITexture>();
+			ITexture previous = texture;
+			ITexture current = texture.Current;
+			set.Add(texture);
+			while (current != null) {
+				if (previous == current)
+					return current;
+				else if (set.Contains(current))
+					return null;
+				previous = current;
+				set.Add(current);
+				current = current.Current;
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Merges the specified vertex information into a single vertex array.
 		/// </summary>
 		/// <param name="vertices">The vertex coordinates.</param>

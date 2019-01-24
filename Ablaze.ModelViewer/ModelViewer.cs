@@ -319,7 +319,7 @@ namespace Ablaze.ModelViewer {
 					try {
 						loaded = TextureParser.Parse(mesh)[0];
 						size = ((Texture2D) loaded).BitmapSize.ToVector2();
-						Scene.Add(new Model(Mesh2D.MeshFromTexture(new TextureCollection(loaded), new Vector3(-size.X * 0.5f, -size.Y * 0.5f, zCount), size, true, false)));
+						Scene.Add(new Model(Mesh2D.MeshFromQuad(new TextureCollection(loaded), new Vector3(-size.X * 0.5f, -size.Y * 0.5f, zCount), size, true, false)));
 						zCount += 1000f;
 					} catch {
 						if (e == null)

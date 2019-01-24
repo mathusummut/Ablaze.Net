@@ -133,8 +133,9 @@ namespace System.Graphics.Models {
 				}
 				id = 0;
 				parentContext = null;
-				GC.SuppressFinalize(this);
 			}
+			if (id == 0)
+				GC.SuppressFinalize(this);
 		}
 	}
 }

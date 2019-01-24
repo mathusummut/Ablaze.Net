@@ -34,6 +34,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		private IModel parent;
 		private Vector3 currentLoc, currentRot, currentScale = Vector3.One;
+		private ITexture defaultTexture;
 		private float alpha = 1f;
 		private bool keepCopyInMemory;
 		private int vertices, triangles;
@@ -93,7 +94,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the mesh at the specified index
+		/// Gets or sets the mesh at the specified index. Setting value to null will remove the texture at the specified index
 		/// </summary>
 		/// <param name="index">The index of the mesh to return</param>
 		public IModel this[int index] {
@@ -121,6 +122,8 @@ namespace System.Graphics.Models {
 						if (!newModel.KeepCopyInMemory && KeepCopyInMemory)
 							newModel.KeepCopyInMemory = true;
 						componentList[index] = value;
+						if (value.DefaultTexture == null)
+							value.DefaultTexture = defaultTexture;
 						newModel.Parent = this;
 						vertices += value.Vertices;
 						triangles += value.Triangles;
@@ -198,31 +201,19 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the default textures of the model components when none is specified, one texture for every child component
+		/// Gets or sets the default texture of the model components when none is specified
 		/// </summary>
-		public TextureCollection DefaultTextures {
+		public ITexture DefaultTexture {
 			get {
-				if (componentList.Count == 0)
-					return new TextureCollection();
-				TextureCollection collection = new TextureCollection();
-				lock (SyncRoot) {
-					for (int i = 0; i < componentList.Count; i++)
-						collection.Add(componentList[i].DefaultTextures);
-				}
-				return collection;
+				return defaultTexture;
 			}
 			set {
-				if (value == null || value.Count == 0) {
-					lock (SyncRoot) {
-						for (int i = 0; i < componentList.Count; i++)
-							componentList[i].DefaultTextures = null;
-					}
-				} else {
-					int index = 0;
-					lock (SyncRoot) {
-						for (int i = 0; i < componentList.Count; i++)
-							componentList[i].DefaultTextures = new TextureCollection(value[index++ % value.Count]);
-					}
+				if (value == defaultTexture)
+					return;
+				defaultTexture = value;
+				lock (SyncRoot) {
+					for (int i = 0; i < componentList.Count; i++)
+						componentList[i].DefaultTexture = value;
 				}
 			}
 		}
@@ -664,6 +655,8 @@ namespace System.Graphics.Models {
 					model.KeepCopyInMemory = true;
 				componentList.Insert(index == -1 ? Count : index, model);
 				model.Parent = this;
+				if (model.DefaultTexture == null)
+					model.DefaultTexture = defaultTexture;
 				vertices += model.Vertices;
 				triangles += model.Triangles;
 			}

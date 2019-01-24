@@ -238,6 +238,16 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Gets the current border opacity of the form
+		/// </summary>
+		[Browsable(false)]
+		public float CurrentBorderOpacity {
+			get {
+				return currentBorderOpacity;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the default border cursor.
 		/// </summary>
 		[Description("Gets or sets the default border cursor.")]
@@ -968,6 +978,7 @@ namespace System.Windows.Forms {
 					}
 				}
 				RedrawBorder(false);
+				OnBorderTextureChanged();
 			}
 		}
 
@@ -2834,22 +2845,6 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		public void SetGdiVisible(bool value) {
-			gdiVisible = value;
-			if (value) {
-				RefreshDpi();
-				FadeState = FadeState.Normal;
-				OnShown(EventArgs.Empty);
-				opacity = 255;
-				OnFadeInCompleted();
-				if (!ShowWithoutActivation)
-					Activate();
-			}
-		}
-
-		/// <summary>
 		/// Use the MouseWheel event instead.
 		/// </summary>
 		protected sealed override void OnMouseWheel(MouseEventArgs e) {
@@ -2876,6 +2871,12 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>
+		/// Called when the border texture has been updated
+		/// </summary>
+		protected virtual void OnBorderTextureChanged() {
+		}
+
+		/// <summary>
 		/// Use the MouseDoubleClick event instead.
 		/// </summary>
 		protected sealed override void OnDoubleClick(EventArgs e) {
@@ -2891,6 +2892,22 @@ namespace System.Windows.Forms {
 		/// Use the MouseUp event instead.
 		/// </summary>
 		protected sealed override void OnMouseClick(MouseEventArgs e) {
+		}
+
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		public void SetGdiVisible(bool value) {
+			gdiVisible = value;
+			if (value) {
+				RefreshDpi();
+				FadeState = FadeState.Normal;
+				OnShown(EventArgs.Empty);
+				opacity = 255;
+				OnFadeInCompleted();
+				if (!ShowWithoutActivation)
+					Activate();
+			}
 		}
 
 		/// <summary>
