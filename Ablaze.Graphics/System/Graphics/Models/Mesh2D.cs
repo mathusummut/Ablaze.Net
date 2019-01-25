@@ -39,9 +39,33 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Vertically flips the texture of the mesh. The mesh must have been created by CreateShared2DMeshRect()
+		/// </summary>
+		/// <param name="mesh2D">The mesh whose texture to flip</param>
+		public static void FlipTextureVertically(MeshComponent mesh2D) {
+			mesh2D.BeginUpdateMesh();
+			Vertex[] bufferData = mesh2D.BufferData;
+			float y, maxY = 0f;
+			int i;
+			for (i = 0; i < bufferData.Length; ++i) {
+				y = bufferData[i].TexPos.Y;
+				if (y > maxY)
+					maxY = y;
+			}
+			for (i = 0; i < bufferData.Length; ++i) {
+				y = bufferData[i].TexPos.Y;
+				if (y == 0f)
+					bufferData[i].TexPos.Y = maxY;
+				else
+					bufferData[i].TexPos.Y = 0f;
+			}
+			mesh2D.EndUpdateMesh();
+		}
+
+		/// <summary>
 		/// Updates the texture coordinates of the specified mesh so that the texture is repeated instead of stretched
 		/// </summary>
-		/// <param name="mesh2D">The mesh whose texture coordinates to update</param>
+		/// <param name="mesh2D">The mesh whose texture coordinates to update. The mesh must have been created by CreateShared2DMeshRect()</param>
 		/// <param name="texture">The texture to tile</param>
 		/// <param name="quadSize">The size of the target area that will contain the tiles</param>
 		public static void UpdateTextureCoordinatesForRepeat(MeshComponent mesh2D, Texture2D texture, Vector2 quadSize) {
@@ -51,7 +75,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Updates the texture coordinates of the specified mesh so that the texture is repeated using the specified tile size instead of stretched
 		/// </summary>
-		/// <param name="mesh2D">The mesh whose texture coordinates to update</param>
+		/// <param name="mesh2D">The mesh whose texture coordinates to update. The mesh must have been created by CreateShared2DMeshRect()</param>
 		/// <param name="tileSize">The size of the texture quad tiles</param>
 		/// <param name="quadSize">The size of the target area that will contain the tiles</param>
 		public static void UpdateTextureCoordinatesForRepeat(MeshComponent mesh2D, Vector2 tileSize, Vector2 quadSize) {
@@ -74,7 +98,7 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Resets the mesh texture coordinates if they have been modified by the UpdateTextureCoordinatesForRepeat() function
 		/// </summary>
-		/// <param name="mesh2D">The rectangular mesh to reset</param>
+		/// <param name="mesh2D">The rectangular mesh to reset. The mesh must have been created by CreateShared2DMeshRect()</param>
 		public static void ResetMeshTexture(MeshComponent mesh2D) {
 			UpdateTextureCoordinatesForRepeat(mesh2D, Vector2.One, Vector2.One);
 		}
@@ -90,6 +114,20 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Draws the specified line on screen on a 2D orthographic projection. Any additional customization can be done using the sharedRectMesh object.
+		/// </summary>
+		/// <param name="texture">The texture of the line (can be null)</param>
+		/// <param name="origin">The origin coordinate in the current 2D orthographic projection (usually {0, 0, 0}), relative to which the location is specified</param>
+		/// <param name="pt1">The location to render the quad at. It is the target location of the top-left coordinate of the texture to be drawn</param>
+		/// <param name="pt2">The size to render the quad at</param>
+		/// <param name="thickness">The thickness of the line</param>
+		/// <param name="opacity">The opacity multiplier for the texture (1 leaves the texture intact, 0 means transparent, can also be any value inbetween)</param>
+		/// <param name="sharedRectMesh">The 2D quad mesh to use for rendering, that must be created with CreateShared2DMeshRect(). Can be null</param>
+		public static void DrawLine(ITexture texture, Vector3 origin, Vector3 pt1, Vector3 pt2, float thickness = 1f, float opacity = 1f, MeshComponent sharedRectMesh = null) {
+			DrawQuad(texture, origin, location, size, rotation, new ColorF(opacity, 1f, 1f, 1f), sharedRectMesh);
+		}
+
+		/// <summary>
 		/// Draws the specified quad on screen on a 2D orthographic projection. Any additional customization can be done using the sharedRectMesh object.
 		/// </summary>
 		/// <param name="texture">The texture of the quad (can be null)</param>
@@ -97,8 +135,8 @@ namespace System.Graphics.Models {
 		/// <param name="location">The location to render the quad at. It is the target location of the top-left coordinate of the texture to be drawn</param>
 		/// <param name="size">The size to render the quad at</param>
 		/// <param name="sharedRectMesh">The 2D quad mesh to use for rendering, that must be created with CreateShared2DMeshRect(). Can be null</param>
-		public static void DrawQuad2D(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, MeshComponent sharedRectMesh = null) {
-			DrawQuad2D(texture, origin, location, size, Vector3.Zero, ColorF.White, sharedRectMesh);
+		public static void DrawQuad(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, MeshComponent sharedRectMesh = null) {
+			DrawQuad(texture, origin, location, size, Vector3.Zero, ColorF.White, sharedRectMesh);
 		}
 
 		/// <summary>
@@ -111,8 +149,8 @@ namespace System.Graphics.Models {
 		/// <param name="rotation">The rotation of the quad</param>
 		/// <param name="opacity">The opacity multiplier for the texture (1 leaves the texture intact, 0 means transparent, can also be any value inbetween)</param>
 		/// <param name="sharedRectMesh">The 2D quad mesh to use for rendering, that must be created with CreateShared2DMeshRect(). Can be null</param>
-		public static void DrawQuad2D(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, Vector3 rotation, float opacity = 1f, MeshComponent sharedRectMesh = null) {
-			DrawQuad2D(texture, origin, location, size, rotation, new ColorF(opacity, 1f, 1f, 1f), sharedRectMesh);
+		public static void DrawQuad(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, Vector3 rotation, float opacity = 1f, MeshComponent sharedRectMesh = null) {
+			DrawQuad(texture, origin, location, size, rotation, new ColorF(opacity, 1f, 1f, 1f), sharedRectMesh);
 		}
 
 		/// <summary>
@@ -125,7 +163,7 @@ namespace System.Graphics.Models {
 		/// <param name="rotation">The rotation of the texture</param>
 		/// <param name="multiplier">The colour and opacity multiplier for the quad</param>
 		/// <param name="sharedRectMesh">The 2D quad mesh to use for rendering, that must be created with CreateShared2DMeshRect(). Can be null</param>
-		public static void DrawQuad2D(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, Vector3 rotation, ColorF multiplier, MeshComponent sharedRectMesh = null) {
+		public static void DrawQuad(ITexture texture, Vector3 origin, Vector3 location, Vector2 size, Vector3 rotation, ColorF multiplier, MeshComponent sharedRectMesh = null) {
 			if (size.X <= 0 || size.Y <= 0 || multiplier.A == 0f)
 				return;
 			bool dispose;
@@ -154,8 +192,8 @@ namespace System.Graphics.Models {
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void Setup2D(Size viewport, float maxZ = 1f, bool disableDepth = true) {
-			Setup2D(new Vector2(viewport.Width, viewport.Height), maxZ, disableDepth);
+		public static void Setup(Size viewport, float maxZ = 1f, bool disableDepth = true) {
+			Setup(new Vector2(viewport.Width, viewport.Height), maxZ, disableDepth);
 		}
 
 		/// <summary>
@@ -164,9 +202,9 @@ namespace System.Graphics.Models {
 		/// <param name="viewport">The view port size (to map to relative pixel coordinates)</param>
 		/// <param name="maxZ">The maximum Z-depth</param>
 		/// <param name="disableDepth">Whether to render consequent polygons as 2D</param>
-		public static void Setup2D(Vector2 viewport, float maxZ, bool disableDepth = true) {
+		public static void Setup(Vector2 viewport, float maxZ, bool disableDepth = true) {
 			Matrix4 matrix = Matrix4.CreateOrthographicOffCenter(0f, viewport.X, viewport.Y, 0f, -maxZ, maxZ);
-			Setup2D(ref matrix, disableDepth);
+			Setup(ref matrix, disableDepth);
 		}
 
 		/// <summary>
@@ -174,7 +212,7 @@ namespace System.Graphics.Models {
 		/// </summary>
 		/// <param name="ortho">The orthographic transform matrix (usually using Matrix4.CreateOrthographicOffCenter())</param>
 		/// <param name="disableDepth">Whether to render consequent polygons as 2D</param>
-		public static void Setup2D(ref Matrix4 ortho, bool disableDepth = true) {
+		public static void Setup(ref Matrix4 ortho, bool disableDepth = true) {
 			if (disableDepth)
 				GL.Disable(EnableCap.DepthTest);
 			GL.Enable(EnableCap.CullFace);

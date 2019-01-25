@@ -3,7 +3,7 @@ using System.Graphics.OGL;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Represents a bindable texture.
+	/// Represents a bindable texture
 	/// </summary>
 	public interface ITexture : ICloneable, IDisposable {
 		/// <summary>

@@ -842,7 +842,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static void Setup2D(Size viewport, float maxZ = 1f, bool disableDepth = true) {
-			Mesh2D.Setup2D(new Vector2(viewport.Width, viewport.Height), maxZ, disableDepth);
+			Mesh2D.Setup(new Vector2(viewport.Width, viewport.Height), maxZ, disableDepth);
 		}
 
 		/// <summary>
@@ -855,7 +855,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static void Setup2D(Vector2 viewport, float maxZ, bool disableDepth = true) {
-			Mesh2D.Setup2D(viewport, maxZ, disableDepth);
+			Mesh2D.Setup(viewport, maxZ, disableDepth);
 		}
 
 		/// <summary>
@@ -867,7 +867,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static void Setup2D(ref Matrix4 ortho, bool disableDepth = true) {
-			Mesh2D.Setup2D(ref ortho, disableDepth);
+			Mesh2D.Setup(ref ortho, disableDepth);
 		}
 
 		/// <summary>

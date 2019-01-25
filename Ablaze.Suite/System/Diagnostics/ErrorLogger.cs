@@ -2,26 +2,26 @@
 
 namespace System.Diagnostics {
 	/// <summary>
-	/// Represents an error logger. To use your own, implement IErrorLogger and set System.Diagnostics.ErrorHandler.Logger to a new instance of your logger.
+	/// Represents an error logger. To use your own, implement IErrorLogger and set System.Diagnostics.ErrorHandler.Logger to a new instance of your logger
 	/// </summary>
 	public interface IErrorLogger {
 		/// <summary>
-		/// Handles an exception that was thrown.
+		/// Handles an exception that was thrown
 		/// </summary>
-		/// <param name="ex">The first exception that was thrown.</param>
-		/// <param name="errorLog">A full description of the error that occurred (pre-formatted for logging).</param>
+		/// <param name="ex">The first exception that was thrown</param>
+		/// <param name="errorLog">A full description of the error that occurred (pre-formatted for logging)</param>
 		void LogException(Exception ex, string errorLog);
 	}
 
 	/// <summary>
 	/// The default error logger. To use your own, inherit this class or implement IErrorLogger and override LogException(),
-	/// and set System.Diagnostics.ErrorHandler.Logger to a new instance of your logger.
+	/// and set System.Diagnostics.ErrorHandler.Logger to a new instance of your logger
 	/// </summary>
 	public class ErrorLogger : IErrorLogger {
 		private int maxLogSize = 1048576;
 
 		/// <summary>
-		/// Gets or sets the maximum log file size in kibibytes.
+		/// Gets or sets the maximum log file size in kibibytes
 		/// </summary>
 		public int MaxLogSizeKiB {
 			get {
@@ -35,10 +35,10 @@ namespace System.Diagnostics {
 		}
 
 		/// <summary>
-		/// Handles an exception that was thrown.
+		/// Handles an exception that was thrown
 		/// </summary>
-		/// <param name="ex">The first exception that was thrown.</param>
-		/// <param name="errorLog">A full description of the error that occurred (pre-formatted for logging).</param>
+		/// <param name="ex">The first exception that was thrown</param>
+		/// <param name="errorLog">A full description of the error that occurred (pre-formatted for logging)</param>
 		public virtual void LogException(Exception ex, string errorLog) {
 			if (errorLog == null)
 				return;

@@ -558,10 +558,10 @@ namespace System.Windows.Forms {
 					} else
 						GdiTexture.Bind();
 					globalShader.Bind();
-					Mesh2D.Setup2D(GLViewport.Size);
+					Mesh2D.Setup(GLViewport.Size);
 					if (gdiRectMesh == null)
 						gdiRectMesh = Mesh2D.CreateShared2DMeshRect();
-					Mesh2D.DrawQuad2D(GdiTexture, Vector3.Zero, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, 1, gdiRectMesh);
+					Mesh2D.DrawQuad(GdiTexture, Vector3.Zero, Vector3.Zero, new Vector2(maskSize.Width * GdiScale.X, maskSize.Height * GdiScale.Y), GdiRotation, 1, gdiRectMesh);
 				}
 				if (!RenderBorderOnGdiLayer)
 					DrawBorderGL();
@@ -1015,7 +1015,7 @@ namespace System.Windows.Forms {
 			globalShader.Bind();
 			if (borderRectMesh == null)
 				borderRectMesh = Mesh2D.CreateShared2DMeshRect();
-			Mesh2D.Setup2D(GLViewport.Size);
+			Mesh2D.Setup(GLViewport.Size);
 			if (BorderTexture == null || updateBorderTexture) {
 				if (BorderTexture != null)
 					BorderTexture.Dispose();
@@ -1033,12 +1033,12 @@ namespace System.Windows.Forms {
 				GL.StencilMask(255);
 				GL.Clear(ClearBufferMask.StencilBufferBit);
 				Rectangle viewport = ViewPort;
-				Mesh2D.DrawQuad2D(null, Vector3.Zero, viewport.Location.ToVector3(), viewport.Size.ToVector2(), borderRectMesh);
+				Mesh2D.DrawQuad(null, Vector3.Zero, viewport.Location.ToVector3(), viewport.Size.ToVector2(), borderRectMesh);
 				GL.ColorMask(true, true, true, true);
 				GL.StencilMask(0);
 				GL.StencilFunc(StencilFunction.Equal, 0, 255);
 				Mesh2D.UpdateTextureCoordinatesForRepeat(borderRectMesh, BorderTexture, clientSize.ToVector2());
-				Mesh2D.DrawQuad2D(BorderTexture, Vector3.Zero, Vector3.Zero, clientSize.ToVector2(), Vector3.Zero, CurrentBorderOpacity, borderRectMesh);
+				Mesh2D.DrawQuad(BorderTexture, Vector3.Zero, Vector3.Zero, clientSize.ToVector2(), Vector3.Zero, CurrentBorderOpacity, borderRectMesh);
 
 				using (Texture2D texture = new Texture2D(1, 2, true, false)) {
 					Color closeTop = CloseButtonRenderer.CurrentBackgroundTop;

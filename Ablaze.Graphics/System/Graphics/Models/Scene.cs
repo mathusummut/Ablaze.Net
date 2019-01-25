@@ -3,24 +3,24 @@ using System.Numerics;
 
 namespace System.Graphics.Models {
 	/// <summary>
-	/// Represents a graphical scene composed of models and additional configurations such as camera and lighting parameters.
+	/// Represents a graphical scene composed of models and additional configurations such as camera and lighting parameters
 	/// </summary>
 	public class Scene : Model {
 		/// <summary>
-		/// The default camera matrix.
+		/// The default camera matrix
 		/// </summary>
 		public static readonly Matrix4 DefaultCamera = Matrix4.LookAt(new Vector3(0f, 0f, 1f), Vector3.Zero, Vector3.UnitY);
 		/// <summary>
-		/// The camera matrix for the scene (the same as CameraMatrix).
+		/// The camera matrix for the scene (the same as CameraMatrix)
 		/// </summary>
 		public Matrix4 Camera;
 		/// <summary>
-		/// The lighting parameters for the scene (same as LightSource).
+		/// The lighting parameters for the scene (same as LightSource)
 		/// </summary>
 		public Light Light = new Light(Vector3.Zero, Light.DefaultLightHue);
 
 		/// <summary>
-		/// Gets or sets the lighting parameters for the scene.
+		/// Gets or sets the lighting parameters for the scene
 		/// </summary>
 		public Light LightSource {
 			get;
@@ -28,7 +28,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets whether lighting is enabled for the scene.
+		/// Gets or sets whether lighting is enabled for the scene
 		/// </summary>
 		public bool LightingEnabled {
 			get;
@@ -36,7 +36,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the camera matrix for the scene.
+		/// Gets or sets the camera matrix for the scene
 		/// </summary>
 		public Matrix4 CameraMatrix {
 			get {
@@ -48,48 +48,48 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Creates a new empty scene.
+		/// Creates a new empty scene
 		/// </summary>
 		public Scene() {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Creates a new scene from the specified components.
+		/// Creates a new scene from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the scene.</param>
+		/// <param name="components">The components that are to make up the scene</param>
 		public Scene(IEnumerable<IModel> components) : base(components) {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Creates a new scene from the specified components.
+		/// Creates a new scene from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the scene.</param>
+		/// <param name="components">The components that are to make up the scene</param>
 		public Scene(IEnumerable<Model> components) : base(components) {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Creates a new scene from the specified components.
+		/// Creates a new scene from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the scene.</param>
+		/// <param name="components">The components that are to make up the scene</param>
 		public Scene(IEnumerable<MeshComponent> components) : base(components) {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Creates a new scene from the specified components.
+		/// Creates a new scene from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the scene.</param>
+		/// <param name="components">The components that are to make up the scene</param>
 		public Scene(params IModel[] components) : base(components) {
 			RestoreDefaults();
 		}
 
 		/// <summary>
-		/// Creates a new model structure from the specified components.
+		/// Creates a new model structure from the specified components
 		/// </summary>
-		/// <param name="components">The components that are to make up the model structure.</param>
+		/// <param name="components">The components that are to make up the model structure</param>
 		public Scene(params Model[] components) : base(components) {
 			RestoreDefaults();
 		}
@@ -161,10 +161,10 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Enables or disables lighting.
+		/// Enables or disables lighting
 		/// </summary>
-		/// <param name="enable">Whether to enable of disable lighting.</param>
-		/// <param name="mode">The method to use to set the value.</param>
+		/// <param name="enable">Whether to enable of disable lighting</param>
+		/// <param name="mode">The method to use to set the value</param>
 		public static void ConfigureLighting(bool enable, ShaderSetMode mode) {
 			GlobalShader shader = (GlobalShader) Shader.CurrentShader;
 			shader.ConfigureLighting(enable, mode);

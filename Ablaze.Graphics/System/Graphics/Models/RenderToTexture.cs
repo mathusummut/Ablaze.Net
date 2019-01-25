@@ -9,7 +9,7 @@ namespace System.Graphics.Models {
 		private RenderBuffer rbo;
 
 		/// <summary>
-		/// Renders the next scene into the specified textures
+		/// Renders the next scene onto the specified textures. Make sure to call GL.Viewport() after being finished with the render buffer
 		/// </summary>
 		/// <param name="width">The width of the buffer</param>
 		/// <param name="height">The height of the buffer</param>
@@ -49,7 +49,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Finishes capturing.
+		/// Finishes capturing
 		/// </summary>
 		public void Dispose() {
 			FrameBuffer.Unbind();
