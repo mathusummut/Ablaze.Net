@@ -155,7 +155,7 @@ namespace System.Drawing {
 		}
 
 		/// <summary>
-		/// Gets the pixel format of the image (same as Format, for easier portability form Bitmap).
+		/// Gets the pixel format of the image (same as Format).
 		/// </summary>
 		public PixelFormat PixelFormat {
 #if NET45

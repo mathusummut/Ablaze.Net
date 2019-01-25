@@ -1040,17 +1040,25 @@ namespace System.Windows.Forms {
 				Mesh2D.UpdateTextureCoordinatesForRepeat(borderRectMesh, BorderTexture, clientSize.ToVector2());
 				Mesh2D.DrawQuad2D(BorderTexture, Vector3.Zero, Vector3.Zero, clientSize.ToVector2(), Vector3.Zero, CurrentBorderOpacity, borderRectMesh);
 
-				Rectangle closeBounds = CloseBounds;
-				MeshComponent closeButton = new MeshComponent(null, MeshExtensions.TriangulateQuads(new Vertex[] {
+				using (Texture2D texture = new Texture2D(1, 2, true, false)) {
+					Color closeTop = CloseButtonRenderer.CurrentBackgroundTop;
+					Color closeBottom = CloseButtonRenderer.CurrentBackgroundBottom;
+					texture.UpdateRegion(new byte[] { closeTop.B, closeTop.G, closeTop.R, closeTop.A,
+						closeBottom.B, closeBottom.G, closeBottom.R, closeBottom.A }, 1, TargetPixelFormat.Bgra, new Rectangle(0, 0, 1, 2), Point.Empty);
+					texture.SetTextureWrapMode(TextureWrapMode.ClampToEdge);
+					Rectangle closeBounds = CloseBounds;
+					using (MeshComponent closeButton = new MeshComponent(texture, MeshExtensions.TriangulateQuads(new Vertex[] {
 					new Vertex(closeBounds.Location.ToVector3(), Vector2.Zero),
 					new Vertex(new Vector3(closeBounds.Right, closeBounds.Y, 0), Vector2.UnitX),
 					new Vertex(new Vector3(closeBounds.Right, closeBounds.Bottom, 0), Vector2.One),
 					new Vertex(new Vector3(closeBounds.X, closeBounds.Bottom, 0), Vector2.UnitY)
 				}), false, BufferUsageHint.StaticDraw, false) {
-					LowOpacity = true
-				};
-				closeButton.MaterialHue = (ColorF) CloseButtonRenderer.CurrentBackgroundTop;
-				closeButton.Render();
+						LowOpacity = true
+					}) {
+						//closeButton.MaterialHue = (ColorF) CloseButtonRenderer.CurrentBackgroundTop;
+						closeButton.Render();
+					}
+				}
 
 				GL.Disable(EnableCap.StencilTest);
 			}

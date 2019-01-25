@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Graphics.OGL;
@@ -8,9 +9,16 @@ namespace System.Graphics.Models {
 	using Graphics = Drawing.Graphics;
 
 	/// <summary>
-	/// A managed wrapper for an OpenGL texture
+	/// A managed wrapper for a 2D OpenGL texture
 	/// </summary>
 	public sealed class Texture2D : ITexture, IEquatable<Texture2D> {
+		private static Dictionary<PixelFormat, TargetPixelFormat> FormatMap = new Dictionary<PixelFormat, TargetPixelFormat> {
+			{ PixelFormat.Alpha, TargetPixelFormat.Alpha },
+			{ PixelFormat.Format24bppRgb, TargetPixelFormat.Bgr },
+			{ PixelFormat.Format8bppIndexed, TargetPixelFormat.Luminance },
+			{ PixelFormat.Format32bppArgb, TargetPixelFormat.Bgra },
+			{ PixelFormat.Format32bppPArgb, TargetPixelFormat.Bgra }
+		};
 		/// <summary>
 		/// An empty texture
 		/// </summary>
@@ -194,8 +202,7 @@ namespace System.Graphics.Models {
 		/// An empty texture
 		/// </summary>
 		public Texture2D() {
-			TextureWrapModeX = TextureWrapMode.Repeat;
-			TextureWrapModeY = TextureWrapMode.Repeat;
+			SetTextureWrapMode(TextureWrapMode.Repeat);
 		}
 
 		/// <summary>
@@ -281,6 +288,18 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Gets the OpenGL pixel format that matches the Bitmap PixelFormat if possible, otherwise returns TargetPixelFormat.Bgra
+		/// </summary>
+		/// <param name="format">The Bitmap pixel format</param>
+		public static TargetPixelFormat GetTargetPixelFormat(PixelFormat format) {
+			TargetPixelFormat result;
+			if (FormatMap.TryGetValue(format, out result))
+				return result;
+			else
+				return TargetPixelFormat.Bgra;
+		}
+
+		/// <summary>
 		/// Binds the texture for use with OpenGL operations
 		/// </summary>
 #if NET45
@@ -346,7 +365,7 @@ namespace System.Graphics.Models {
 				parentContext = GraphicsContext.CurrentContext;
 				GL.BindTexture(TextureTarget.Texture2D, id);
 				if (BitmapSize == TextureSize) {
-					BitmapData data = image.LockBits(new Rectangle(Point.Empty, TextureSize), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+					BitmapData data = image.LockBits(new Rectangle(Point.Empty, TextureSize), ImageLockMode.ReadOnly, image.PixelFormat == PixelFormat.Format32bppPArgb ? PixelFormat.Format32bppPArgb : PixelFormat.Format32bppArgb);
 					GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 					image.UnlockBits(data);
 				} else {
@@ -420,10 +439,53 @@ namespace System.Graphics.Models {
 				return;
 			Bind(TextureWrapMode.ClampToEdge);
 			GL.PixelStore(PixelStoreParameter.UnpackRowLength, source.Width);
-			BitmapData data = source.LockBits(srcRegion, ImageLockMode.ReadOnly, source.PixelFormat);
+			BitmapData data = source.LockBits(srcRegion, ImageLockMode.ReadOnly, source.PixelFormat == PixelFormat.Format32bppPArgb ? PixelFormat.Format32bppPArgb : PixelFormat.Format32bppArgb);
 			GL.TexSubImage2D(TextureTarget.Texture2D, 0, textureRectLoc.X, textureRectLoc.Y, srcRegion.Width, srcRegion.Height, TargetPixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 			source.UnlockBits(data);
 			GL.PixelStore(PixelStoreParameter.UnpackRowLength, 0);
+		}
+
+		/// <summary>
+		/// Updates the specified texture region
+		/// </summary>
+		/// <param name="source">The bytes of a bitmap containing the region to update with</param>
+		/// <param name="srcRegion">The region from the source bitmap to update with</param>
+		/// <param name="textureRectLoc">The target texture coordinate to update the region at</param>
+		public void UpdateRegion(PixelWorker source, Rectangle srcRegion, Point textureRectLoc) {
+			if (srcRegion.Width <= 0 || srcRegion.Height <= 0)
+				return;
+			Bind(TextureWrapMode.ClampToEdge);
+			GL.PixelStore(PixelStoreParameter.UnpackRowLength,source.Width);
+			using (PixelWorker.PointerWrapper pointer = source.PinPointer()) {
+				GL.TexSubImage2D(TextureTarget.Texture2D, 0, textureRectLoc.X, textureRectLoc.Y, srcRegion.Width, srcRegion.Height, GetTargetPixelFormat(source.Format), PixelType.UnsignedByte, pointer.Pointer);
+				GL.PixelStore(PixelStoreParameter.UnpackRowLength, 0);
+			}
+		}
+
+		/// <summary>
+		/// Updates the specified texture region
+		/// </summary>
+		/// <param name="source">The bytes of a bitmap containing the region to update with</param>
+		/// <param name="srcWidth">The pixel line width of the source bitmap</param>
+		/// <param name="srcFormat">The format of the bitmap (the default format of System.Drawing.Bitmap is Bgra)</param>
+		/// <param name="srcRegion">The region from the source bitmap to update with</param>
+		/// <param name="textureRectLoc">The target texture coordinate to update the region at</param>
+		public void UpdateRegion(byte[] source, int srcWidth, TargetPixelFormat srcFormat, Rectangle srcRegion, Point textureRectLoc) {
+			if (srcRegion.Width <= 0 || srcRegion.Height <= 0)
+				return;
+			Bind(TextureWrapMode.ClampToEdge);
+			GL.PixelStore(PixelStoreParameter.UnpackRowLength, srcWidth);
+			GL.TexSubImage2D(TextureTarget.Texture2D, 0, textureRectLoc.X, textureRectLoc.Y, srcRegion.Width, srcRegion.Height, srcFormat, PixelType.UnsignedByte, source);
+			GL.PixelStore(PixelStoreParameter.UnpackRowLength, 0);
+		}
+
+		/// <summary>
+		/// Sets the wrap mode for the X and Y axis of the texture
+		/// </summary>
+		/// <param name="mode">The new texture wrap mode</param>
+		public void SetTextureWrapMode(TextureWrapMode mode) {
+			TextureWrapModeX = mode;
+			TextureWrapModeY = mode;
 		}
 
 		/// <summary>
