@@ -91,6 +91,16 @@ namespace System {
 		}
 
 		/// <summary>
+		/// Gets whether the OS is Windows and the version is Windows 8 or newer.
+		/// </summary>
+		public static bool IsWindows8OrNewer {
+			get {
+				OperatingSystem os = Environment.OSVersion;
+				return os.Platform == PlatformID.Win32NT && (os.Version.Major > 6 || (os.Version.Major == 6 && os.Version.Minor >= 2));
+			}
+		}
+
+		/// <summary>
 		/// Determines whether the current process is a 64-bit process.
 		/// </summary>
 		public static bool Is64BitProcess {

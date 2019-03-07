@@ -124,7 +124,7 @@ namespace System.Graphics.Models {
 		/// <param name="opacity">The opacity multiplier for the texture (1 leaves the texture intact, 0 means transparent, can also be any value inbetween)</param>
 		/// <param name="sharedRectMesh">The 2D quad mesh to use for rendering, that must be created with CreateShared2DMeshRect(). Can be null</param>
 		public static void DrawLine(ITexture texture, Vector3 origin, Vector3 pt1, Vector3 pt2, float thickness = 1f, float opacity = 1f, MeshComponent sharedRectMesh = null) {
-			DrawQuad(texture, origin, location, size, rotation, new ColorF(opacity, 1f, 1f, 1f), sharedRectMesh);
+			//DrawQuad(texture, origin, location, size, rotation, new ColorF(opacity, 1f, 1f, 1f), sharedRectMesh);
 		}
 
 		/// <summary>

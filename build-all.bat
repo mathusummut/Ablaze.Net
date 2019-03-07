@@ -2,6 +2,7 @@
 setlocal EnableDelayedExpansion
 SET MSBUILD_CONFIG=Release
 SET PLATFORM="Any CPU"
+SET VCVARS_PLATFORM=x86_amd64
 
 Echo Choose Visual Studio version to compile with (must be installed):
 Echo.

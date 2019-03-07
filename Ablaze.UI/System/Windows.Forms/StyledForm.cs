@@ -1592,8 +1592,17 @@ namespace System.Windows.Forms {
 			if (isInit)
 				return false;
 			isInit = true;
-			if (Environment.OSVersion.Version.Major >= 6) {
-				NativeApi.SetProcessDPIAware();
+			if (Platform.IsWindowsVistaOrNewer) {
+				try {
+					NativeApi.SetProcessDpiAwareness(DpiAwareness.PerMonitorAware);
+				} catch {
+					try {
+						NativeApi.SetProcessDPIAware();
+					} catch {
+					}
+				}
+			}
+			if (Platform.IsWindowsXPOrNewer) {
 				Application.EnableVisualStyles();
 				Application.VisualStyleState = VisualStyles.VisualStyleState.ClientAndNonClientAreasEnabled;
 			}

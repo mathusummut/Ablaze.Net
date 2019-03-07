@@ -163,7 +163,7 @@ namespace AForge.Video.DirectShow {
 		/// <returns>Returns true if both video capabilities are equal or false otherwise.</returns>
 		/// 
 		public bool Equals(VideoCapabilities vc2) {
-			if ((object) vc2 == null) {
+			if (object.ReferenceEquals(vc2, null)) {
 				return false;
 			}
 
@@ -194,7 +194,7 @@ namespace AForge.Video.DirectShow {
 			}
 
 			// if one is null, but not both, return false.
-			if (((object) a == null) || ((object) b == null)) {
+			if (object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null)) {
 				return false;
 			}
 

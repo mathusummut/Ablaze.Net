@@ -798,8 +798,7 @@ namespace System.Platforms.Windows {
 		NOTIMEOUTIFNOTHUNG = 0x8,
 		ERRORONEXIT = 0x20
 	}
-
-
+	
 	[Guid("00000122-0000-0000-C000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IOleDropTarget {
@@ -822,6 +821,12 @@ namespace System.Platforms.Windows {
 		ENABLE_TRANSPARENTGRADIENT = 2,
 		ENABLE_BLURBEHIND = 3,
 		INVALID_STATE = 4
+	}
+
+	public enum DpiAwareness {
+		None = 0,
+		SystemAware = 1,
+		PerMonitorAware = 2
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -958,6 +963,10 @@ namespace System.Platforms.Windows {
 		[SuppressUnmanagedCodeSecurity]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool SetProcessDPIAware();
+
+		[DllImport("shcore.dll")]
+		[SuppressUnmanagedCodeSecurity]
+		public static extern int SetProcessDpiAwareness(DpiAwareness processDpiAwareness);
 
 		[SuppressUnmanagedCodeSecurity]
 		[DllImport("ole32.dll", CharSet = CharSet.None, ExactSpelling = true, SetLastError = true)]

@@ -272,7 +272,7 @@ namespace Particles {
 			MeshComponent.SetupGLEnvironment();
 			//Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-1f, 1f, 1f, -1f, -1f, 5f);
 			Matrix4 ortho = Matrix4.CreateOrthographicOffCenter(-2f, 2f, 2f, -2f, -1f, 5f);
-			Mesh2D.Setup2D(ref ortho);
+			Mesh2D.Setup(ref ortho);
 			webcamMesh = Mesh2D.CreateShared2DMeshRect();
 		}
 
@@ -281,7 +281,7 @@ namespace Particles {
 		/// </summary>
 		protected override void OnPaintGL() {
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			Mesh2D.DrawTexture2D(texture, Vector3.Zero, new Vector3(-1f, -1f, 4f), new Vector2(2f, 2f), Vector3.Zero, webcamMesh);
+			Mesh2D.DrawQuad(texture, Vector3.Zero, new Vector3(-1f, -1f, 4f), new Vector2(2f, 2f), Vector3.Zero, ColorF.White, webcamMesh);
 			Particles.Render();
 		}
 
