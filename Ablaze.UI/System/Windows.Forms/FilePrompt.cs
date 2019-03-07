@@ -473,7 +473,9 @@ namespace System.Windows.Forms {
 		}
 
 		private static bool IsValid(string path, bool selectDirectory, SyncedList<string> extensions) {
-			if (!selectDirectory && IsPathToFile(path)) {
+			if (string.IsNullOrEmpty(path))
+				return false;
+			else if (!selectDirectory && IsPathToFile(path)) {
 				string ext;
 				return FileUtils.FileExists(path) && IsAllowed(path, extensions, out ext);
 			} else if (selectDirectory)
@@ -501,6 +503,8 @@ namespace System.Windows.Forms {
 			if (path == null || path.Length == 0)
 				path = Environment.CurrentDirectory;
 			path = FileUtils.ResolvePath(path);
+			if (path == null)
+				return;
 			bool directory = selectDirectory;
 			TreeNode node;
 			do {
