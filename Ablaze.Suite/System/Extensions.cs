@@ -262,16 +262,30 @@ namespace System {
 		}
 
 		/// <summary>
-		/// Gets a dictionary that represents the specified object (where keys represent properties).
+		/// Gets a dictionary that represents the specified object (where keys represent properties)
 		/// </summary>
-		/// <param name="source">The object to serialize into a dictionary.</param>
-		/// <param name="bindingAttr">The attirbutes to use when searching for properties.</param>
+		/// <param name="source">The object to serialize into a dictionary</param>
+		/// <param name="bindingAttr">The attributes to use when searching for properties</param>
 		public static Dictionary<string, object> ToDictionary(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) {
 			if (source == null)
 				return null;
 			else
 				return source.GetType().GetProperties(bindingAttr).ToDictionary(propInfo => propInfo.Name, propInfo => propInfo.GetValue(source, null));
 		}
+		
+		/*/// <summary>
+		/// Creates a dynamic ExpandoObject from the given object
+		/// </summary>
+		/// <typeparam name="T">The type of the object</typeparam>
+		/// <param name="source">The object to convert</param>
+		public static dynamic ToDynamic<T>(this T source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) {
+			if (obj == null)
+				return null;
+			IDictionary<string, object> expando = new ExpandoObject();
+			foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(bindingAttr))
+				expando.Add(propertyInfo.Name, propertyInfo.GetValue(source));
+			return expando as ExpandoObject;
+		}*/
 
 #if !NET35
 		/// <summary>
@@ -834,20 +848,6 @@ namespace System {
 			return (Action<S, T>) setterMethod.CreateDelegate(typeof(Action<S, T>));
 		}
 		
-		/*/// <summary>
-		/// Creates a dynamic ExpandoObject from the given object
-		/// </summary>
-		/// <typeparam name="T">The type of the object</typeparam>
-		/// <param name="obj">The object to convert</param>
-		public static dynamic ToDynamic<T>(this T obj) {
-			if (obj == null)
-				return null;
-			IDictionary<string, object> expando = new ExpandoObject();
-			foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic))
-				expando.Add(propertyInfo.Name, propertyInfo.GetValue(obj));
-			return expando as ExpandoObject;
-		}*/
-
 		/// <summary>
 		/// Gets whether the specified key is a modifier key
 		/// </summary>
