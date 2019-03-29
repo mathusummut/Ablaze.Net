@@ -833,6 +833,20 @@ namespace System {
 			gen.Emit(OpCodes.Ret);
 			return (Action<S, T>) setterMethod.CreateDelegate(typeof(Action<S, T>));
 		}
+		
+		/*/// <summary>
+		/// Creates a dynamic ExpandoObject from the given object
+		/// </summary>
+		/// <typeparam name="T">The type of the object</typeparam>
+		/// <param name="obj">The object to convert</param>
+		public static dynamic ToDynamic<T>(this T obj) {
+			if (obj == null)
+				return null;
+			IDictionary<string, object> expando = new ExpandoObject();
+			foreach (PropertyInfo propertyInfo in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic))
+				expando.Add(propertyInfo.Name, propertyInfo.GetValue(obj));
+			return expando as ExpandoObject;
+		}*/
 
 		/// <summary>
 		/// Gets whether the specified key is a modifier key
