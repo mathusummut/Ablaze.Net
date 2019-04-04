@@ -60,6 +60,13 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Gets the number of textures in the collection (or if a single texture, returns 1 if not empty else 0)
+		/// </summary>
+		int Count {
+			get;
+		}
+
+		/// <summary>
 		/// Binds the texture for use with OpenGL operations
 		/// </summary>
 		void Bind();

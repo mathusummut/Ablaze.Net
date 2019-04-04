@@ -8,9 +8,10 @@ Echo Choose Visual Studio version to compile with (must be installed):
 Echo.
 Echo 1. Visual Studio 2015
 Echo 2. Visual Studio 2017
+Echo 3. Visual Studio 2019
 Echo.
 SET QUERY=""
-SET /P QUERY=Choose compiler (1 or 2): 
+SET /P QUERY=Choose compiler (1/2/3): 
 IF /I "%QUERY%"=="1" (
 	call .\set-env-2015.bat
 	GOTO BUILD
@@ -19,11 +20,17 @@ IF /I "%QUERY%"=="2" (
 	call .\set-env-2017.bat
 	GOTO BUILD
 )
+IF /I "%QUERY%"=="3" (
+	call .\set-env-2019.bat
+	GOTO BUILD
+)
 IF /I "%QUERY%" NEQ "1" (
 	IF /I "%QUERY%" NEQ "2" (
-		Echo Invalid choice.
-		Echo.
-		GOTO CHOOSE
+		IF /I "%QUERY%" NEQ "3" (
+			Echo Invalid choice.
+			Echo.
+			GOTO CHOOSE
+		)
 	)
 )
 

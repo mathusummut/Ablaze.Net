@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace System.Graphics.Models.Parsers {
 	/// <summary>
-	/// Contains methods for parsing 3D models from files.
+	/// Contains methods for parsing 3D models from files
 	/// </summary>
 	public static class ModelParser {
 		private static Dictionary<string, ValueTuple<Func<Stream, TextureCollection, Model>, Action<IModel, Stream>>> ParserDictionary;
@@ -107,7 +107,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="mesh">The location of the file to parse the mesh from.</param>
 		/// <returns>A list of models with all the parsed components.</returns>
 		public static Model Parse(string mesh) {
-			if (mesh == null)
+			if (string.IsNullOrEmpty(mesh))
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				return Parse(file, Path.GetExtension(mesh), null as TextureCollection);
@@ -120,7 +120,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="textures">The locations of the textures involved (can be null or empty).</param>
 		/// <returns>A list of models with all the parsed components.</returns>
 		public static Model Parse(string mesh, params string[] textures) {
-			if (mesh == null)
+			if (string.IsNullOrEmpty(mesh))
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				return Parse(file, Path.GetExtension(mesh), Texture2D.ToTextures(textures));
@@ -134,7 +134,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="textures">The images to use as textures (can be null or empty)</param>
 		/// <returns>A list of models with all the parsed components</returns>
 		public static Model Parse(string mesh, ImageParameterAction bindAction, params Bitmap[] textures) {
-			if (mesh == null)
+			if (string.IsNullOrEmpty(mesh))
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				return Parse(file, Path.GetExtension(mesh), Texture2D.ToTextures(bindAction, textures));
@@ -147,7 +147,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="textures">The textures to use (can be null or empty).</param>
 		/// <returns>A list of models with all the parsed components.</returns>
 		public static Model Parse(string mesh, TextureCollection textures) {
-			if (mesh == null)
+			if (string.IsNullOrEmpty(mesh))
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(mesh, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				return Parse(file, Path.GetExtension(mesh), textures);
@@ -184,7 +184,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="textures">The textures for the model to use (can be null or empty).</param>
 		/// <returns>A list of models with all the parsed components.</returns>
 		public static Model Parse(Stream mesh, string encoding, TextureCollection textures) {
-			if (mesh == null || encoding == null || mesh.Position == mesh.Length)
+			if (mesh == null || string.IsNullOrEmpty(encoding) || mesh.Position == mesh.Length)
 				return null;
 			encoding = encoding.Trim().ToLower();
 			if (encoding.Length != 0 && encoding[0] == '.')
@@ -209,7 +209,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="saveStream">The stream to save in.</param>
 		/// <param name="encoding">The encoding to use.</param>
 		public static void Save(IModel component, Stream saveStream, string encoding) {
-			if (component == null || saveStream == null || encoding == null)
+			if (component == null || saveStream == null || string.IsNullOrEmpty(encoding))
 				return;
 			encoding = encoding.Trim().ToLower();
 			if (encoding.Length != 0 && encoding[0] == '.')

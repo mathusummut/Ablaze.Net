@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
@@ -53,6 +52,15 @@ namespace System.Graphics.Models {
 			set {
 				frameOffset = value;
 				stopwatch.ElapsedTicks = 0.0;
+			}
+		}
+
+		/// <summary>
+		/// Gets the current frame
+		/// </summary>
+		public IModel Current {
+			get {
+				return this[(int) CurrentFramePosition];
 			}
 		}
 

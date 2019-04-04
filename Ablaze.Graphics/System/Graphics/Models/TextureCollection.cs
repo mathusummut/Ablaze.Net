@@ -9,7 +9,7 @@ namespace System.Graphics.Models {
 	/// <summary>
 	/// Offers methods to manage textures collectively
 	/// </summary>
-	public class TextureCollection : ITexture, IEnumerable<ITexture>, IEnumerable {
+	public class TextureCollection : ITexture, IList<ITexture>, ICollection<ITexture>, IEnumerable<ITexture>, IEnumerable {
 		/// <summary>
 		/// Used to safely iterate or modify the textures in this collection
 		/// </summary>
@@ -26,6 +26,15 @@ namespace System.Graphics.Models {
 		public ReadOnlyCollection<ITexture> Textures {
 			get {
 				return textureList.AsReadOnly();
+			}
+		}
+
+		/// <summary>
+		/// Gets whether the collection is read-only, so returns false
+		/// </summary>
+		public bool IsReadOnly {
+			get {
+				return false;
 			}
 		}
 
@@ -352,6 +361,15 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Copies the elements of the collection to an Array, starting at a particular Array index
+		/// </summary>
+		/// <param name="array">The array to copy the elements to</param>
+		/// <param name="arrayIndex">The index at which to insert the elements</param>
+		public void CopyTo(ITexture[] array, int arrayIndex) {
+			textureList.CopyTo(array, arrayIndex);
+		}
+
+		/// <summary>
 		/// Binds the texture at the index specified by BindIndex for use with OpenGL operations
 		/// </summary>
 		public virtual void Bind() {
@@ -372,6 +390,17 @@ namespace System.Graphics.Models {
 				Unbind();
 			else
 				current.Bind(mode);
+		}
+
+		/// <summary>
+		/// Returns whether the specified texture is in the current texture collection (only a top-level search)
+		/// </summary>
+		/// <param name="texture">The texture to search for</param>
+		public bool Contains(ITexture texture) {
+			if (texture == null)
+				return false;
+			else
+				return textureList.Contains(texture);
 		}
 
 		/// <summary>

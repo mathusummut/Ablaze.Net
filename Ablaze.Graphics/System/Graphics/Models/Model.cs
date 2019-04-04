@@ -8,7 +8,7 @@ namespace System.Graphics.Models {
 	/// <summary>
 	/// Offers methods to manage 3D model structures collectively
 	/// </summary>
-	public class Model : IModel, IEnumerable<IModel>, IEnumerable {
+	public class Model : IModel, IList<IModel>, ICollection<IModel>, IEnumerable<IModel>, IEnumerable {
 		/// <summary>
 		/// Called when a model is about to be rendered
 		/// </summary>
@@ -37,7 +37,7 @@ namespace System.Graphics.Models {
 		private ITexture defaultTexture;
 		private float alpha = 1f;
 		private bool keepCopyInMemory;
-		private int vertices, triangles;
+		private int vertices, indexCount;
 		/// <summary>
 		/// Used to safely iterate or modify the components in this model
 		/// </summary>
@@ -46,6 +46,15 @@ namespace System.Graphics.Models {
 		/// A list of the component structures managed by the model
 		/// </summary>
 		private List<IModel> componentList = new List<IModel>();
+
+		/// <summary>
+		/// Gets whether the collection is read-only, so returns false
+		/// </summary>
+		public bool IsReadOnly {
+			get {
+				return false;
+			}
+		}
 
 		/// <summary>
 		/// Gets a read-only wrapper for the components in the model
@@ -85,7 +94,16 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the number of components in the model
+		/// Gets whether the current model is considered empty without evaluating sub-components
+		/// </summary>
+		public bool IsEmpty {
+			get {
+				return vertices <= 0 || indexCount <= 0;
+			}
+		}
+
+		/// <summary>
+		/// Gets the number of components in the model (or frame count if AnimatedModel)
 		/// </summary>
 		public int Count {
 			get {
@@ -109,7 +127,7 @@ namespace System.Graphics.Models {
 						return;
 					newModel.Parent = null;
 					vertices -= newModel.Vertices;
-					triangles -= newModel.Triangles;
+					indexCount -= newModel.IndexCount;
 					if (value == null)
 						componentList.RemoveAt(index);
 					else {
@@ -126,7 +144,7 @@ namespace System.Graphics.Models {
 							value.DefaultTexture = defaultTexture;
 						newModel.Parent = this;
 						vertices += value.Vertices;
-						triangles += value.Triangles;
+						indexCount += value.IndexCount;
 					}
 				}
 			}
@@ -146,7 +164,16 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public int Triangles {
 			get {
-				return triangles;
+				return indexCount / 3;
+			}
+		}
+
+		/// <summary>
+		/// Gets the number of indices in the model
+		/// </summary>
+		public int IndexCount {
+			get {
+				return indexCount;
 			}
 		}
 
@@ -603,6 +630,26 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Returns whether the specified model is in the current model collection (only a top-level search)
+		/// </summary>
+		/// <param name="model">The model to search for</param>
+		public bool Contains(IModel model) {
+			if (model == null)
+				return false;
+			else
+				return componentList.Contains(model);
+		}
+
+		/// <summary>
+		/// Copies the elements of the collection to an Array, starting at a particular Array index
+		/// </summary>
+		/// <param name="array">The array to copy the elements to</param>
+		/// <param name="arrayIndex">The index at which to insert the elements</param>
+		public void CopyTo(IModel[] array, int arrayIndex) {
+			componentList.CopyTo(array, arrayIndex);
+		}
+
+		/// <summary>
 		/// Gets the component at the specified index without locking
 		/// </summary>
 		/// <param name="index">The index of the model to return</param>
@@ -658,7 +705,7 @@ namespace System.Graphics.Models {
 				if (model.DefaultTexture == null)
 					model.DefaultTexture = defaultTexture;
 				vertices += model.Vertices;
-				triangles += model.Triangles;
+				indexCount += model.IndexCount;
 			}
 		}
 
@@ -713,7 +760,7 @@ namespace System.Graphics.Models {
 				componentList.RemoveAt(index);
 				model.Parent = null;
 				vertices -= model.Vertices;
-				triangles -= model.Triangles;
+				indexCount -= model.IndexCount;
 			}
 		}
 
@@ -728,7 +775,7 @@ namespace System.Graphics.Models {
 				if (componentList.Remove(model)) {
 					model.Parent = null;
 					vertices -= model.Vertices;
-					triangles -= model.Triangles;
+					indexCount -= model.IndexCount;
 					return true;
 				} else
 					return false;
@@ -743,7 +790,7 @@ namespace System.Graphics.Models {
 				List<IModel> oldComponents = componentList;
 				componentList = new List<IModel>();
 				vertices = 0;
-				triangles = 0;
+				indexCount = 0;
 				foreach (IModel component in oldComponents)
 					component.Parent = null;
 			}
@@ -981,7 +1028,7 @@ namespace System.Graphics.Models {
 				}
 				componentList.Clear();
 				vertices = 0;
-				triangles = 0;
+				indexCount = 0;
 			}
 		}
 	}

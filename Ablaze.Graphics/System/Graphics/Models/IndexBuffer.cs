@@ -58,7 +58,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets the indices that are represented by this buffer. The returned value can be byte[], ushort[] or uint[]
+		/// Gets the indices that are represented by this buffer. The returned value can be byte[], ushort[] or uint[], depending on the Format
 		/// </summary>
 		public Array Indices {
 			get {

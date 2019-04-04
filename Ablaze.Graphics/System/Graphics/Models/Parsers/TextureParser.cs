@@ -84,7 +84,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="source">The location of the file to parse the texture from.</param>
 		/// <returns>A list of the textures parsed.</returns>
 		public static TextureCollection Parse(string source) {
-			if (source == null)
+			if (string.IsNullOrEmpty(source))
 				return null;
 			using (BufferedStream file = FileUtils.LoadFileBuffered(source, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				return Parse(file, Path.GetExtension(source));
@@ -97,7 +97,7 @@ namespace System.Graphics.Models.Parsers {
 		/// <param name="encoding">The file extension representing the texture encoding.</param>
 		/// <returns>A list of the textures parsed.</returns>
 		public static TextureCollection Parse(Stream source, string encoding) {
-			if (source == null || encoding == null)
+			if (source == null || string.IsNullOrEmpty(encoding))
 				return null;
 			encoding = encoding.Trim().ToLower();
 			if (encoding.Length != 0 && encoding[0] == '.')
@@ -109,12 +109,12 @@ namespace System.Graphics.Models.Parsers {
 			FileStream str = source as FileStream;
 			string name = string.Empty;
 			if (str != null)
-				name = Path.GetFileName(str.Name);
+				name = str.Name;
 			ITexture texture;
 			for (int i = 0; i < textures.Count; i++) {
 				texture = textures[i];
 				if (texture.Name == null)
-					texture.Name = name + i;
+					texture.Name = name;
 			}
 			return textures;
 		}

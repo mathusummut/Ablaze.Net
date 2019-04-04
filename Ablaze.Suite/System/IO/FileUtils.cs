@@ -200,7 +200,7 @@ namespace System.IO {
 				return null;
 			FileOrFolder exists;
 			string absolutePath = ResolvePath(path, true, out exists);
-			if (exists != FileOrFolder.File)
+			if (exists == FileOrFolder.Folder)
 				return null;
 			else if (absolutePath != null)
 				return new FileStream(absolutePath, mode, accessLevel, permissionsForOtherStreams);
@@ -269,17 +269,17 @@ namespace System.IO {
 		}
 
 		/// <summary>
-		/// Loads the specified file using a buffered stream.
+		/// Loads the specified file using a buffered stream
 		/// </summary>
-		/// <param name="path">A path to the file (can be relative or absolute).</param>
-		/// <param name="mode">The file mode to use.</param>
-		/// <param name="throwOnError">Whether to throw an exception when the file is not found.</param>
-		/// <param name="accessLevel">The access right level requested by this instance.</param>
-		/// <param name="permissionsForOtherStreams">What to allow other filestreams to do while this stream is open.</param>
+		/// <param name="path">A path to the file (can be relative or absolute)</param>
+		/// <param name="mode">The file mode to use</param>
+		/// <param name="throwOnError">Whether to throw an exception when the file is not found</param>
+		/// <param name="accessLevel">The access right level requested by this instance</param>
+		/// <param name="permissionsForOtherStreams">What to allow other filestreams to do while this stream is open</param>
 		public static BufferedStream LoadFileBuffered(string path, FileMode mode, FileAccess accessLevel, FileShare permissionsForOtherStreams, bool throwOnError = false) {
 			FileStream stream = LoadFile(path, mode, accessLevel, permissionsForOtherStreams);
 			if (stream == null && throwOnError)
-				throw new FileNotFoundException("The file " + path + " was not found.", path);
+				throw new FileNotFoundException("The file " + path + " was not found, or the path represents a directory", path);
 			else
 				return stream == null ? null : new BufferedStream(stream);
 		}

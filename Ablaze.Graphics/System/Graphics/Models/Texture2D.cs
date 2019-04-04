@@ -175,6 +175,15 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
+		/// Returns 1 if not empty else 0
+		/// </summary>
+		public int Count {
+			get {
+				return IsEmpty ? 0 : 1;
+			}
+		}
+
+		/// <summary>
 		/// Gets whether the texture is disposed
 		/// </summary>
 		public bool IsDisposed {

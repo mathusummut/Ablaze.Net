@@ -203,6 +203,22 @@ namespace System.Graphics.Models {
 			return result.ToArray();
 		}
 
+		/// <summary>
+		/// Returns whether the specified texture is considered null or empty
+		/// </summary>
+		/// <param name="texture">The texture to evaluate</param>
+		public static bool IsNullOrEmpty(this ITexture texture) {
+			return texture == null || texture.IsEmpty;
+		}
+
+		/// <summary>
+		/// Returns whether the specified model is considered null or empty
+		/// </summary>
+		/// <param name="model">The model to evaluate</param>
+		public static bool IsNullOrEmpty(this IModel model) {
+			return model == null || model.IsEmpty;
+		}
+
 		private static bool Intersect(this List<Vertex> polygon, int vertex1Ind, int vertex2Ind, int vertex3Ind) {
 			float s1, s2, s3;
 			for (int i = 0; i < polygon.Count; i++) {

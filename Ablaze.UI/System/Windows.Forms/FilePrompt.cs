@@ -111,6 +111,10 @@ namespace System.Windows.Forms {
 			}
 			set {
 				open = value;
+				if (open)
+					ButtonText = "Open";
+				else
+					ButtonText = "Save";
 			}
 		}
 
@@ -266,7 +270,7 @@ namespace System.Windows.Forms {
 			if (selectDirectory)
 				Text = "Choose a folder...";
 			this.selectDirectory = selectDirectory;
-			this.filters = filter;
+			filters = filter;
 			DialogResult = DialogResult.Cancel;
 			DragEnter += FilePrompt_DragEnter;
 			DragDrop += FilePrompt_DragDrop;
@@ -324,16 +328,23 @@ namespace System.Windows.Forms {
 
 		private int GetIcon(string path) {
 			try {
+				ImageList.ImageCollection images = imageList.Images;
+				if (images == null)
+					return -1;
 				SHFILEINFO shinfo = new SHFILEINFO();
 				Shell.GetFileInfo(path, 0, ref shinfo, SHFILEINFO.Size, ShGetFileIconFlags.Icon | ShGetFileIconFlags.LargeIcon);
-				int index = imageList.Images.Count;
+				int index = images.Count;
 				lock (treeSyncRoot) {
 					if (shinfo.hIcon == IntPtr.Zero || treeView.IsDisposed || treeView.Disposing || !treeView.IsHandleCreated)
 						return -1;
 					Icon icon = Icon.FromHandle(shinfo.hIcon);
 					if (icon == null)
 						return -1;
-					imageList.Images.Add(icon);
+					try {
+						images.Add(icon);
+					} catch {
+						return -1;
+					}
 					return index;
 				}
 			} catch {
@@ -344,8 +355,18 @@ namespace System.Windows.Forms {
 		private object RebuildTree(object param) {
 			if (rebuildDispatch == null)
 				return null;
-			treeView.Nodes.Clear();
-			imageList.Images.Clear();
+			try {
+				TreeNodeCollection collection = treeView.Nodes;
+				if (collection != null)
+					collection.Clear();
+			} catch {
+			}
+			try {
+				ImageList.ImageCollection images = imageList.Images;
+				if (images != null)
+					images.Clear();
+			} catch {
+			}
 			TreeNode currentNode;
 			string str;
 			if (IsClosing || IsDisposed || rebuildDispatch.QueueCount != 0)
@@ -385,7 +406,8 @@ namespace System.Windows.Forms {
 		}
 
 		private static void AddNode(TreeNodeCollection parent, List<TreeNode> nodes) {
-			parent.AddRange(nodes);
+			if (parent != null)
+				parent.AddRange(nodes);
 		}
 
 		private void treeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
@@ -404,14 +426,22 @@ namespace System.Windows.Forms {
 			SelectButton_Click(sender, e);
 		}
 
-		private static bool IsPathToFile(string Path) {
-			return (File.GetAttributes(Path) & FileAttributes.Directory) != FileAttributes.Directory;
+		private static bool IsPathToFile(string path) {
+			if (string.IsNullOrEmpty(path))
+				return false;
+			else
+				return (File.GetAttributes(path) & FileAttributes.Directory) != FileAttributes.Directory;
 		}
 
 		private void PopulateChildren(TreeNode node, string path) {
 			if (rebuildDispatch == null || IsPathToFile(path))
 				return;
-			node.Nodes.Clear();
+			try {
+				TreeNodeCollection collection = node.Nodes;
+				if (collection != null)
+					collection.Clear();
+			} catch {
+			}
 			string[] dirs;
 			try {
 				dirs = Directory.GetDirectories(path);
@@ -485,13 +515,15 @@ namespace System.Windows.Forms {
 		}
 
 		private static bool IsAllowed(string file, SyncedList<string> extensions, out string extension) {
+			extension = string.Empty;
+			if (string.IsNullOrEmpty(file))
+				return false;
 			foreach (string ex in extensions) {
 				if (ex == "*" || file.EndsWith(ex, StringComparison.OrdinalIgnoreCase)) {
 					extension = ex;
 					return true;
 				}
 			}
-			extension = string.Empty;
 			return false;
 		}
 
@@ -500,10 +532,10 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="path">The path to try to select.</param>
 		public void SelectPath(string path) {
-			if (path == null || path.Length == 0)
+			if (string.IsNullOrEmpty(path))
 				path = Environment.CurrentDirectory;
 			path = FileUtils.ResolvePath(path);
-			if (path == null)
+			if (string.IsNullOrEmpty(path))
 				return;
 			bool directory = selectDirectory;
 			TreeNode node;
@@ -530,7 +562,7 @@ namespace System.Windows.Forms {
 				} else
 					path = Path.GetDirectoryName(path);
 				directory = true;
-			} while (path.Length != 0);
+			} while (!string.IsNullOrEmpty(path));
 		}
 
 		private TreeNode GetSubNode(string name, TreeNode node) {

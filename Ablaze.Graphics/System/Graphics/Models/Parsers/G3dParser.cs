@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Numerics;
 using System.Text;
@@ -7,7 +8,7 @@ namespace System.Graphics.Models.Parsers {
 	/// <summary>
 	/// Contains methods for parsing and saving G3D models
 	/// </summary>
-	[ModelParser("g3d,Parse,")]
+	[ModelParser("g3d,Parse,Save")]
 	public static class G3dParser {
 		/// <summary>
 		/// Describes rendering properties for the mesh
@@ -69,7 +70,7 @@ namespace System.Graphics.Models.Parsers {
 			const float AnimationSpeed = 75f;
 			AnimatedModel model = new AnimatedModel(AnimationSpeed);
 			using (BinaryReader reader = new BinaryReader(mesh)) {
-				if (Encoding.ASCII.GetString(reader.ReadBytes(3)) != "G3D")
+				if (Encoding.UTF8.GetString(reader.ReadBytes(3)) != "G3D")
 					throw new FormatException("Unrecognized model format (expected \"G3D\" at start of file)");
 				byte version = reader.ReadByte();
 				if (version == 0)
@@ -95,7 +96,7 @@ namespace System.Graphics.Models.Parsers {
 				AnimatedModel animatedComponent;
 
 				for (int i = 0; i < meshCount; i++) {
-					name = Encoding.ASCII.GetString(reader.ReadBytes(64)).TruncateAtNull();
+					name = Encoding.UTF8.GetString(reader.ReadBytes(64)).TruncateAtNull();
 					frameCount = reader.ReadUInt32();
 					vertexCount = reader.ReadUInt32();
 					indexCount = reader.ReadUInt32();
@@ -107,7 +108,7 @@ namespace System.Graphics.Models.Parsers {
 					associatedTextures = (MeshTexture) reader.ReadUInt32();
 					if (textures == null || textures.Count == 0) {
 						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) //has texture
-							diffuseTexture = TextureParser.Parse(Encoding.ASCII.GetString(reader.ReadBytes(64)).TruncateAtNull());
+							diffuseTexture = TextureParser.Parse(Encoding.UTF8.GetString(reader.ReadBytes(64)).TruncateAtNull());
 						else
 							diffuseTexture = null;
 					} else
@@ -156,20 +157,119 @@ namespace System.Graphics.Models.Parsers {
 			return model;
 		}
 
-		/*/// <summary>
-		/// Serializes the model structure into the specified stream
+		/// <summary>
+		/// Serializes the model structure into the specified stream (must be an AnimatedModel instance)
 		/// </summary>
 		/// <param name="structure">The structure to serialize</param>
 		/// <param name="stream">The stream to serialize into</param>
 		public static void Save(IModel structure, Stream stream) {
-			MeshComponent component = structure as MeshComponent;
-			if (component == null) {
-				foreach (IModel comp in ((Model) structure))
-					FromModelStructure(comp, vertices, indices);
-			} else {
-				indices.Add(component.IndexBuffer.Indices);
-				vertices.Add(component.BufferData);
+			Model temp;
+			while (structure.Count == 1) {
+				temp = structure as Model;
+				if (temp == null)
+					break;
+				else
+					structure = temp[0];
 			}
-		}*/
+			using (BinaryWriter writer = new BinaryWriter(stream)) {
+				// model header
+				writer.Write((byte) 'G');
+				writer.Write((byte) '3');
+				writer.Write((byte) 'D');
+				writer.Write((byte) 4);
+				AnimatedModel model = structure as AnimatedModel;
+				int frameCount = model.Count;
+				int meshCount = MeshExtensions.IsNullOrEmpty(model) ? 0 : model[0].Count;
+				writer.Write((ushort) meshCount);
+				writer.Write((byte) 0);
+				if (meshCount == 0)
+					return;
+
+				MeshComponent mesh;
+				MeshComponent currentMesh = model[0] as MeshComponent;
+				bool hasMultipleModels = currentMesh == null;
+					
+				List<byte> name; //the name of the model
+				Vertex[] bufferData;
+				int frame, vertex, index;
+				bool hasTexture;
+				for (int i = 0; i < meshCount; i++) {
+					currentMesh = hasMultipleModels ? ((MeshComponent) ((Model) model[0])[i]) : (MeshComponent) model[i];
+					name = new List<byte>(Encoding.UTF8.GetBytes(currentMesh.Name == null ? string.Empty : (currentMesh.Name.Length > 63 ? currentMesh.Name.Substring(0, 63) : currentMesh.Name)));
+					while (name.Count < 64)
+						name.Add(0);
+					writer.Write(name.ToArray()); //the name of the model
+					writer.Write((uint) frameCount); //number of frames of the mesh
+					writer.Write((uint) currentMesh.Vertices); //number of vertices in the mesh
+					writer.Write((uint) currentMesh.IndexCount); //number of indices in the mesh
+					writer.Write(currentMesh.MaterialHue.R);
+					writer.Write(currentMesh.MaterialHue.G);
+					writer.Write(currentMesh.MaterialHue.B);
+					writer.Write(currentMesh.ShineHue.R);
+					writer.Write(currentMesh.ShineHue.G);
+					writer.Write(currentMesh.ShineHue.B);
+					writer.Write(currentMesh.Shininess);
+					writer.Write(currentMesh.MaterialHue.A);
+					writer.Write((uint) (currentMesh.Cull ? MeshPropertyFlag.None : MeshPropertyFlag.TwoSided));
+					hasTexture = MeshExtensions.IsNullOrEmpty(currentMesh.Textures);
+					if (hasTexture)
+						writer.Write((uint) MeshTexture.None);
+					else {
+						writer.Write((uint) MeshTexture.Diffuse);
+						name = new List<byte>(Encoding.UTF8.GetBytes(currentMesh.Textures.Name == null ? string.Empty : (currentMesh.Textures.Name.Length > 63 ? currentMesh.Textures.Name.Substring(0, 63) : currentMesh.Textures.Name)));
+						while (name.Count < 64)
+							name.Add(0);
+						writer.Write(name.ToArray());
+					}
+					for (frame = 0; frame < frameCount; frame++) {
+						mesh = hasMultipleModels ? ((MeshComponent) ((Model) model[frame])[i]) : (MeshComponent) model[frame];
+						bufferData = mesh.BufferData;
+						for (vertex = 0; vertex < mesh.Vertices; vertex++) {
+							writer.Write(bufferData[vertex].Pos.X);
+							writer.Write(bufferData[vertex].Pos.Y);
+							writer.Write(bufferData[vertex].Pos.Z);
+						}
+					}
+					for (frame = 0; frame < frameCount; frame++) {
+						mesh = hasMultipleModels ? ((MeshComponent) ((Model) model[frame])[i]) : (MeshComponent) model[frame];
+						bufferData = mesh.BufferData;
+						for (vertex = 0; vertex < mesh.Vertices; vertex++) {
+							writer.Write(bufferData[vertex].Normal.X);
+							writer.Write(bufferData[vertex].Normal.Y);
+							writer.Write(bufferData[vertex].Normal.Z);
+						}
+					}
+					if (hasTexture) {
+						mesh = hasMultipleModels ? ((MeshComponent) ((Model) model[frame])[i]) : (MeshComponent) model[frame];
+						bufferData = mesh.BufferData;
+						for (vertex = 0; vertex < mesh.Vertices; vertex++) {
+							writer.Write(bufferData[vertex].TexPos.X);
+							writer.Write(bufferData[vertex].TexPos.Y);
+						}
+					}
+					Array buffer = currentMesh.IndexBuffer.Indices;
+					switch (currentMesh.IndexBuffer.Format) {
+						case OGL.DrawElementsType.UnsignedByte: {
+								byte[] indices = (byte[]) buffer;
+								for (index = 0; index < indices.Length; index++)
+									writer.Write((uint) indices[index]);
+								break;
+							}
+						case OGL.DrawElementsType.UnsignedShort: {
+								ushort[] indices = (ushort[]) buffer;
+								for (index = 0; index < indices.Length; index++)
+									writer.Write((uint) indices[index]);
+								break;
+							}
+						default: {
+								uint[] indices = (uint[]) buffer;
+								for (index = 0; index < indices.Length; index++)
+									writer.Write(indices[index]);
+								break;
+							}
+					}
+				}
+			}
+		}
 	}
 }

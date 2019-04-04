@@ -58,7 +58,7 @@ namespace System.Graphics.Models {
 		private IndexBuffer indexBuffer;
 		private TextureCollection texture;
 		private IModel parent;
-		private int triangles, vertices;
+		private int indexCount, vertices;
 		/// <summary>
 		/// The transformation matrix that is used if 'UseCustomTransformation' is set to true. The same as TransformationMatrix
 		/// </summary>
@@ -69,10 +69,11 @@ namespace System.Graphics.Models {
 		/// </summary>
 		public bool KeepCopyInMemory {
 			get {
-				return indexBuffer.KeepCopyInMemory;
+				return indexBuffer == null ? false : indexBuffer.KeepCopyInMemory;
 			}
 			set {
-				indexBuffer.KeepCopyInMemory = value;
+				if (indexBuffer != null)
+					indexBuffer.KeepCopyInMemory = value;
 			}
 		}
 
@@ -102,7 +103,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the component's hue and opacity
+		/// Gets or sets the component's hue and opacity (diffuse color)
 		/// </summary>
 		public ColorF MaterialHue {
 			get;
@@ -118,7 +119,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the hue of the reflective shine of the object
+		/// Gets or sets the hue of the reflective specular shine of the object
 		/// </summary>
 		public ColorF ShineHue {
 			get;
@@ -126,7 +127,7 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Gets or sets the shininess exponent of the material
+		/// Gets or sets the shininess (specular) exponent of the material
 		/// </summary>
 		public float Shininess {
 			get;
@@ -142,15 +143,6 @@ namespace System.Graphics.Models {
 			}
 			set {
 				Transformation = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets the number of components in the model
-		/// </summary>
-		public int Count {
-			get {
-				return 0;
 			}
 		}
 
@@ -223,7 +215,19 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return triangles;
+				return indexCount / 3;
+			}
+		}
+
+		/// <summary>
+		/// Gets the number of indices in the model
+		/// </summary>
+		public int IndexCount {
+#if NET45
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+			get {
+				return indexCount;
 			}
 		}
 
@@ -303,6 +307,24 @@ namespace System.Graphics.Models {
 		public ITexture DefaultTexture {
 			get;
 			set;
+		}
+
+		/// <summary>
+		/// Gets whether the current model is considered empty without evaluating sub-components
+		/// </summary>
+		public bool IsEmpty {
+			get {
+				return vertices == 0 || indexCount == 0;
+			}
+		}
+
+		/// <summary>
+		/// Returns 1 if the mesh component is not empty, otherwise returns 0
+		/// </summary>
+		public int Count {
+			get {
+				return IsEmpty ? 0 : 1;
+			}
 		}
 
 		/// <summary>
@@ -628,7 +650,7 @@ namespace System.Graphics.Models {
 			currentScale = modelComponent.currentScale;
 			BufferSize = modelComponent.BufferSize;
 			Visible = modelComponent.Visible;
-			triangles = modelComponent.triangles;
+			indexCount = modelComponent.indexCount;
 			vertices = modelComponent.vertices;
 			texture = modelComponent.texture;
 			if (texture == null)
@@ -688,7 +710,7 @@ namespace System.Graphics.Models {
 			DataBuffer = new DataBuffer();
 			if (GL.Delegates.glGenVertexArrays != null)
 				VertexArrayBuffer = new VertexArrayBuffer();
-			triangles = indices.Length / 3;
+			indexCount = indices.Length;
 			indexBuffer = IndexBuffer.FromArray(indices);
 			this.vertices = bufferData.Length;
 			BufferSize = new IntPtr(bufferData.Length * Vertex.SizeOfVertex);
@@ -1030,8 +1052,9 @@ namespace System.Graphics.Models {
 			}
 			if (FlushBufferOnNextRender && !KeepCopyInMemory)
 				FlushBuffer();
-			indexBuffer.Bind();
-			GL.DrawElements(BeginMode.Triangles, indexBuffer.Count, indexBuffer.Format, IntPtr.Zero);
+			if (indexBuffer != null)
+				indexBuffer.Bind();
+			GL.DrawElements(BeginMode.Triangles, indexCount, indexBuffer == null ? DrawElementsType.UnsignedInt : indexBuffer.Format, IntPtr.Zero);
 			if (vab == null) {
 				GL.DisableVertexAttribArray(0);
 				GL.DisableVertexAttribArray(1);
@@ -1162,9 +1185,9 @@ namespace System.Graphics.Models {
 		public override string ToString() {
 			string name = Name == null ? null : Name.Trim();
 			if (name == null || name.Length == 0)
-				return "{ Vertices: " + Vertices + " }";
+				return GetType().Name + ": { Vertices: " + Vertices + " }";
 			else
-				return "{ Vertices: " + Vertices + ", Name: " + name + " }";
+				return GetType().Name + ": { Vertices: " + Vertices + ", Name: " + name + " }";
 		}
 
 		/// <summary>
@@ -1253,6 +1276,8 @@ namespace System.Graphics.Models {
 			texture = null;
 			DefaultTexture = null;
 			DataBuffer = null;
+			vertices = 0;
+			indexCount = 0;
 			if (indexBuffer != null) {
 				indexBuffer.Dispose();
 				indexBuffer = null;
