@@ -11,14 +11,15 @@ namespace System.Graphics.Models {
 		/// <summary>
 		/// Creates a 2D orthographic mesh from the specified quadrilateral
 		/// </summary>
+		/// <param name="name">The name of the mesh component</param>
 		/// <param name="texture">The texture of the quad mesh from (can be null)</param>
 		/// <param name="location">The location on initialize the mesh at</param>
 		/// <param name="size">The size of the mesh</param>
 		/// <param name="flipVertically">Whether to render the texture upside down</param>
 		/// <param name="render2D">True if the mesh is meant to be rendered on an orthographic projection</param>
-		public static MeshComponent MeshFromQuad(TextureCollection texture, Vector3 location, Vector2 size, bool flipVertically = false, bool render2D = true) {
+		public static MeshComponent MeshFromQuad(string name, TextureCollection texture, Vector3 location, Vector2 size, bool flipVertically = false, bool render2D = true) {
 			if (flipVertically) {
-				return new MeshComponent(texture, MeshExtensions.TriangulateQuads(new Vertex[] {
+				return new MeshComponent(name, texture, MeshExtensions.TriangulateQuads(new Vertex[] {
 					new Vertex(location, Vector2.UnitY),
 					new Vertex(new Vector3(location.X + size.X, location.Y, location.Z), Vector2.One),
 					new Vertex(new Vector3(location.X + size.X, location.Y + size.Y, location.Z), Vector2.UnitX),
@@ -27,7 +28,7 @@ namespace System.Graphics.Models {
 					LowOpacity = render2D
 				};
 			} else {
-				return new MeshComponent(texture, MeshExtensions.TriangulateQuads(new Vertex[] {
+				return new MeshComponent(name, texture, MeshExtensions.TriangulateQuads(new Vertex[] {
 					new Vertex(location, Vector2.Zero),
 					new Vertex(new Vector3(location.X + size.X, location.Y, location.Z), Vector2.UnitX),
 					new Vertex(new Vector3(location.X + size.X, location.Y + size.Y, location.Z), Vector2.One),
@@ -110,7 +111,7 @@ namespace System.Graphics.Models {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 		public static MeshComponent CreateShared2DMeshRect() {
-			return MeshFromQuad(null, Vector3.Zero, Vector2.One, false, true);
+			return MeshFromQuad("Shared2DMeshRect", null, Vector3.Zero, Vector2.One, false, true);
 		}
 
 		/// <summary>

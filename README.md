@@ -6,8 +6,8 @@ An open-source C# framework for multithreaded 3D graphics and game development.
 
 ## Manual Plaform Retarget:
 
-- To target .Net Framework 4.7, declare compiler constants NET45 and NET47.
-- To target .Net Framework 4.5 or 4.6, declare compiler constant NET45.
+- To target .Net Framework 4.7.x or newer, declare compiler constants NET45 and NET47.
+- To target .Net Framework 4.5.x or 4.6.x, declare compiler constant NET45.
 - To target .Net Framework 4.0 (Client or Non-Client profile), declare no compiler constant and add references to System.Numerics.Vectors.
 - To target .Net Framework 3.5 (Client or Non-Client or Unity Full-Base Class profile), declare compiler constant NET35 and add references to System.Numerics.Vectors and System.Threading.Tasks.
 - To target .Net Framework 2.0 or 3.0, declare compiler constants NET20 and NET35 and add references to System.Numerics.Vectors, System.Threading.Tasks and System.Core.

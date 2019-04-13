@@ -978,7 +978,7 @@ namespace System.Windows.Forms {
 					}
 				}
 				RedrawBorder(false);
-				OnBorderTextureChanged();
+				OnBorderTextureChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1111,13 +1111,11 @@ namespace System.Windows.Forms {
 				showBorder = value;
 				if (isFullScreen)
 					return;
-				else if (value) {
+				else if (value)
 					RefreshBorder();
-					OnShowBorderChanged();
-				} else {
+				else
 					OnBorderSizeChangedInner(-borderWidth, -titleBarHeight);
-					OnShowBorderChanged();
-				}
+				OnShowBorderChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1362,7 +1360,7 @@ namespace System.Windows.Forms {
 					wasTopMost = TopMost;
 					TopMost = true;
 					Activate();
-					OnEnterFullScreen();
+					OnFullScreenChanged(EventArgs.Empty, true);
 				} else {
 					if (WindowBorder != FormBorderStyle.None)
 						FormBorderStyle = WindowBorder;
@@ -1373,7 +1371,7 @@ namespace System.Windows.Forms {
 					} else
 						AnimateBoundsTo(oldBounds);
 					TopMost = wasTopMost;
-					OnLeaveFullScreen();
+					OnFullScreenChanged(EventArgs.Empty, false);
 				}
 			}
 		}
@@ -1465,7 +1463,7 @@ namespace System.Windows.Forms {
 			callOnResizeEnd = CallOnResizeEnd;
 			CheckForIllegalCrossThreadCalls = false;
 			Name = nameof(StyledForm);
-			OnConstructorStarted();
+			OnConstructorStarted(null);
 			SetStyle(ControlStyles.StandardClick | ControlStyles.UserMouse | ControlStyles.ResizeRedraw, false);
 			SetStyle(ControlStyles.CacheText | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			Cursor = DefaultCursor;
@@ -1567,7 +1565,7 @@ namespace System.Windows.Forms {
 			if (!(oldScale.Width == DpiScale.Width && oldScale.Height == DpiScale.Height)) {
 				Scale(new SizeF(DpiScale.Width / oldScale.Width, DpiScale.Height / oldScale.Height));
 				TitleBarChanged(0, 0);
-				OnDpiChanged();
+				OnDpiChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1575,7 +1573,7 @@ namespace System.Windows.Forms {
 		/// Called when the constructor is about to start. This is called only once.
 		/// Don't do anything fancy, almost everything is null or uninitialized
 		/// </summary>
-		protected virtual void OnConstructorStarted() {
+		protected virtual void OnConstructorStarted(EventArgs e) {
 		}
 
 		/// <summary>
@@ -1779,8 +1777,9 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the ShowInTaskbar property has changed
 		/// </summary>
+		/// <param name="e">Ignored</param>
 		/// <param name="showInTaskbar">The new value of the property</param>
-		protected virtual void OnShowInTaskbarChanged(bool showInTaskbar) {
+		protected virtual void OnShowInTaskbarChanged(EventArgs e, bool showInTaskbar) {
 		}
 
 		private object SetShowInTaskbarCore(object newValue) {
@@ -1797,7 +1796,7 @@ namespace System.Windows.Forms {
 					SetVisibleNoAnimation(true);
 			} else
 				base.ShowInTaskbar = false;
-			OnShowInTaskbarChanged(newValueBool);
+			OnShowInTaskbarChanged(EventArgs.Empty, newValueBool);
 			return null;
 		}
 
@@ -2882,7 +2881,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the border texture has been updated
 		/// </summary>
-		protected virtual void OnBorderTextureChanged() {
+		protected virtual void OnBorderTextureChanged(EventArgs e) {
 		}
 
 		/// <summary>
@@ -2913,7 +2912,7 @@ namespace System.Windows.Forms {
 				FadeState = FadeState.Normal;
 				OnShown(EventArgs.Empty);
 				opacity = 255;
-				OnFadeInCompleted();
+				OnFadeInCompleted(EventArgs.Empty);
 				if (!ShowWithoutActivation)
 					Activate();
 			}
@@ -3157,7 +3156,7 @@ namespace System.Windows.Forms {
 					Bounds = oldBounds;
 			}
 			OnClientSizeChanged(null);
-			OnMaximizeChanged();
+			OnMaximizeChanged(EventArgs.Empty);
 			RedrawBorder(false);
 		}
 
@@ -3203,7 +3202,7 @@ namespace System.Windows.Forms {
 				UIAnimator.SharedAnimator.Animate(TopInnerProperty, screen.Bounds.Bottom - 1, 0.5, 2.0, false, onMinimizeUpdate, true);
 			} else
 				OnMinimizeFinished();
-			OnMinimizeChanged();
+			OnMinimizeChanged(EventArgs.Empty);
 		}
 
 		private void Restore() {
@@ -3221,7 +3220,7 @@ namespace System.Windows.Forms {
 				UIAnimator.SharedAnimator.Animate(TopInnerProperty, topBeforeMinimize, 0.5, 2.0, false, onMinimizeUpdate, true);
 			else
 				OnMinimizeFinished();
-			OnMinimizeChanged();
+			OnMinimizeChanged(EventArgs.Empty);
 		}
 
 		private bool OnMinimizeUpdate(AnimationInfo state) {
@@ -3252,7 +3251,7 @@ namespace System.Windows.Forms {
 				TitleBarChanged(0, 0);
 			}
 			OnResizeEnd(EventArgs.Empty);
-			OnMinimizeAnimationFinished();
+			OnMinimizeAnimationFinished(EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -3344,7 +3343,7 @@ namespace System.Windows.Forms {
 						Activate();
 						ActivateBorder();
 					}
-					OnFadeInCompleted();
+					OnFadeInCompleted(EventArgs.Empty);
 				} else if (fadeState == FadeState.FadingOut) {
 					if (Thread.CurrentThread == residentThread)
 						SetVisibleCore(false);
@@ -3401,7 +3400,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the minimize animation is completed.
 		/// </summary>
-		protected virtual void OnMinimizeAnimationFinished() {
+		protected virtual void OnMinimizeAnimationFinished(EventArgs e) {
 		}
 
 		private object SetVisible(object value) {
@@ -3441,7 +3440,7 @@ namespace System.Windows.Forms {
 					OnShown(EventArgs.Empty);
 					if (IsMinimized && !restoring)
 						Restore();
-					OnFadeInCompleted();
+					OnFadeInCompleted(EventArgs.Empty);
 				} else {
 					if (FadeState == FadeState.FadingIn) {
 						base.SetVisibleCore(true);
@@ -3457,7 +3456,7 @@ namespace System.Windows.Forms {
 							FadeState = FadeState.Normal;
 							base.SetVisibleCore(true);
 							OnShown(EventArgs.Empty);
-							OnFadeInCompleted();
+							OnFadeInCompleted(EventArgs.Empty);
 						}
 					}
 				}
@@ -3477,7 +3476,7 @@ namespace System.Windows.Forms {
 				} else {
 					FadeState = FadeState.Normal;
 					base.SetVisibleCore(false);
-					OnFadeOutCompleted();
+					OnFadeOutCompleted(EventArgs.Empty);
 					openForms.Remove(this);
 				}
 			}
@@ -3488,7 +3487,7 @@ namespace System.Windows.Forms {
 			closeSize = new Size((int) (titleBarHeight * 1.5f * DpiScale.Height) - 1, newHeight);
 			maximizeButtonSize = new Size((int) (titleBarHeight * DpiScale.Height) - 1, newHeight);
 			OnBorderSizeChangedInner(widthDiff, titleBarDiff);
-			OnBorderLayoutChanged();
+			OnBorderLayoutChanged(EventArgs.Empty);
 		}
 
 		private void OnBorderSizeChangedInner(int widthDiff, int titleBarDiff) {
@@ -3505,7 +3504,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the form DPI has been changed.
 		/// </summary>
-		protected virtual void OnDpiChanged() {
+		protected virtual void OnDpiChanged(EventArgs e) {
 		}
 
 		/// <summary>
@@ -3610,7 +3609,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the display resolution changed.
 		/// </summary>
-		protected virtual void OnDisplaySettingsChanged() {
+		protected virtual void OnDisplaySettingsChanged(EventArgs e) {
 		}
 
 		/// <summary>
@@ -3640,7 +3639,7 @@ namespace System.Windows.Forms {
 							AnimateBoundsTo(screen.Bounds);
 						else if (isMaximized)
 							AnimateBoundsTo(WorkingArea);
-						OnDisplaySettingsChanged();
+						OnDisplaySettingsChanged(EventArgs.Empty);
 						return;
 					case WindowMessage.CONTEXTMENU: {
 							Point curPos = Cursor.Position;
@@ -3876,7 +3875,7 @@ namespace System.Windows.Forms {
 			if (oldWindowState != state) {
 				bool wasMinimized = oldWindowState == FormWindowState.Minimized;
 				oldWindowState = state;
-				OnStateChanged();
+				OnStateChanged(EventArgs.Empty);
 				if (wasMinimized && state != FormWindowState.Minimized)
 					Restore();
 			}
@@ -3904,7 +3903,7 @@ namespace System.Windows.Forms {
 				if (WindowBorder != FormBorderStyle) {
 					WindowBorder = FormBorderStyle;
 					UpdateShadow();
-					OnBorderStyleChanged();
+					OnBorderStyleChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -3912,7 +3911,7 @@ namespace System.Windows.Forms {
 		private void RefreshBorder() {
 			if (showBorder && !(IsMinimized || minimizing || restoring || isFullScreen || animatingTopInner || AnimatingBounds || IsClosing)) {
 				bool bordersShown = !(isMaximized && IsFullyMaximized);
-				int titleBarHeight = (int) (this.titleBarHeight * DpiScale.Height);
+				//int titleBarHeight = (int) (this.titleBarHeight * DpiScale.Height);
 				if (bordersShown == wereBordersShown)
 					RedrawBorder(false);
 				else {
@@ -4162,67 +4161,61 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the window state is actually changed (for example, minimize is fully completed, the window is maximized or fullscreen...).
 		/// </summary>
-		protected virtual void OnStateChanged() {
+		protected virtual void OnStateChanged(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called whenever the window is minimized or restored.
 		/// </summary>
-		protected virtual void OnMinimizeChanged() {
+		protected virtual void OnMinimizeChanged(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called whenever the window is maximized or unmaximized.
 		/// </summary>
-		protected virtual void OnMaximizeChanged() {
+		protected virtual void OnMaximizeChanged(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called when the FPS count is updated.
 		/// </summary>
-		protected virtual void OnFramesPerSecondUpdated() {
+		protected virtual void OnFramesPerSecondUpdated(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called when the window fade-in is completed.
 		/// </summary>
-		protected virtual void OnFadeInCompleted() {
+		protected virtual void OnFadeInCompleted(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called when the ShowBorder value has changed.
 		/// </summary>
-		protected virtual void OnShowBorderChanged() {
+		protected virtual void OnShowBorderChanged(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called when the border layout is adjusted.
 		/// </summary>
-		protected virtual void OnBorderLayoutChanged() {
+		protected virtual void OnBorderLayoutChanged(EventArgs e) {
 		}
 
 		/// <summary>
-		/// Called when the window enters full screen mode.
+		/// Called when the window enters or leaves full screen mode.
 		/// </summary>
-		protected virtual void OnEnterFullScreen() {
-		}
-
-		/// <summary>
-		/// Called when the window leaves full screen mode.
-		/// </summary>
-		protected virtual void OnLeaveFullScreen() {
+		protected virtual void OnFullScreenChanged(EventArgs e, bool isFullScreen) {
 		}
 
 		/// <summary>
 		/// Called when FormBorderStyle has changed.
 		/// </summary>
-		protected virtual void OnBorderStyleChanged() {
+		protected virtual void OnBorderStyleChanged(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called when the fade out is completed.
 		/// </summary>
-		protected virtual void OnFadeOutCompleted() {
+		protected virtual void OnFadeOutCompleted(EventArgs e) {
 		}
 
 		/// <summary>
@@ -4261,7 +4254,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the window is now starting to close.
 		/// </summary>
-		protected virtual void OnClosing() {
+		protected virtual void OnClosing(EventArgs e) {
 		}
 
 		/// <summary>
@@ -4277,7 +4270,7 @@ namespace System.Windows.Forms {
 			if (FadeState == FadeState.FadingOut) {
 				if (!IsClosing) {
 					IsClosing = true;
-					OnClosing();
+					OnClosing(e);
 				}
 				e.Cancel = true;
 			} else if (IsClosing || !Visible) {
@@ -4287,7 +4280,7 @@ namespace System.Windows.Forms {
 			} else if (OnQueryClose(e.CloseReason)) {
 				Capture = false;
 				IsClosing = true;
-				OnClosing();
+				OnClosing(e);
 				SetVisibleCore(false);
 				if (EnableOpacityAnimation && AllowTransparency && !DesignMode && WindowState != FormWindowState.Minimized)
 					e.Cancel = true;

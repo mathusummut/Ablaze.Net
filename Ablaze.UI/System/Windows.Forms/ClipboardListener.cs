@@ -34,14 +34,14 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Gets or sets whether the clipboard is monitored.
 		/// </summary>
-		private static bool Enabled {
+		public static bool Enabled {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
 				return nativeMonitor != null;
 			}
-			set {
+			private set {
 				if (value == (nativeMonitor != null))
 					return;
 				if (value) {

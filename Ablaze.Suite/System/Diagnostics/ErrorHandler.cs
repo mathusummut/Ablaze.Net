@@ -308,7 +308,7 @@ namespace System.Diagnostics {
 		}
 
 		private sealed class ErrorDialogForm : Form {
-			private readonly int count = IncrementDialogCount();
+			private readonly int count = IncrementDialogCount(); //leave this here
 			private Panel panel1;
 			private Button ignoreButton, throwButton, quitButton;
 			private CheckBox checkBox1;

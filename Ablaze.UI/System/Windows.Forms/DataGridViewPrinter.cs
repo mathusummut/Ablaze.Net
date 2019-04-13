@@ -268,7 +268,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void DrawFooter(PrintPageEventArgs e, int RowsPerPage) {
-			int cnt = 0;
+			int cnt;
 			// Detemining rows number to print
 			if (PrintAllRows) {
 				if (dataGrid.Rows[dataGrid.Rows.Count - 1].IsNewRow)

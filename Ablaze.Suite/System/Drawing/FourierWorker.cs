@@ -151,7 +151,7 @@ namespace System.Drawing {
 		public FourierWorker(PixelWorker image, bool shiftAxes = true, bool ignoreAlpha = false, bool disposeImage = false, int targetWidth = -1, int targetHeight = -1) {
 			if (image == null)
 				return;
-			int componentCount = image.ComponentCount, targetPixelCount = image.PixelCount;
+			int componentCount = image.ComponentCount;
 			if (ignoreAlpha && componentCount == 4) {
 				componentCount = 3;
 				alphaReference = image;
@@ -173,7 +173,7 @@ namespace System.Drawing {
 			fourierHeightLog2 = Maths.Log2((uint) FourierHeight);
 			ComplexF[] current;
 			byte comp;
-			int c, x = 0, y = 0, fourierWidth = FourierWidth, fourierHeight = FourierHeight, tw = TargetWidth;
+			int c, x, y, fourierWidth = FourierWidth, fourierHeight = FourierHeight, tw = TargetWidth;
 			int tcc = image.ComponentCount, txMinusOne = TargetWidth - 1, tyMinusOne = TargetHeight - 1;
 			for (c = 0; c < componentCount; c++) {
 				current = new ComplexF[FourierPixelCount];

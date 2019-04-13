@@ -107,9 +107,13 @@ namespace System.Graphics.Models.Parsers {
 					properties = (MeshPropertyFlag) reader.ReadUInt32();
 					associatedTextures = (MeshTexture) reader.ReadUInt32();
 					if (textures == null || textures.Count == 0) {
-						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) //has texture
-							diffuseTexture = TextureParser.Parse(Encoding.UTF8.GetString(reader.ReadBytes(64)).TruncateAtNull());
-						else
+						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) { //has texture
+							try {
+								diffuseTexture = TextureParser.Parse(Encoding.UTF8.GetString(reader.ReadBytes(64)).TruncateAtNull());
+							} catch {
+								diffuseTexture = null;
+							}
+						} else
 							diffuseTexture = null;
 					} else
 						diffuseTexture = textures;
@@ -142,16 +146,15 @@ namespace System.Graphics.Models.Parsers {
 						indices[index] = reader.ReadUInt32();
 					animatedComponent = new AnimatedModel(AnimationSpeed);
 					for (frame = 0; frame < frameCount; frame++) {
-						animatedComponent.Add(new MeshComponent(diffuseTexture, bufferData[frame], indices) {
+						animatedComponent.Add(new MeshComponent(name, diffuseTexture, bufferData[frame], indices) {
 							Cull = (properties & MeshPropertyFlag.TwoSided) != MeshPropertyFlag.TwoSided,
 							Alpha = opacity,
 							MaterialHue = diffuseColor,
 							ShineHue = specularColor,
-							Shininess = specularPower,
-							Name = name
+							Shininess = specularPower
 						});
 					}
-					model.CombineWith(animatedComponent);
+					model.CombineWith(animatedComponent, true);
 				}
 			}
 			return model;
@@ -172,7 +175,7 @@ namespace System.Graphics.Models.Parsers {
 					structure = temp[0];
 			}
 			using (BinaryWriter writer = new BinaryWriter(stream)) {
-				// model header
+				//model header
 				writer.Write((byte) 'G');
 				writer.Write((byte) '3');
 				writer.Write((byte) 'D');

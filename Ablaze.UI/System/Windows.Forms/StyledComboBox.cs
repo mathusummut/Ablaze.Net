@@ -618,13 +618,13 @@ namespace System.Windows.Forms {
 
 		private void TransferToContextMenu() {
 			string text;
-			int index = -1;
+			//int index = -1;
 			for (int i = 0; i < base.Items.Count; i++) {
 				text = base.Items[i].ToString();
-				if (text == Key)
-					index = i;
-				else
+				if (text != Key)
 					AddItem(text);
+				/*else
+					index = i;*/
 			}
 			if (Label.Text.Length == 0 && ContextMenuStrip.Items.Count != 0)
 				Text = ContextMenuStrip.Items[0].Text;

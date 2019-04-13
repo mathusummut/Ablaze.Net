@@ -5,13 +5,11 @@ namespace System.Text.JScript {
 		public static void Serialize(object obj, JavaScriptSerializer jss, StringBuilder output) {
 			JsonSerializer js = new JsonSerializer(jss);
 			js.Serialize(obj, output);
-			js = null;
 		}
 
 		public static void Serialize(object obj, JavaScriptSerializer jss, TextWriter output) {
 			JsonSerializer js = new JsonSerializer(jss);
 			js.Serialize(obj, output);
-			js = null;
 		}
 
 		public static object Deserialize(string input, JavaScriptSerializer jss) {

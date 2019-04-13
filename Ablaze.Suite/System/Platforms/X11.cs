@@ -2478,7 +2478,7 @@ XF86VidModeGetGammaRampSize(
 		public static IntPtr CreatePixmapFromImage(IntPtr display, Bitmap image) {
 			int width = image.Width;
 			int height = image.Height;
-			int size = width * height;
+			//int size = width * height;
 
 			BitmapData data = image.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 

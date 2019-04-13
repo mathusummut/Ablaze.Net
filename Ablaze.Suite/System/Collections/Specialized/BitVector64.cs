@@ -220,7 +220,7 @@ namespace System.Collections.Specialized {
 			ulong data = Data;
 			for (int i = 0; i < 0x40; i++) {
 				sb.Append(((data & 0x8000000000000000) == 0) ? '0' : '1');
-				data = data << 1;
+				data <<= 1;
 			}
 
 			sb.Append("}");

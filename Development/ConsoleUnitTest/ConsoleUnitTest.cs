@@ -6,8 +6,6 @@ using System.Windows.Forms;
 
 namespace ConsoleUnitTest {
 	public static class UnitTest {
-		private static PreciseStopwatch watch = new PreciseStopwatch();
-
 		[STAThread]
 		public static void Main() {
 			PreciseStopwatch watch = new PreciseStopwatch();

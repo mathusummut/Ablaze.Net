@@ -569,7 +569,7 @@ namespace System {
 #endif
 		[CLSCompliant(false)]
 		public static int NumberOfSetBits(this uint val) {
-			val = val - ((val >> 1) & 0x55555555);
+			val -= (val >> 1) & 0x55555555;
 			val = (val & 0x33333333) + ((val >> 2) & 0x33333333);
 			return (int) unchecked((((val + (val >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24);
 		}
@@ -594,7 +594,7 @@ namespace System {
 #endif
 		[CLSCompliant(false)]
 		public static int NumberOfSetBits(this ulong val) {
-			val = val - ((val >> 1) & 0x5555555555555555UL);
+			val -= (val >> 1) & 0x5555555555555555UL;
 			val = (val & 0x3333333333333333UL) + ((val >> 2) & 0x3333333333333333UL);
 			return (int) unchecked(((val + (val >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL >> 56);
 		}

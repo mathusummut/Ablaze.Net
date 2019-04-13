@@ -78,7 +78,7 @@ namespace System.Graphics.Models {
 				}
 				y++;
 			}
-			MeshComponent component = new MeshComponent(null, MeshExtensions.TriangulateQuads(vertices.ToArray()), optimizeIndices, OGL.BufferUsageHint.StaticDraw);
+			MeshComponent component = new MeshComponent("HeightMap", null, MeshExtensions.TriangulateQuads(vertices.ToArray()), optimizeIndices, OGL.BufferUsageHint.StaticDraw);
 			component.ScaleMesh(new Vector3(scale.X, 1f, scale.Y), Vector3.Zero);
 			component.FlushBufferOnNextRender = flushBuffer;
 			return component;

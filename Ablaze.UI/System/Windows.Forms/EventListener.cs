@@ -194,14 +194,14 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Whether the key press hook is enabled.
 		/// </summary>
-		private static bool Enabled {
+		public static bool Enabled {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
 				return enabled;
 			}
-			set {
+			private set {
 				if (value == enabled || StyledForm.DesignMode)
 					return;
 				else if (value)

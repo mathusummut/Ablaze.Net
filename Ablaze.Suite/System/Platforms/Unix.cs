@@ -49,7 +49,7 @@ namespace System.Platforms.Unix {
 		/// Detects the unix kernel by p/invoking uname (libc).
 		/// </summary>
 		public static string GetUnixKernelName() {
-			utsname uts = new utsname();
+			utsname uts;
 			uname(out uts);
 			return uts.sysname;
 		}

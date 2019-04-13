@@ -2483,7 +2483,7 @@ namespace System {
 			if (Math.Abs(radii.X - radii.Y) <= float.Epsilon)
 				return SetAngleFrom(radii, Vector2.Zero, angle);
 			else {
-				angle = angle % Maths.TwoPiF;
+				angle %= Maths.TwoPiF;
 				if (angle >= Maths.PiF)
 					angle -= Maths.TwoPiF;
 				double t = Math.Atan(radii.X * Math.Tan(angle) / radii.Y);

@@ -201,7 +201,6 @@ namespace System.Collections.Generic {
 		/// </summary>
 		/// <param name="item">The item to remove.</param>
 		public bool Remove(T item) {
-			T removedItem = item;
 			int index = heap.IndexOf(item);
 			if (index == -1)
 				return false;
@@ -209,10 +208,7 @@ namespace System.Collections.Generic {
 				Dequeue();
 				return true;
 			}
-			int parent = (index - 1) >> 1;
-			int leftChild, rightChild, twiceParent = 2 * parent;
-			leftChild = twiceParent + 1;
-			rightChild = twiceParent + 2;
+			int parent;
 			int last = heap.Count - 1;
 			T lastItem = heap[last];
 			if (last != 0 && index != last) {

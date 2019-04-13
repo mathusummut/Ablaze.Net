@@ -1446,7 +1446,7 @@ namespace System.Platforms.MacOS {
 		public unsafe static extern OSStatus _ZoomWindowIdeal(IntPtr windowRef, short inPartCode, IntPtr toIdealSize);
 
 		public static void ZoomWindowIdeal(IntPtr windowRef, WindowPartCode inPartCode, ref CarbonPoint toIdealSize) {
-			CarbonPoint pt = toIdealSize;
+			//CarbonPoint pt = toIdealSize;
 			OSStatus error;
 			IntPtr handle = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CarbonPoint)));
 			Marshal.StructureToPtr(toIdealSize, handle, false);

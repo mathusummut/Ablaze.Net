@@ -147,7 +147,7 @@ namespace System.Graphics.Models {
 		/// Renders the scene (must be called on a thread on which an OpenGL context is set up, preferably on the thread on which the model was loaded)
 		/// Bind the global shader calling Render()
 		/// </summary>
-		/// <param name="nextModel">Ignored</param>
+		/// <param name="nextModel">The next scene to blend with (must have the exact same structure), or just null</param>
 		public override void Render(IModel nextModel) {
 			GlobalShader shader = (GlobalShader) Shader.CurrentShader;
 			bool light = LightingEnabled;
@@ -157,7 +157,7 @@ namespace System.Graphics.Models {
 				shader.SetUniformValue(GlobalShaderParams.LightPosition.ToString(), Light.Position, ShaderSetMode.SetImmediately);
 				shader.SetUniformValue(GlobalShaderParams.PointLight.ToString(), Light.PointLight ? 1f : 0f, ShaderSetMode.SetImmediately);
 			}
-			base.Render(null);
+			base.Render(nextModel);
 		}
 
 		/// <summary>

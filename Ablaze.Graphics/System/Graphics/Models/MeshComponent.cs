@@ -239,7 +239,7 @@ namespace System.Graphics.Models {
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
-				return new MeshComponent(null, null, null, BufferUsageHint.StaticDraw, false);
+				return new MeshComponent(nameof(Empty), null, null, null, BufferUsageHint.StaticDraw, false);
 			}
 		}
 
@@ -663,39 +663,43 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Initializes a new mesh component.
+		/// Initializes a new mesh component
 		/// </summary>
-		/// <param name="texture">The texture to use with the model.</param>
-		/// <param name="optimization">Configures what the mesh is optimized for.</param>
-		/// <param name="vertices">A sequential array of all the vertices of the triangles of the mesh.</param>
-		/// <param name="optimizeDuplicates">Whether to remove duplicates from the array (may take a long time to perform).</param>
+		/// <param name="name">The name of the mesh component</param>
+		/// <param name="texture">The texture to use with the model</param>
+		/// <param name="optimization">Configures what the mesh is optimized for</param>
+		/// <param name="vertices">A sequential array of all the vertices of the triangles of the mesh</param>
+		/// <param name="optimizeDuplicates">Whether to remove duplicates from the array (may take a long time to perform)</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
-		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public MeshComponent(TextureCollection texture, Vertex[] vertices, bool optimizeDuplicates, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(texture, MeshExtensions.GenerateIndices(vertices, optimizeDuplicates), optimization, flushBuffer) {
+		/// manipulate the mesh vertices must be performed on an OpenGL thread</param>
+		public MeshComponent(string name, TextureCollection texture, Vertex[] vertices, bool optimizeDuplicates, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(name, texture, MeshExtensions.GenerateIndices(vertices, optimizeDuplicates), optimization, flushBuffer) {
 		}
 
 		/// <summary>
-		/// Initializes a new mesh component.
+		/// Initializes a new mesh component
 		/// </summary>
-		/// <param name="texture">The texture to use with the model.</param>
+		/// <param name="name">The name of the mesh component</param>
+		/// <param name="texture">The texture to use with the model</param>
 		/// <param name="bufferData">A tuple where the first element is sequential array of all the vertices of the triangles of the mesh (can't be null),
-		/// and the second element contains indices that represent the vertex order (can be byte[], ushort[] or uint[])..</param>
-		/// <param name="optimization">Configures what the mesh is optimized for.</param>
+		/// and the second element contains indices that represent the vertex order (can be byte[], ushort[] or uint[])</param>
+		/// <param name="optimization">Configures what the mesh is optimized for</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
-		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public MeshComponent(TextureCollection texture, Tuple<Vertex[], Array> bufferData, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(texture, bufferData == null ? null : bufferData.Item1, bufferData == null ? null : bufferData.Item2, optimization, flushBuffer) {
+		/// manipulate the mesh vertices must be performed on an OpenGL thread</param>
+		public MeshComponent(string name, TextureCollection texture, Tuple<Vertex[], Array> bufferData, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) : this(name, texture, bufferData == null ? null : bufferData.Item1, bufferData == null ? null : bufferData.Item2, optimization, flushBuffer) {
 		}
 
 		/// <summary>
-		/// Initializes a new mesh component.
+		/// Initializes a new mesh component
 		/// </summary>
-		/// <param name="texture">The texture to use with the model.</param>
-		/// <param name="optimization">Configures what the mesh is optimized for.</param>
-		/// <param name="vertices">A sequential array of all the vertices of the triangles of the mesh.</param>
-		/// <param name="indices">The indices that represent the vertex order (can be byte[], ushort[] or uint[]).</param>
+		/// <param name="name">The name of the mesh component</param>
+		/// <param name="texture">The texture to use with the model</param>
+		/// <param name="optimization">Configures what the mesh is optimized for</param>
+		/// <param name="vertices">A sequential array of all the vertices of the triangles of the mesh</param>
+		/// <param name="indices">The indices that represent the vertex order (can be byte[], ushort[] or uint[])</param>
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
-		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
-		public MeshComponent(TextureCollection texture, Vertex[] vertices, Array indices, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) {
+		/// manipulate the mesh vertices must be performed on an OpenGL thread</param>
+		public MeshComponent(string name, TextureCollection texture, Vertex[] vertices, Array indices, BufferUsageHint optimization = BufferUsageHint.StaticDraw, bool flushBuffer = true) {
+			Name = name;
 			if (vertices == null)
 				bufferData = new Vertex[0];
 			else
@@ -1068,8 +1072,6 @@ namespace System.Graphics.Models {
 			if (lowOpacity)
 				GL.DepthMask(true);
 			GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-			if (nextModel != null)
-				shader.SetUniformValue(GlobalShaderParams.Interpolate.ToString(), 0f, ShaderSetMode.SetImmediately);
 			RaiseRenderEnd();
 		}
 

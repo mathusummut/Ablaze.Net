@@ -453,7 +453,7 @@ namespace System.Windows.Forms {
 					return;
 				gdiEnabled = value;
 				if (value) {
-					OnGdiEnabled();
+					OnGdiEnabled(EventArgs.Empty);
 					InvalidateGdi(GdiRenderMode.GdiAsync);
 				}
 			}
@@ -489,8 +489,8 @@ namespace System.Windows.Forms {
 		/// Called when the constructor is about to start. This is called only once.
 		/// Don't do anything fancy, almost everything is null or uninitialized.
 		/// </summary>
-		protected override void OnConstructorStarted() {
-			base.OnConstructorStarted();
+		protected override void OnConstructorStarted(EventArgs e) {
+			base.OnConstructorStarted(e);
 			ReduceFlickerOnResize = true;
 			callDrawBorder = CallDrawBorder;
 			paintControl = Control_Paint;
@@ -521,7 +521,7 @@ namespace System.Windows.Forms {
 			lock (RenderLock) {
 				if (!IsGLEnabled || Unloading)
 					return null;
-				OnPaintGL();
+				OnPaintGL(EventArgs.Empty);
 			}
 			if (IsGLEnabled && !Unloading) {
 				if (gdiEnabled) {
@@ -580,7 +580,7 @@ namespace System.Windows.Forms {
 					rpsStopwatch.ElapsedMilliseconds = elapsed;
 				}
 				rpsCounter = 0;
-				OnFramesPerSecondUpdated();
+				OnFramesPerSecondUpdated(EventArgs.Empty);
 			} else
 				rpsCounter++;
 			if (Volatile.Read(ref glQueueCount) >= 1)
@@ -608,9 +608,9 @@ namespace System.Windows.Forms {
 				elapsedMs = updateTimer.Interval;
 			if (DisableSimultaneousUpdatingAndRendering) {
 				lock (RenderLock)
-					OnUpdate(elapsedMs);
+					OnUpdate(EventArgs.Empty, elapsedMs);
 			} else
-				OnUpdate(elapsedMs);
+				OnUpdate(EventArgs.Empty, elapsedMs);
 		}
 
 		/// <summary>
@@ -629,15 +629,16 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the update timer has ticked.
 		/// </summary>
+		/// <param name="e">Ignored</param>
 		/// <param name="elapsedMilliseconds">The milliseconds elapsed since the last frame.</param>
-		protected virtual void OnUpdate(double elapsedMilliseconds) {
+		protected virtual void OnUpdate(EventArgs e, double elapsedMilliseconds) {
 		}
 
 		/// <summary>
 		/// Called when the minimize animation is completed.
 		/// </summary>
-		protected override void OnMinimizeAnimationFinished() {
-			base.OnMinimizeAnimationFinished();
+		protected override void OnMinimizeAnimationFinished(EventArgs e) {
+			base.OnMinimizeAnimationFinished(e);
 			if (!IsMinimized)
 				InvokeOnGLThreadAsync(new InvocationData(PaintGL), false);
 		}
@@ -645,16 +646,16 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the window fade-in animation is completed.
 		/// </summary>
-		protected override void OnFadeInCompleted() {
-			base.OnFadeInCompleted();
+		protected override void OnFadeInCompleted(EventArgs e) {
+			base.OnFadeInCompleted(e);
 			InvalidateGL(false);
 		}
 
 		/// <summary>
 		/// Called when the minimize state of the window is changed.
 		/// </summary>
-		protected override void OnMinimizeChanged() {
-			base.OnMinimizeChanged();
+		protected override void OnMinimizeChanged(EventArgs e) {
+			base.OnMinimizeChanged(e);
 			if (IsMinimized) {
 				if (UpdateTimerRunning) {
 					UpdateTimerRunning = false;
@@ -831,7 +832,7 @@ namespace System.Windows.Forms {
 			GL.Viewport(openGLScissorBox);
 			GL.Scissor(openGLScissorBox.X, openGLScissorBox.Y, openGLScissorBox.Width, openGLScissorBox.Height);
 			globalShader.Bind();
-			OnViewSizeChanged();
+			OnViewSizeChanged(EventArgs.Empty);
 			CallPaintGL(param);
 			return null;
 		}
@@ -839,7 +840,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the GDI layer is enabled. Be sure to call base.OnGdiEnabled() in any child classes *after* the GDI layer is initalized if applicable.
 		/// </summary>
-		protected virtual void OnGdiEnabled() {
+		protected virtual void OnGdiEnabled(EventArgs e) {
 		}
 
 		private object MakeCurrent(object param) {
@@ -985,7 +986,7 @@ namespace System.Windows.Forms {
 				globalShader = new GlobalShader();
 				globalShader.Bind();
 				GL.ClearColor(BackColor);
-				OnGLInitialized();
+				OnGLInitialized(EventArgs.Empty);
 				GL.Enable(EnableCap.ScissorTest);
 				CallViewSizeChanged(null);
 			} catch (Exception e) {
@@ -997,14 +998,14 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the border texture has been updated. Be sure to call the base border texture
 		/// </summary>
-		protected override void OnBorderTextureChanged() {
-			base.OnBorderTextureChanged();
+		protected override void OnBorderTextureChanged(EventArgs e) {
+			base.OnBorderTextureChanged(e);
 		}
 
 		/// <summary>
 		/// Called when the OpenGL context is initialized.
 		/// </summary>
-		protected virtual void OnGLInitialized() {
+		protected virtual void OnGLInitialized(EventArgs e) {
 		}
 
 		/// <summary>
@@ -1047,7 +1048,7 @@ namespace System.Windows.Forms {
 						closeBottom.B, closeBottom.G, closeBottom.R, closeBottom.A }, 1, TargetPixelFormat.Bgra, new Rectangle(0, 0, 1, 2), Point.Empty);
 					texture.SetTextureWrapMode(TextureWrapMode.ClampToEdge);
 					Rectangle closeBounds = CloseBounds;
-					using (MeshComponent closeButton = new MeshComponent(texture, MeshExtensions.TriangulateQuads(new Vertex[] {
+					using (MeshComponent closeButton = new MeshComponent("CloseButton", texture, MeshExtensions.TriangulateQuads(new Vertex[] {
 					new Vertex(closeBounds.Location.ToVector3(), Vector2.Zero),
 					new Vertex(new Vector3(closeBounds.Right, closeBounds.Y, 0), Vector2.UnitX),
 					new Vertex(new Vector3(closeBounds.Right, closeBounds.Bottom, 0), Vector2.One),
@@ -1378,7 +1379,7 @@ namespace System.Windows.Forms {
 		/// <param name="g">The Graphics object to use to paint on.</param>
 		/// <param name="clippingRect">The clipping rectangle that was invalidated in GDI-layer coordinates.</param>
 		/// <param name="clearBeforeRedraw">If true, the GDI layer is cleared before redraw.</param>
-		protected virtual void OnPaintGdi(Drawing.Graphics g, Rectangle clippingRect, bool clearBeforeRedraw) {
+		protected virtual void OnPaintGdi(Graphics g, Rectangle clippingRect, bool clearBeforeRedraw) {
 			if (clearBeforeRedraw)
 				g.Clear(Color.Transparent);
 			g.DrawControls(GdiControls, Point.Empty, clippingRect, true);
@@ -1387,7 +1388,7 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called whenever a GL render takes place.
 		/// </summary>
-		protected virtual void OnPaintGL() {
+		protected virtual void OnPaintGL(EventArgs e) {
 		}
 
 		/// <summary>
@@ -1448,7 +1449,7 @@ namespace System.Windows.Forms {
 		/// </summary>
 		/// <param name="g">The Graphics object to use to paint on</param>
 		/// <param name="clippingRect">The clipping rectangle that was invalidated in viewport coordinates (ie. excludes border)</param>
-		protected override void OnPaint(Drawing.Graphics g, Rectangle clippingRect) {
+		protected override void OnPaint(Graphics g, Rectangle clippingRect) {
 			if (gdiEnabled) {
 				Point offset = CurrentGdiLocation;
 				if (!offset.IsEmpty) {
@@ -1473,13 +1474,13 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called whenever the view size has changed. This is called on the OpenGL thread.
 		/// </summary>
-		protected virtual void OnViewSizeChanged() {
+		protected virtual void OnViewSizeChanged(EventArgs e) {
 		}
 
 		/// <summary>
 		/// Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here.
 		/// </summary>
-		protected virtual void OnUnload() {
+		protected virtual void OnUnload(EventArgs e) {
 		}
 
 		/// <summary>
@@ -1510,7 +1511,7 @@ namespace System.Windows.Forms {
 
 		private object CallUnload(object param) {
 			if ((bool) param) {
-				OnUnload();
+				OnUnload(EventArgs.Empty);
 				if (gdiRectMesh != null) {
 					gdiRectMesh.Dispose();
 					gdiRectMesh = null;
@@ -1548,10 +1549,10 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Called when the window is now starting to close.
 		/// </summary>
-		protected override void OnClosing() {
+		protected override void OnClosing(EventArgs e) {
 			if (updateTimer != null)
 				UpdateTimerRunning = false;
-			base.OnClosing();
+			base.OnClosing(e);
 		}
 
 		/// <summary>

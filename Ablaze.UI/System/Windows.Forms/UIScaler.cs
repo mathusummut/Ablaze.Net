@@ -248,7 +248,7 @@ namespace System.Windows.Forms {
 			return One;
 		}*/
 
-		private static void Scale(Control control, float xMult, float yMult, bool isExcludedCheck, bool scaleBounds, bool scaleFont) {
+		private static void Scale(Control control, float xMult, float yMult, bool isExcludedCheck, bool scaleBounds/*, bool scaleFont*/) {
 			if (IsExcluded(control, isExcludedCheck))
 				return;
 			ControlInfo info;
@@ -294,7 +294,7 @@ namespace System.Windows.Forms {
 			}
 			PreviousBounds.AddOrUpdate(control, info, (ctrl, sz) => info);
 			foreach (Control child in control.Controls)
-				Scale(child, xMult, yMult, false, true, true);
+				Scale(child, xMult, yMult, false, true/*, true*/);
 		}
 
 		private static void Control_ControlAdded(object sender, ControlEventArgs e) {
@@ -303,7 +303,7 @@ namespace System.Windows.Forms {
 			SetAutoScaleModeToDpi(e.Control);
 			if (PreviousBounds.TryGetValue(parent, out info)) {
 				SizeF scale = info.LastScale;
-				Scale(e.Control, scale.Width, scale.Height, true, true, true);
+				Scale(e.Control, scale.Width, scale.Height, true, true/*, true*/);
 			}
 		}
 
@@ -312,7 +312,7 @@ namespace System.Windows.Forms {
 			ControlInfo info;
 			if (parent != null && PreviousBounds.TryGetValue(parent, out info)) {
 				SizeF scale = info.LastScale;
-				Scale(e.Control, 1f / scale.Width, 1f / scale.Height, true, true, true);
+				Scale(e.Control, 1f / scale.Width, 1f / scale.Height, true, true/*, true*/);
 			}
 		}
 
@@ -324,7 +324,7 @@ namespace System.Windows.Forms {
 			info.LastBounds = control.ClientRectangle;
 			SizeF mult = info.LastScale;
 			foreach (Control child in control.Controls)
-				Scale(child, mult.Width, mult.Height, false, false, true);
+				Scale(child, mult.Width, mult.Height, false, false/*, true*/);
 		}
 
 		private static void Control_Disposed(object sender, EventArgs e) {

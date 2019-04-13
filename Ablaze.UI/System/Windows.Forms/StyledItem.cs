@@ -810,7 +810,7 @@ namespace System.Windows.Forms {
 		/// <param name="location">The location to draw the item at</param>
 		/// <param name="drawChildren">Does not do anything</param>
 		public void DrawGdi(Graphics g, Point location, bool drawChildren = true) {
-			DrawGdi(g, new Rectangle(location, Size), false, false);
+			DrawGdi(g, new Rectangle(location, Size), drawChildren, false);
 		}
 
 		/// <summary>
@@ -840,7 +840,7 @@ namespace System.Windows.Forms {
 		/// <param name="drawChildren">Does not do anything</param>
 		/// <param name="alignGradientWorkaround">Whether to align the gradient with the menu strip gradient if they are misaligned on a StyledMenuStrip.</param>
 		public void DrawGdi(Graphics g, Point location, bool drawChildren, bool alignGradientWorkaround = false) {
-			DrawGdi(g, new Rectangle(location, Size), true, alignGradientWorkaround);
+			DrawGdi(g, new Rectangle(location, Size), drawChildren, alignGradientWorkaround);
 		}
 
 		/// <summary>
@@ -853,7 +853,8 @@ namespace System.Windows.Forms {
 		public virtual void DrawGdi(Graphics g, Rectangle bounds, bool drawChildren, bool alignGradientWorkaround) {
 			CheckBox.Bounds = bounds;
 			Renderer.RenderBackground(g, bounds, false, alignGradientWorkaround, BackgroundImage, BackgroundImageLayout);
-			CheckBox.DrawGdi(g);
+			if (drawChildren)
+				CheckBox.DrawGdi(g);
 		}
 
 		/// <summary>

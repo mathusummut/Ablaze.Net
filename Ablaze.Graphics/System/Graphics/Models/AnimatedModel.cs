@@ -155,9 +155,12 @@ namespace System.Graphics.Models {
 				}
 			}
 			if (thisFrame != null) {
+				GlobalShader shader = (GlobalShader) Shader.CurrentShader;
 				if (nextModel != null)
-					((GlobalShader) Shader.CurrentShader).SetUniformValue(GlobalShaderParams.Interpolate.ToString(), interpolate, ShaderSetMode.SetImmediately);
+					shader.SetUniformValue(GlobalShaderParams.Interpolate.ToString(), interpolate, ShaderSetMode.SetImmediately);
 				thisFrame.Render(nextModel);
+				if (nextModel != null)
+					shader.SetUniformValue(GlobalShaderParams.Interpolate.ToString(), 0f, ShaderSetMode.SetImmediately);
 			}
 			RaiseRenderEnd();
 		}
@@ -186,7 +189,8 @@ namespace System.Graphics.Models {
 		/// Combines the frames of the specified animated model into the current animated model
 		/// </summary>
 		/// <param name="model">The animated model whose frames to combine. The number of frames in the model must the same as in this one</param>
-		public void CombineWith(AnimatedModel model) {
+		/// <param name="combineName">Whether to also concatenate the model names</param>
+		public void CombineWith(AnimatedModel model, bool combineName = false) {
 			if (model == null)
 				return;
 			lock (SyncRoot) {
@@ -196,15 +200,22 @@ namespace System.Graphics.Models {
 					else if (Count == 0)
 						AddRange(model);
 					else {
-						IModel current;
+						IModel current, modelToAdd;
 						Model modelList;
 						for (int i = 0; i < Count; i++) {
 							current = GetComponent(i);
 							modelList = current as Model;
-							if (modelList == null)
-								this[i] = new Model(current, model.GetComponent(i));
-							else
-								modelList.Add(model.GetComponent(i));
+							modelToAdd = model.GetComponent(i);
+							if (modelList == null) {
+								modelList = new Model(current, modelToAdd);
+								if (combineName)
+									modelList.Name = current.Name + "+" + modelToAdd.Name;
+								this[i] = modelList;
+							} else {
+								modelList.Add(modelToAdd);
+								if (combineName)
+									modelList.Name += "+" + modelToAdd.Name;
+							}
 						}
 					}
 				}

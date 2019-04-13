@@ -795,11 +795,11 @@ namespace System.Windows.Forms {
 			base.OnClientSizeChanged(e);
 			Size clientSize = ClientSize;
 			if (Vertical) {
-				int width = ClientSize.Width;
+				int width = clientSize.Width;
 				label.MaximumSize = new Size(width, 0);
 				label.MinimumSize = new Size(width, 0);
 			} else {
-				int height = ClientSize.Height;
+				int height = clientSize.Height;
 				label.MaximumSize = new Size(0, height);
 				label.MinimumSize = new Size(0, height);
 			}

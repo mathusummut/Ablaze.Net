@@ -163,10 +163,10 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="source">The PixelWorker to use.</param>
 		public static Rectangle GetTrimBounds(this PixelWorker source) {
-			int xMin = int.MaxValue;
-			int xMax = int.MinValue;
+			int xMin;
+			int xMax;
 			int yMin = int.MaxValue;
-			int yMax = int.MinValue;
+			int yMax;
 			int x, y;
 			for (x = 0; x < source.Width; x++) {
 				for (y = 0; y < source.Height; y++) {

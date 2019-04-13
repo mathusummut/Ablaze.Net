@@ -241,11 +241,11 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Whether the key press hook is enabled.
 		/// </summary>
-		private static bool Enabled {
+		public static bool Enabled {
 			get {
 				return enabled;
 			}
-			set {
+			private set {
 				if (value == enabled || StyledForm.DesignMode)
 					return;
 				else if (value) {

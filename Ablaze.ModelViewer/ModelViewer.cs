@@ -160,8 +160,8 @@ namespace Ablaze.ModelViewer {
 		/// <summary>
 		/// Called when the OpenGL context is initialized.
 		/// </summary>
-		protected override void OnGLInitialized() {
-			base.OnGLInitialized();
+		protected override void OnGLInitialized(EventArgs e) {
+			base.OnGLInitialized(e);
 			//if (Extensions.IsAeroEnabled && EnableAeroBlur)
 			//	GL.ClearColor(Color.FromArgb(128, BackColor));
 			MeshComponent.SetupGLEnvironment();
@@ -170,8 +170,8 @@ namespace Ablaze.ModelViewer {
 		/// <summary>
 		/// Called when the window fade-in animation has completed.
 		/// </summary>
-		protected override void OnFadeInCompleted() {
-			base.OnFadeInCompleted();
+		protected override void OnFadeInCompleted(EventArgs e) {
+			base.OnFadeInCompleted(e);
 			UIAnimator.SharedAnimator.Interval = 6;
 			UpdateTimerRunning = true;
 		}
@@ -208,8 +208,9 @@ namespace Ablaze.ModelViewer {
 		/// <summary>
 		/// Called when the update timer has ticked.
 		/// </summary>
+		/// <param name="e">Ignored</param>
 		/// <param name="elapsedMilliseconds">The milliseconds elapsed since the last frame.</param>
-		protected override void OnUpdate(double elapsedMilliseconds) {
+		protected override void OnUpdate(EventArgs e, double elapsedMilliseconds) {
 			float elapsed = (float) elapsedMilliseconds;
 			if (isLeftArrowDown || isRightArrowDown || isUpArrowDown || isDownArrowDown) {
 				if (isLeftArrowDown)
@@ -232,14 +233,13 @@ namespace Ablaze.ModelViewer {
 			if (Scene.Count == 0)
 				StyledMessageBox.Show("No models have been loaded yet.", "Message");
 			else {
-				string[] textures = null;
 				filePrompt.Open = true;
 				filePrompt.Multiselect = true;
 				filePrompt.AllFilesString = "All Image Types";
 				filePrompt.Filter = string.Empty;
 				filePrompt.Title = "Choose the new texture(s) to use...";
 				if (MessageLoop.ShowDialog(filePrompt, false) == DialogResult.OK) {
-					textures = filePrompt.FileNames;
+					string[] textures = filePrompt.FileNames;
 					if (textures == null) {
 						Scene.Textures = null;
 						InvalidateGL(false);
@@ -319,7 +319,7 @@ namespace Ablaze.ModelViewer {
 					try {
 						loaded = TextureParser.Parse(mesh)[0];
 						size = ((Texture2D) loaded).BitmapSize.ToVector2();
-						Scene.Add(new Model(Mesh2D.MeshFromQuad(new TextureCollection(loaded), new Vector3(-size.X * 0.5f, -size.Y * 0.5f, zCount), size, true, false)));
+						Scene.Add(new Model(Mesh2D.MeshFromQuad(loaded.Name, new TextureCollection(loaded), new Vector3(-size.X * 0.5f, -size.Y * 0.5f, zCount), size, true, false)));
 						zCount += 1000f;
 					} catch {
 						if (e == null)
@@ -498,9 +498,9 @@ namespace Ablaze.ModelViewer {
 				case Keys.Down:
 					isDownArrowDown = true;
 					break;
-				case Keys.T:
+				/*case Keys.T:
 					ShowInTaskbar = !ShowInTaskbar;
-					break;
+					break;*/
 			}
 		}
 
@@ -526,20 +526,18 @@ namespace Ablaze.ModelViewer {
 				case Keys.Escape:
 					Capture = false;
 					break;
-				default:
-					if (e.Control && e.KeyCode == Keys.R) {
-						viewDirection = new Vector3(1F, 0.75F, 1F);
-						UIAnimator.SharedAnimator.Animate(currentViewDirectionProperty, viewDirection, 0.25f, 0.0005f, true, processUpdates, false);
-						viewTarget = Vector3.Zero;
-						UIAnimator.SharedAnimator.Animate(currentViewTargetProperty, viewTarget, 0.25f, 0.0005f, true, processUpdates, false);
-						angleX = 0f;
-						UIAnimator.SharedAnimator.Animate(currentAngleXProperty, angleX, 0.25f, 0.0005f, true, processUpdates, false);
-						angleY = 0f;
-						UIAnimator.SharedAnimator.Animate(currentAngleYProperty, angleY, 0.25f, 0.0005f, true, processUpdates, false);
-						angleZ = 0f;
-						viewDistance = Math.Max(max * 0.8f, 0.1f);
-						UIAnimator.SharedAnimator.Animate(currentDistanceProperty, viewDistance, 0.25f, 0.0005f, true, processUpdates, false);
-					}
+				case Keys.R:
+					viewDirection = new Vector3(1F, 0.75F, 1F);
+					UIAnimator.SharedAnimator.Animate(currentViewDirectionProperty, viewDirection, 0.25f, 0.0005f, true, processUpdates, false);
+					viewTarget = Vector3.Zero;
+					UIAnimator.SharedAnimator.Animate(currentViewTargetProperty, viewTarget, 0.25f, 0.0005f, true, processUpdates, false);
+					angleX = 0f;
+					UIAnimator.SharedAnimator.Animate(currentAngleXProperty, angleX, 0.25f, 0.0005f, true, processUpdates, false);
+					angleY = 0f;
+					UIAnimator.SharedAnimator.Animate(currentAngleYProperty, angleY, 0.25f, 0.0005f, true, processUpdates, false);
+					angleZ = 0f;
+					viewDistance = Math.Max(max * 0.8f, 0.1f);
+					UIAnimator.SharedAnimator.Animate(currentDistanceProperty, viewDistance, 0.25f, 0.0005f, true, processUpdates, false);
 					break;
 			}
 		}
@@ -584,7 +582,7 @@ namespace Ablaze.ModelViewer {
 		/// <summary>
 		/// Called whenever a GL render takes place.
 		/// </summary>
-		protected override void OnPaintGL() {
+		protected override void OnPaintGL(EventArgs e) {
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 			MeshComponent.Setup3D(GLViewport.Size.ToVector2(), ref Scene.Camera, (float) Math.Max((Math.Pow(currentDistance * 0.5, 0.3)) * 0.75 - 1.5, 0.001));
 			Scene.Render();
@@ -593,9 +591,9 @@ namespace Ablaze.ModelViewer {
 		/// <summary>
 		/// Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here.
 		/// </summary>
-		protected override void OnUnload() {
+		protected override void OnUnload(EventArgs e) {
 			Dispose3DModel(new List<IModel>(Scene));
-			base.OnUnload();
+			base.OnUnload(e);
 		}
 
 		/// <summary>

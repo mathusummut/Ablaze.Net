@@ -45,14 +45,14 @@ namespace System.Windows.Forms {
 		/// <summary>
 		/// Gets or sets whether the hotkey listener is enabled.
 		/// </summary>
-		private static bool Enabled {
+		public static bool Enabled {
 #if NET45
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
 			get {
 				return enabled;
 			}
-			set {
+			private set {
 				if (value == enabled || StyledForm.DesignMode)
 					return;
 				enabled = value;

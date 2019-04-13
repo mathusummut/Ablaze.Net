@@ -110,7 +110,7 @@ namespace System {
 						// E is between -10 and 0. F is a normalized float whose magnitude is less than Half.MinNormalizedValue.
 						// We convert F to a denormalized half.
 						// Add an explicit leading 1 to the significand.
-						mantissa = mantissa | 0x00800000;
+						mantissa |= 0x00800000;
 						// Round to M to the nearest (10+E)-bit value (with E between -10 and 0); in case of a tie, round to the nearest even value.
 						//
 						// Rounding may cause the significand to overflow and make our number normalized. Because of the way a half's bits
@@ -194,8 +194,8 @@ namespace System {
 					return (sign << 31) | 0x7f800000 | (mantissa << 13);
 			}
 			// Normalized number
-			exponent = exponent + (127 - 15);
-			mantissa = mantissa << 13;
+			exponent += 127 - 15;
+			mantissa <<= 13;
 			// Assemble S, E and M.
 			return (sign << 31) | (exponent << 23) | mantissa;
 		}
