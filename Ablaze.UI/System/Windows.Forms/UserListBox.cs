@@ -139,7 +139,7 @@ namespace System.Windows.Forms {
 					SplitContainer.Panel2.Controls.Remove(upButton);
 					SplitContainer.Panel2.Controls.Remove(downButton);
 				}
-				OnResize(null);
+				OnResize(EventArgs.Empty);
 			}
 		}
 
@@ -199,7 +199,7 @@ namespace System.Windows.Forms {
 				if (value == defaultButtonWidth)
 					return;
 				defaultButtonWidth = value;
-				OnResize(null);
+				OnResize(EventArgs.Empty);
 			}
 		}
 

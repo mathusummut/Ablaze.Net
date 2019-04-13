@@ -1463,7 +1463,7 @@ namespace System.Windows.Forms {
 			callOnResizeEnd = CallOnResizeEnd;
 			CheckForIllegalCrossThreadCalls = false;
 			Name = nameof(StyledForm);
-			OnConstructorStarted(null);
+			OnConstructorStarted(EventArgs.Empty);
 			SetStyle(ControlStyles.StandardClick | ControlStyles.UserMouse | ControlStyles.ResizeRedraw, false);
 			SetStyle(ControlStyles.CacheText | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
 			Cursor = DefaultCursor;
@@ -3155,7 +3155,7 @@ namespace System.Windows.Forms {
 				else
 					Bounds = oldBounds;
 			}
-			OnClientSizeChanged(null);
+			OnClientSizeChanged(EventArgs.Empty);
 			OnMaximizeChanged(EventArgs.Empty);
 			RedrawBorder(false);
 		}
