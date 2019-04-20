@@ -188,27 +188,26 @@ namespace System.Drawing {
 		private const int ExtensionAreaSoftwareVersionLetterByteLength = 1;
 		private const int ExtensionAreaColorCorrectionTableValueLength = 256;
 		private const string TargaFooterASCIISignature = "TRUEVISION-XFILE";
-
-		private TargaHeader objTargaHeader = null;
-		private TargaExtensionArea objTargaExtensionArea = null;
-		private TargaFooter objTargaFooter = null;
-		private Bitmap bmpTargaImage = null;
-		private Bitmap bmpImageThumbnail = null;
-		private TGAFormat eTGAFormat = TGAFormat.UNKNOWN;
-		private int intStride = 0;
-		private int intPadding = 0;
+		private TargaHeader objTargaHeader;
+		private TargaExtensionArea objTargaExtensionArea;
+		private TargaFooter objTargaFooter;
+		private Bitmap bmpTargaImage;
+		private Bitmap bmpImageThumbnail;
+		private TGAFormat eTGAFormat;
+		private int intStride;
+		private int intPadding;
 		private GCHandle ImageByteHandle;
 		private GCHandle ThumbnailByteHandle;
 		private List<List<byte>> rows = new List<List<byte>>();
 		private List<byte> row = new List<byte>();
-		private bool disposed = false;
+		private bool disposed;
 
 		/// <summary>
 		/// Gets a TargaHeader object that holds the Targa Header information of the loaded file.
 		/// </summary>
 		public TargaHeader Header {
 			get {
-				return this.objTargaHeader;
+				return objTargaHeader;
 			}
 		}
 
@@ -217,7 +216,7 @@ namespace System.Drawing {
 		/// </summary>
 		public TargaExtensionArea ExtensionArea {
 			get {
-				return this.objTargaExtensionArea;
+				return objTargaExtensionArea;
 			}
 		}
 
@@ -226,7 +225,7 @@ namespace System.Drawing {
 		/// </summary>
 		public TargaFooter Footer {
 			get {
-				return this.objTargaFooter;
+				return objTargaFooter;
 			}
 		}
 
@@ -235,7 +234,7 @@ namespace System.Drawing {
 		/// </summary>
 		public TGAFormat Format {
 			get {
-				return this.eTGAFormat;
+				return eTGAFormat;
 			}
 		}
 
@@ -244,7 +243,7 @@ namespace System.Drawing {
 		/// </summary>
 		public Bitmap Image {
 			get {
-				return this.bmpTargaImage;
+				return bmpTargaImage;
 			}
 		}
 
@@ -253,7 +252,7 @@ namespace System.Drawing {
 		/// </summary>
 		public Bitmap Thumbnail {
 			get {
-				return this.bmpImageThumbnail;
+				return bmpImageThumbnail;
 			}
 		}
 
@@ -266,7 +265,7 @@ namespace System.Drawing {
 		/// </remarks>
 		public int Stride {
 			get {
-				return this.intStride;
+				return intStride;
 			}
 		}
 
@@ -281,7 +280,7 @@ namespace System.Drawing {
 		/// </remarks>
 		public int Padding {
 			get {
-				return this.intPadding;
+				return intPadding;
 			}
 		}
 
@@ -289,11 +288,11 @@ namespace System.Drawing {
 		/// Creates a new instance of the TargaImage object.
 		/// </summary>
 		public TargaImage() {
-			this.objTargaFooter = new TargaFooter();
-			this.objTargaHeader = new TargaHeader();
-			this.objTargaExtensionArea = new TargaExtensionArea();
-			this.bmpTargaImage = null;
-			this.bmpImageThumbnail = null;
+			objTargaFooter = new TargaFooter();
+			objTargaHeader = new TargaHeader();
+			objTargaExtensionArea = new TargaExtensionArea();
+			bmpTargaImage = null;
+			bmpImageThumbnail = null;
 		}
 
 		/// <summary>
@@ -303,642 +302,653 @@ namespace System.Drawing {
 		/// <param name="disposeAllButImage">Whether to only keep the image loaded after parsing.</param>
 		public TargaImage(Stream targaStream, bool disposeAllButImage = false) : this() {
 			using (BinaryReader binReader = new BinaryReader(targaStream)) {
-				try {
-					// set the cursor at the beginning of the signature string.
-					binReader.BaseStream.Seek((FooterSignatureOffsetFromEnd * -1), SeekOrigin.End);
+				// set the cursor at the beginning of the signature string.
+				binReader.BaseStream.Seek((FooterSignatureOffsetFromEnd * -1), SeekOrigin.End);
 
-					// read the signature bytes and convert to ascii string
-					string Signature = System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(FooterSignatureByteLength)).TrimEnd('\0');
+				// read the signature bytes and convert to ascii string
+				string Signature = System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(FooterSignatureByteLength)).TrimEnd('\0');
 
-					// do we have a proper signature
-					if (string.Compare(Signature, TargaFooterASCIISignature) == 0) {
-						// this is a NEW targa file.
-						// create the footer
-						this.eTGAFormat = TGAFormat.NEW_TGA;
+				// do we have a proper signature
+				if (string.Compare(Signature, TargaFooterASCIISignature) == 0) {
+					// this is a NEW targa file.
+					// create the footer
+					this.eTGAFormat = TGAFormat.NEW_TGA;
 
-						// set cursor to beginning of footer info
-						binReader.BaseStream.Seek((FooterByteLength * -1), SeekOrigin.End);
+					// set cursor to beginning of footer info
+					binReader.BaseStream.Seek((FooterByteLength * -1), SeekOrigin.End);
 
-						// read the Extension Area Offset value
-						int ExtOffset = binReader.ReadInt32();
+					// read the Extension Area Offset value
+					int ExtOffset = binReader.ReadInt32();
 
-						// read the Developer Directory Offset value
-						int DevDirOff = binReader.ReadInt32();
+					// read the Developer Directory Offset value
+					int DevDirOff = binReader.ReadInt32();
 
-						// skip the signature we have already read it.
-						binReader.ReadBytes(FooterSignatureByteLength);
+					// skip the signature we have already read it.
+					binReader.ReadBytes(FooterSignatureByteLength);
 
-						// read the reserved character
-						string ResChar = System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(FooterReservedCharByteLength)).TrimEnd('\0');
+					// read the reserved character
+					string ResChar = System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(FooterReservedCharByteLength)).TrimEnd('\0');
 
-						// set all values to our TargaFooter class
-						this.objTargaFooter.SetExtensionAreaOffset(ExtOffset);
-						this.objTargaFooter.SetDeveloperDirectoryOffset(DevDirOff);
-						this.objTargaFooter.SetSignature(Signature);
-						this.objTargaFooter.SetReservedCharacter(ResChar);
-					} else {
-						// this is not an ORIGINAL targa file.
-						this.eTGAFormat = TGAFormat.ORIGINAL_TGA;
+					// set all values to our TargaFooter class
+					this.objTargaFooter.SetExtensionAreaOffset(ExtOffset);
+					this.objTargaFooter.SetDeveloperDirectoryOffset(DevDirOff);
+					this.objTargaFooter.SetSignature(Signature);
+					this.objTargaFooter.SetReservedCharacter(ResChar);
+				} else {
+					// this is not an ORIGINAL targa file.
+					this.eTGAFormat = TGAFormat.ORIGINAL_TGA;
+				}
+				// set the cursor at the beginning of the file.
+				binReader.BaseStream.Seek(0, SeekOrigin.Begin);
+
+				// read the header properties from the file
+				this.objTargaHeader.SetImageIDLength(binReader.ReadByte());
+				this.objTargaHeader.SetColorMapType((ColorMapType) binReader.ReadByte());
+				this.objTargaHeader.SetImageType((ImageType) binReader.ReadByte());
+
+				this.objTargaHeader.SetColorMapFirstEntryIndex(binReader.ReadInt16());
+				this.objTargaHeader.SetColorMapLength(binReader.ReadInt16());
+				this.objTargaHeader.SetColorMapEntrySize(binReader.ReadByte());
+
+				this.objTargaHeader.SetXOrigin(binReader.ReadInt16());
+				this.objTargaHeader.SetYOrigin(binReader.ReadInt16());
+				this.objTargaHeader.SetWidth(binReader.ReadInt16());
+				this.objTargaHeader.SetHeight(binReader.ReadInt16());
+
+				byte pixeldepth = binReader.ReadByte();
+				switch (pixeldepth) {
+					case 8:
+					case 16:
+					case 24:
+					case 32:
+						this.objTargaHeader.SetPixelDepth(pixeldepth);
+						break;
+
+					default:
+						Dispose(true);
+						throw new NotSupportedException("Targa Image only supports 8, 16, 24, or 32 bit pixel depths.");
+				}
+
+				byte ImageDescriptor = binReader.ReadByte();
+				this.objTargaHeader.SetAttributeBits((byte) Utilities.GetBits(ImageDescriptor, 0, 4));
+
+				this.objTargaHeader.SetVerticalTransferOrder((VerticalTransferOrder) Utilities.GetBits(ImageDescriptor, 5, 1));
+				this.objTargaHeader.SetHorizontalTransferOrder((HorizontalTransferOrder) Utilities.GetBits(ImageDescriptor, 4, 1));
+
+				// load ImageID value if any
+				if (this.objTargaHeader.ImageIDLength > 0) {
+					byte[] ImageIDValueBytes = binReader.ReadBytes(this.objTargaHeader.ImageIDLength);
+					this.objTargaHeader.SetImageIDValue(System.Text.Encoding.ASCII.GetString(ImageIDValueBytes).TrimEnd('\0'));
+				}
+				// load color map if it's included and/or needed
+				// Only needed for UNCOMPRESSED_COLOR_MAPPED and RUN_LENGTH_ENCODED_COLOR_MAPPED
+				// image types. If color map is included for other file types we can ignore it.
+				if (this.objTargaHeader.ColorMapType == ColorMapType.COLOR_MAP_INCLUDED) {
+					if (this.objTargaHeader.ImageType == ImageType.UNCOMPRESSED_COLOR_MAPPED ||
+						this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_COLOR_MAPPED) {
+						if (this.objTargaHeader.ColorMapLength > 0) {
+							for (int i = 0; i < this.objTargaHeader.ColorMapLength; i++) {
+								int a = 0;
+								int r = 0;
+								int g = 0;
+								int b = 0;
+
+								// load each color map entry based on the ColorMapEntrySize value
+								switch (this.objTargaHeader.ColorMapEntrySize) {
+									case 15:
+										byte[] color15 = binReader.ReadBytes(2);
+										// remember that the bytes are stored in reverse oreder
+										this.objTargaHeader.ColorMap.Add(Utilities.GetColorFrom2Bytes(color15[1], color15[0]));
+										break;
+									case 16:
+										byte[] color16 = binReader.ReadBytes(2);
+										// remember that the bytes are stored in reverse oreder
+										this.objTargaHeader.ColorMap.Add(Utilities.GetColorFrom2Bytes(color16[1], color16[0]));
+										break;
+									case 24:
+										b = Convert.ToInt32(binReader.ReadByte());
+										g = Convert.ToInt32(binReader.ReadByte());
+										r = Convert.ToInt32(binReader.ReadByte());
+										this.objTargaHeader.ColorMap.Add(System.Drawing.Color.FromArgb(r, g, b));
+										break;
+									case 32:
+										a = Convert.ToInt32(binReader.ReadByte());
+										b = Convert.ToInt32(binReader.ReadByte());
+										g = Convert.ToInt32(binReader.ReadByte());
+										r = Convert.ToInt32(binReader.ReadByte());
+										this.objTargaHeader.ColorMap.Add(System.Drawing.Color.FromArgb(a, r, g, b));
+										break;
+									default:
+										Dispose(true);
+										throw new NotSupportedException("TargaImage only supports ColorMap Entry Sizes of 15, 16, 24 or 32 bits.");
+
+								}
+
+
+							}
+						} else {
+							Dispose(true);
+							throw new ArgumentException("Image Type requires a Color Map and Color Map Length is zero.");
+						}
 					}
-					// set the cursor at the beginning of the file.
-					binReader.BaseStream.Seek(0, SeekOrigin.Begin);
 
-					// read the header properties from the file
-					this.objTargaHeader.SetImageIDLength(binReader.ReadByte());
-					this.objTargaHeader.SetColorMapType((ColorMapType) binReader.ReadByte());
-					this.objTargaHeader.SetImageType((ImageType) binReader.ReadByte());
 
-					this.objTargaHeader.SetColorMapFirstEntryIndex(binReader.ReadInt16());
-					this.objTargaHeader.SetColorMapLength(binReader.ReadInt16());
-					this.objTargaHeader.SetColorMapEntrySize(binReader.ReadByte());
+				} else {
+					if (this.objTargaHeader.ImageType == ImageType.UNCOMPRESSED_COLOR_MAPPED ||
+						this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_COLOR_MAPPED) {
+						Dispose(true);
+						throw new ArgumentException("Image Type requires a Color Map and there was not a Color Map included in the file.");
+					}
+				}
+				// is there an Extension Area in file
+				if (this.objTargaFooter.ExtensionAreaOffset > 0) {
+					// set the cursor at the beginning of the Extension Area using ExtensionAreaOffset.
+					binReader.BaseStream.Seek(this.objTargaFooter.ExtensionAreaOffset, SeekOrigin.Begin);
 
-					this.objTargaHeader.SetXOrigin(binReader.ReadInt16());
-					this.objTargaHeader.SetYOrigin(binReader.ReadInt16());
-					this.objTargaHeader.SetWidth(binReader.ReadInt16());
-					this.objTargaHeader.SetHeight(binReader.ReadInt16());
+					// load the extension area fields from the file
 
-					byte pixeldepth = binReader.ReadByte();
-					switch (pixeldepth) {
-						case 8:
-						case 16:
-						case 24:
-						case 32:
-							this.objTargaHeader.SetPixelDepth(pixeldepth);
+					this.objTargaExtensionArea.SetExtensionSize((int) (binReader.ReadInt16()));
+					this.objTargaExtensionArea.SetAuthorName(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaAuthorNameByteLength)).TrimEnd('\0'));
+					this.objTargaExtensionArea.SetAuthorComments(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaAuthorCommentsByteLength)).TrimEnd('\0'));
+
+
+					// get the date/time stamp of the file
+					Int16 iMonth = binReader.ReadInt16();
+					Int16 iDay = binReader.ReadInt16();
+					Int16 iYear = binReader.ReadInt16();
+					Int16 iHour = binReader.ReadInt16();
+					Int16 iMinute = binReader.ReadInt16();
+					Int16 iSecond = binReader.ReadInt16();
+					DateTime dtstamp;
+					string strStamp = iMonth + @"/" + iDay + @"/" + iYear + @" ";
+					strStamp += iHour + @":" + iMinute + @":" + iSecond;
+					if (DateTime.TryParse(strStamp, out dtstamp) == true)
+						this.objTargaExtensionArea.SetDateTimeStamp(dtstamp);
+
+
+					this.objTargaExtensionArea.SetJobName(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaJobNameByteLength)).TrimEnd('\0'));
+
+
+					// get the job time of the file
+					iHour = binReader.ReadInt16();
+					iMinute = binReader.ReadInt16();
+					iSecond = binReader.ReadInt16();
+					TimeSpan ts = new TimeSpan((int) iHour, (int) iMinute, (int) iSecond);
+					this.objTargaExtensionArea.SetJobTime(ts);
+
+
+					this.objTargaExtensionArea.SetSoftwareID(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaSoftwareIDByteLength)).TrimEnd('\0'));
+
+
+					// get the version number and letter from file
+					float iVersionNumber = (float) binReader.ReadInt16() / 100f;
+					string strVersionLetter = System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaSoftwareVersionLetterByteLength)).TrimEnd('\0');
+
+
+					this.objTargaExtensionArea.SetSoftwareID(iVersionNumber.ToString(@"F2") + strVersionLetter);
+
+
+					// get the color key of the file
+					int a = (int) binReader.ReadByte();
+					int r = (int) binReader.ReadByte();
+					int b = (int) binReader.ReadByte();
+					int g = (int) binReader.ReadByte();
+					this.objTargaExtensionArea.SetKeyColor(Color.FromArgb(a, r, g, b));
+
+
+					this.objTargaExtensionArea.SetPixelAspectRatioNumerator((int) binReader.ReadInt16());
+					this.objTargaExtensionArea.SetPixelAspectRatioDenominator((int) binReader.ReadInt16());
+					this.objTargaExtensionArea.SetGammaNumerator((int) binReader.ReadInt16());
+					this.objTargaExtensionArea.SetGammaDenominator((int) binReader.ReadInt16());
+					this.objTargaExtensionArea.SetColorCorrectionOffset(binReader.ReadInt32());
+					this.objTargaExtensionArea.SetPostageStampOffset(binReader.ReadInt32());
+					this.objTargaExtensionArea.SetScanLineOffset(binReader.ReadInt32());
+					this.objTargaExtensionArea.SetAttributesType((int) binReader.ReadByte());
+
+
+					// load Scan Line Table from file if any
+					if (this.objTargaExtensionArea.ScanLineOffset > 0) {
+						binReader.BaseStream.Seek(this.objTargaExtensionArea.ScanLineOffset, SeekOrigin.Begin);
+						for (int i = 0; i < this.objTargaHeader.Height; i++) {
+							this.objTargaExtensionArea.ScanLineTable.Add(binReader.ReadInt32());
+						}
+					}
+
+
+					// load Color Correction Table from file if any
+					if (this.objTargaExtensionArea.ColorCorrectionOffset > 0) {
+						binReader.BaseStream.Seek(this.objTargaExtensionArea.ColorCorrectionOffset, SeekOrigin.Begin);
+						for (int i = 0; i < ExtensionAreaColorCorrectionTableValueLength; i++) {
+							a = (int) binReader.ReadInt16();
+							r = (int) binReader.ReadInt16();
+							b = (int) binReader.ReadInt16();
+							g = (int) binReader.ReadInt16();
+							this.objTargaExtensionArea.ColorCorrectionTable.Add(Color.FromArgb(a, r, g, b));
+						}
+					}
+				}
+				//**************  NOTE  *******************
+				// The memory allocated for Microsoft Bitmaps must be aligned on a 32bit boundary.
+				// The stride refers to the number of bytes allocated for one scanline of the bitmap.
+				// In your loop, you copy the pixels one scanline at a time and take into
+				// consideration the amount of padding that occurs due to memory alignment.
+				// calculate the stride, in bytes, of the image (32bit aligned width of each image row)
+				this.intStride = (((int) this.objTargaHeader.Width * (int) this.objTargaHeader.PixelDepth + 31) & ~31) >> 3; // width in bytes
+
+				// calculate the padding, in bytes, of the image 
+				// number of bytes to add to make each row a 32bit aligned row
+				// padding in bytes
+				this.intPadding = this.intStride - ((((int) this.objTargaHeader.Width * (int) this.objTargaHeader.PixelDepth) + 7) / 8);
+
+				// read the image data into a byte array
+				// take into account stride has to be a multiple of 4
+				// use padding to make sure multiple of 4    
+
+				byte[] bimagedata = null;
+				if (this.objTargaHeader.ImageDataOffset > 0) {
+					// padding bytes
+					byte[] padding = new byte[this.intPadding];
+					MemoryStream msData = null;
+
+					// seek to the beginning of the image data using the ImageDataOffset value
+					binReader.BaseStream.Seek(this.objTargaHeader.ImageDataOffset, SeekOrigin.Begin);
+
+
+					// get the size in bytes of each row in the image
+					int intImageRowByteSize = (int) this.objTargaHeader.Width * ((int) this.objTargaHeader.BytesPerPixel);
+
+					// get the size in bytes of the whole image
+					int intImageByteSize = intImageRowByteSize * (int) this.objTargaHeader.Height;
+
+					// is this a RLE compressed image type
+					if (this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_BLACK_AND_WHITE ||
+					   this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_COLOR_MAPPED ||
+					   this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_TRUE_COLOR) {
+
+
+
+						// RLE Packet info
+						byte bRLEPacket = 0;
+						int intRLEPacketType = -1;
+						int intRLEPixelCount = 0;
+						byte[] bRunLengthPixel = null;
+
+						// used to keep track of bytes read
+						int intImageBytesRead = 0;
+						int intImageRowBytesRead = 0;
+
+						// keep reading until we have the all image bytes
+						while (intImageBytesRead < intImageByteSize) {
+							// get the RLE packet
+							bRLEPacket = binReader.ReadByte();
+							intRLEPacketType = Utilities.GetBits(bRLEPacket, 7, 1);
+							intRLEPixelCount = Utilities.GetBits(bRLEPacket, 0, 7) + 1;
+
+							// check the RLE packet type
+							if ((RLEPacketType) intRLEPacketType == RLEPacketType.RUN_LENGTH) {
+								// get the pixel color data
+								bRunLengthPixel = binReader.ReadBytes((int) this.objTargaHeader.BytesPerPixel);
+
+								// add the number of pixels specified using the read pixel color
+								for (int i = 0; i < intRLEPixelCount; i++) {
+									row.AddRange(bRunLengthPixel);
+
+									// increment the byte counts
+									intImageRowBytesRead += bRunLengthPixel.Length;
+									intImageBytesRead += bRunLengthPixel.Length;
+
+									// if we have read a full image row
+									// add the row to the row list and clear it
+									// restart row byte count
+									if (intImageRowBytesRead == intImageRowByteSize) {
+										rows.Add(row);
+										row = new List<byte>();
+										intImageRowBytesRead = 0;
+
+									}
+								}
+
+							} else if ((RLEPacketType) intRLEPacketType == RLEPacketType.RAW) {
+								// get the number of bytes to read based on the read pixel count
+								int intBytesToRead = intRLEPixelCount * (int) this.objTargaHeader.BytesPerPixel;
+
+								// read each byte
+								for (int i = 0; i < intBytesToRead; i++) {
+									row.Add(binReader.ReadByte());
+
+									// increment the byte counts
+									intImageBytesRead++;
+									intImageRowBytesRead++;
+
+									// if we have read a full image row
+									// add the row to the row list and clear it
+									// restart row byte count
+									if (intImageRowBytesRead == intImageRowByteSize) {
+										rows.Add(row);
+										row = new List<byte>();
+										intImageRowBytesRead = 0;
+									}
+
+								}
+
+							}
+						}
+
+
+
+					} else {
+
+
+						// loop through each row in the image
+						for (int i = 0; i < (int) this.objTargaHeader.Height; i++) {
+							// loop through each byte in the row
+							for (int j = 0; j < intImageRowByteSize; j++) {
+								// add the byte to the row
+								row.Add(binReader.ReadByte());
+							}
+
+							// add row to the list of rows
+							rows.Add(row);
+
+							// create a new row
+							row = new List<byte>();
+						}
+
+					}
+
+					// flag that states whether or not to reverse the location of all rows.
+					bool blnRowsReverse = false;
+
+					// flag that states whether or not to reverse the bytes in each row.
+					bool blnEachRowReverse = false;
+
+					// use FirstPixelDestination to determine the alignment of the 
+					// image data byte
+					switch (this.objTargaHeader.FirstPixelDestination) {
+						case FirstPixelDestination.TOP_LEFT:
+							blnRowsReverse = false;
+							blnEachRowReverse = true;
 							break;
 
-						default:
-							Dispose(true);
-							throw new NotSupportedException("Targa Image only supports 8, 16, 24, or 32 bit pixel depths.");
+						case FirstPixelDestination.TOP_RIGHT:
+							blnRowsReverse = false;
+							blnEachRowReverse = false;
+							break;
+
+						case FirstPixelDestination.BOTTOM_LEFT:
+							blnRowsReverse = true;
+							blnEachRowReverse = true;
+							break;
+
+						case FirstPixelDestination.BOTTOM_RIGHT:
+						case FirstPixelDestination.UNKNOWN:
+							blnRowsReverse = true;
+							blnEachRowReverse = false;
+
+							break;
 					}
 
-					byte ImageDescriptor = binReader.ReadByte();
-					this.objTargaHeader.SetAttributeBits((byte) Utilities.GetBits(ImageDescriptor, 0, 4));
+					// write the bytes from each row into a memory stream and get the 
+					// resulting byte array
+					using (msData = new MemoryStream()) {
 
-					this.objTargaHeader.SetVerticalTransferOrder((VerticalTransferOrder) Utilities.GetBits(ImageDescriptor, 5, 1));
-					this.objTargaHeader.SetHorizontalTransferOrder((HorizontalTransferOrder) Utilities.GetBits(ImageDescriptor, 4, 1));
+						// do we reverse the rows in the row list.
+						if (blnRowsReverse == true)
+							rows.Reverse();
 
-					// load ImageID value if any
-					if (this.objTargaHeader.ImageIDLength > 0) {
-						byte[] ImageIDValueBytes = binReader.ReadBytes(this.objTargaHeader.ImageIDLength);
-						this.objTargaHeader.SetImageIDValue(System.Text.Encoding.ASCII.GetString(ImageIDValueBytes).TrimEnd('\0'));
+						// go through each row
+						for (int i = 0; i < rows.Count; i++) {
+							// do we reverse the bytes in the row
+							if (blnEachRowReverse == true)
+								rows[i].Reverse();
+
+							// get the byte array for the row
+							byte[] brow = rows[i].ToArray();
+
+							// write the row bytes and padding bytes to the memory streem
+							msData.Write(brow, 0, brow.Length);
+							msData.Write(padding, 0, padding.Length);
+						}
+						// get the image byte array
+						bimagedata = msData.ToArray();
+
+
+
 					}
-					// load color map if it's included and/or needed
-					// Only needed for UNCOMPRESSED_COLOR_MAPPED and RUN_LENGTH_ENCODED_COLOR_MAPPED
-					// image types. If color map is included for other file types we can ignore it.
-					if (this.objTargaHeader.ColorMapType == ColorMapType.COLOR_MAP_INCLUDED) {
-						if (this.objTargaHeader.ImageType == ImageType.UNCOMPRESSED_COLOR_MAPPED ||
-							this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_COLOR_MAPPED) {
-							if (this.objTargaHeader.ColorMapLength > 0) {
-								try {
-									for (int i = 0; i < this.objTargaHeader.ColorMapLength; i++) {
-										int a = 0;
-										int r = 0;
-										int g = 0;
-										int b = 0;
 
-										// load each color map entry based on the ColorMapEntrySize value
-										switch (this.objTargaHeader.ColorMapEntrySize) {
-											case 15:
-												byte[] color15 = binReader.ReadBytes(2);
-												// remember that the bytes are stored in reverse oreder
-												this.objTargaHeader.ColorMap.Add(Utilities.GetColorFrom2Bytes(color15[1], color15[0]));
-												break;
-											case 16:
-												byte[] color16 = binReader.ReadBytes(2);
-												// remember that the bytes are stored in reverse oreder
-												this.objTargaHeader.ColorMap.Add(Utilities.GetColorFrom2Bytes(color16[1], color16[0]));
-												break;
-											case 24:
-												b = Convert.ToInt32(binReader.ReadByte());
-												g = Convert.ToInt32(binReader.ReadByte());
-												r = Convert.ToInt32(binReader.ReadByte());
-												this.objTargaHeader.ColorMap.Add(System.Drawing.Color.FromArgb(r, g, b));
-												break;
-											case 32:
-												a = Convert.ToInt32(binReader.ReadByte());
-												b = Convert.ToInt32(binReader.ReadByte());
-												g = Convert.ToInt32(binReader.ReadByte());
-												r = Convert.ToInt32(binReader.ReadByte());
-												this.objTargaHeader.ColorMap.Add(System.Drawing.Color.FromArgb(a, r, g, b));
-												break;
-											default:
-												Dispose(true);
-												throw new NotSupportedException("TargaImage only supports ColorMap Entry Sizes of 15, 16, 24 or 32 bits.");
+				} else {
+					Dispose(true);
+					throw new IOException(@"Error loading file, No image data in file.");
+				}
 
-										}
+				// since the Bitmap constructor requires a poiter to an array of image bytes
+				// we have to pin down the memory used by the byte array and use the pointer 
+				// of this pinned memory to create the Bitmap.
+				// This tells the Garbage Collector to leave the memory alone and DO NOT touch it.
+				this.ImageByteHandle = GCHandle.Alloc(bimagedata, GCHandleType.Pinned);
+
+				// make sure we don't have a phantom Bitmap
+				if (this.bmpTargaImage != null) {
+					this.bmpTargaImage.Dispose();
+				}
+
+				// make sure we don't have a phantom Thumbnail
+				if (this.bmpImageThumbnail != null) {
+					this.bmpImageThumbnail.Dispose();
+				}
 
 
-									}
-								} finally {
-									Dispose(true);
-								}
+				// get the Pixel format to use with the Bitmap object
+				PixelFormat pf = PixelFormat.Undefined;
 
+				// first off what is our Pixel Depth (bits per pixel)
+				switch (this.objTargaHeader.PixelDepth) {
+					case 8:
+						pf = PixelFormat.Format8bppIndexed;
+						break;
 
+					case 16:
+						//PixelFormat.Format16bppArgb1555
+						//PixelFormat.Format16bppRgb555
+						if (this.Format == TGAFormat.NEW_TGA) {
+							switch (this.objTargaExtensionArea.AttributesType) {
+								case 0:
+								case 1:
+								case 2: // no alpha data
+									pf = PixelFormat.Format16bppRgb555;
+									break;
 
-							} else {
-								Dispose(true);
-								throw new ArgumentException("Image Type requires a Color Map and Color Map Length is zero.");
+								case 3: // useful alpha data
+									pf = PixelFormat.Format16bppArgb1555;
+									break;
 							}
+						} else {
+							pf = PixelFormat.Format16bppRgb555;
 						}
 
+						break;
 
-					} else {
-						if (this.objTargaHeader.ImageType == ImageType.UNCOMPRESSED_COLOR_MAPPED ||
-							this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_COLOR_MAPPED) {
-							Dispose(true);
-							throw new ArgumentException("Image Type requires a Color Map and there was not a Color Map included in the file.");
-						}
-					}
-					// is there an Extension Area in file
-					if (this.objTargaFooter.ExtensionAreaOffset > 0) {
-						// set the cursor at the beginning of the Extension Area using ExtensionAreaOffset.
-						binReader.BaseStream.Seek(this.objTargaFooter.ExtensionAreaOffset, SeekOrigin.Begin);
+					case 24:
+						pf = PixelFormat.Format24bppRgb;
+						break;
 
-						// load the extension area fields from the file
+					case 32:
+						//PixelFormat.Format32bppArgb
+						//PixelFormat.Format32bppPArgb
+						//PixelFormat.Format32bppRgb
+						if (this.Format == TGAFormat.NEW_TGA) {
+							switch (this.objTargaExtensionArea.AttributesType) {
 
-						this.objTargaExtensionArea.SetExtensionSize((int) (binReader.ReadInt16()));
-						this.objTargaExtensionArea.SetAuthorName(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaAuthorNameByteLength)).TrimEnd('\0'));
-						this.objTargaExtensionArea.SetAuthorComments(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaAuthorCommentsByteLength)).TrimEnd('\0'));
+								case 1:
+								case 2: // no alpha data
+									pf = PixelFormat.Format32bppRgb;
+									break;
 
+								case 0:
+								case 3: // useful alpha data
+									pf = PixelFormat.Format32bppArgb;
+									break;
 
-						// get the date/time stamp of the file
-						Int16 iMonth = binReader.ReadInt16();
-						Int16 iDay = binReader.ReadInt16();
-						Int16 iYear = binReader.ReadInt16();
-						Int16 iHour = binReader.ReadInt16();
-						Int16 iMinute = binReader.ReadInt16();
-						Int16 iSecond = binReader.ReadInt16();
-						DateTime dtstamp;
-						string strStamp = iMonth + @"/" + iDay + @"/" + iYear + @" ";
-						strStamp += iHour + @":" + iMinute + @":" + iSecond;
-						if (DateTime.TryParse(strStamp, out dtstamp) == true)
-							this.objTargaExtensionArea.SetDateTimeStamp(dtstamp);
+								case 4: // premultiplied alpha data
+									pf = PixelFormat.Format32bppPArgb;
+									break;
 
-
-						this.objTargaExtensionArea.SetJobName(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaJobNameByteLength)).TrimEnd('\0'));
-
-
-						// get the job time of the file
-						iHour = binReader.ReadInt16();
-						iMinute = binReader.ReadInt16();
-						iSecond = binReader.ReadInt16();
-						TimeSpan ts = new TimeSpan((int) iHour, (int) iMinute, (int) iSecond);
-						this.objTargaExtensionArea.SetJobTime(ts);
-
-
-						this.objTargaExtensionArea.SetSoftwareID(System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaSoftwareIDByteLength)).TrimEnd('\0'));
-
-
-						// get the version number and letter from file
-						float iVersionNumber = (float) binReader.ReadInt16() / 100f;
-						string strVersionLetter = System.Text.Encoding.ASCII.GetString(binReader.ReadBytes(ExtensionAreaSoftwareVersionLetterByteLength)).TrimEnd('\0');
-
-
-						this.objTargaExtensionArea.SetSoftwareID(iVersionNumber.ToString(@"F2") + strVersionLetter);
-
-
-						// get the color key of the file
-						int a = (int) binReader.ReadByte();
-						int r = (int) binReader.ReadByte();
-						int b = (int) binReader.ReadByte();
-						int g = (int) binReader.ReadByte();
-						this.objTargaExtensionArea.SetKeyColor(Color.FromArgb(a, r, g, b));
-
-
-						this.objTargaExtensionArea.SetPixelAspectRatioNumerator((int) binReader.ReadInt16());
-						this.objTargaExtensionArea.SetPixelAspectRatioDenominator((int) binReader.ReadInt16());
-						this.objTargaExtensionArea.SetGammaNumerator((int) binReader.ReadInt16());
-						this.objTargaExtensionArea.SetGammaDenominator((int) binReader.ReadInt16());
-						this.objTargaExtensionArea.SetColorCorrectionOffset(binReader.ReadInt32());
-						this.objTargaExtensionArea.SetPostageStampOffset(binReader.ReadInt32());
-						this.objTargaExtensionArea.SetScanLineOffset(binReader.ReadInt32());
-						this.objTargaExtensionArea.SetAttributesType((int) binReader.ReadByte());
-
-
-						// load Scan Line Table from file if any
-						if (this.objTargaExtensionArea.ScanLineOffset > 0) {
-							binReader.BaseStream.Seek(this.objTargaExtensionArea.ScanLineOffset, SeekOrigin.Begin);
-							for (int i = 0; i < this.objTargaHeader.Height; i++) {
-								this.objTargaExtensionArea.ScanLineTable.Add(binReader.ReadInt32());
 							}
+						} else {
+							pf = PixelFormat.Format32bppRgb;
+							break;
 						}
 
 
-						// load Color Correction Table from file if any
-						if (this.objTargaExtensionArea.ColorCorrectionOffset > 0) {
-							binReader.BaseStream.Seek(this.objTargaExtensionArea.ColorCorrectionOffset, SeekOrigin.Begin);
-							for (int i = 0; i < ExtensionAreaColorCorrectionTableValueLength; i++) {
-								a = (int) binReader.ReadInt16();
-								r = (int) binReader.ReadInt16();
-								b = (int) binReader.ReadInt16();
-								g = (int) binReader.ReadInt16();
-								this.objTargaExtensionArea.ColorCorrectionTable.Add(Color.FromArgb(a, r, g, b));
-							}
-						}
-					}
-					//**************  NOTE  *******************
-					// The memory allocated for Microsoft Bitmaps must be aligned on a 32bit boundary.
-					// The stride refers to the number of bytes allocated for one scanline of the bitmap.
-					// In your loop, you copy the pixels one scanline at a time and take into
-					// consideration the amount of padding that occurs due to memory alignment.
-					// calculate the stride, in bytes, of the image (32bit aligned width of each image row)
-					this.intStride = (((int) this.objTargaHeader.Width * (int) this.objTargaHeader.PixelDepth + 31) & ~31) >> 3; // width in bytes
 
-					// calculate the padding, in bytes, of the image 
-					// number of bytes to add to make each row a 32bit aligned row
-					// padding in bytes
-					this.intPadding = this.intStride - ((((int) this.objTargaHeader.Width * (int) this.objTargaHeader.PixelDepth) + 7) / 8);
+						break;
 
-					// read the image data into a byte array
-					// take into account stride has to be a multiple of 4
-					// use padding to make sure multiple of 4    
+				}
 
-					byte[] bimagedata = null;
-					if (this.objTargaHeader.ImageDataOffset > 0) {
-						// padding bytes
-						byte[] padding = new byte[this.intPadding];
-						MemoryStream msData = null;
+				// create a Bitmap object using the image Width, Height,
+				// Stride, PixelFormat and the pointer to the pinned byte array.
+				this.bmpTargaImage = new Bitmap(this.objTargaHeader.Width,
+												this.objTargaHeader.Height,
+												this.intStride,
+												pf,
+												this.ImageByteHandle.AddrOfPinnedObject());
+
+
+				// read the Thumbnail image data into a byte array
+				// take into account stride has to be a multiple of 4
+				// use padding to make sure multiple of 4    
+
+				byte[] data = null;
+				if (binReader != null && binReader.BaseStream != null && binReader.BaseStream.Length > 0 && binReader.BaseStream.CanSeek == true) {
+					if (this.ExtensionArea.PostageStampOffset > 0) {
 
 						// seek to the beginning of the image data using the ImageDataOffset value
-						binReader.BaseStream.Seek(this.objTargaHeader.ImageDataOffset, SeekOrigin.Begin);
+						binReader.BaseStream.Seek(this.ExtensionArea.PostageStampOffset, SeekOrigin.Begin);
 
+						int iWidth = binReader.ReadByte();
+						int iHeight = binReader.ReadByte();
 
-						// get the size in bytes of each row in the image
-						int intImageRowByteSize = (int) this.objTargaHeader.Width * ((int) this.objTargaHeader.BytesPerPixel);
+						int iStride = ((iWidth * this.objTargaHeader.PixelDepth + 31) & ~31) >> 3; // width in bytes
+						int iPadding = iStride - (((iWidth * this.objTargaHeader.PixelDepth) + 7) / 8);
 
-						// get the size in bytes of the whole image
-						int intImageByteSize = intImageRowByteSize * (int) this.objTargaHeader.Height;
-
-						// is this a RLE compressed image type
-						if (this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_BLACK_AND_WHITE ||
-						   this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_COLOR_MAPPED ||
-						   this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_TRUE_COLOR) {
+						List<List<byte>> objRows = new List<List<byte>>();
+						List<byte> objRow = new List<byte>();
 
 
 
-							// RLE Packet info
-							byte bRLEPacket = 0;
-							int intRLEPacketType = -1;
-							int intRLEPixelCount = 0;
-							byte[] bRunLengthPixel = null;
 
-							// used to keep track of bytes read
-							int intImageBytesRead = 0;
-							int intImageRowBytesRead = 0;
-
-							// keep reading until we have the all image bytes
-							while (intImageBytesRead < intImageByteSize) {
-								// get the RLE packet
-								bRLEPacket = binReader.ReadByte();
-								intRLEPacketType = Utilities.GetBits(bRLEPacket, 7, 1);
-								intRLEPixelCount = Utilities.GetBits(bRLEPacket, 0, 7) + 1;
-
-								// check the RLE packet type
-								if ((RLEPacketType) intRLEPacketType == RLEPacketType.RUN_LENGTH) {
-									// get the pixel color data
-									bRunLengthPixel = binReader.ReadBytes((int) this.objTargaHeader.BytesPerPixel);
-
-									// add the number of pixels specified using the read pixel color
-									for (int i = 0; i < intRLEPixelCount; i++) {
-										row.AddRange(bRunLengthPixel);
-
-										// increment the byte counts
-										intImageRowBytesRead += bRunLengthPixel.Length;
-										intImageBytesRead += bRunLengthPixel.Length;
-
-										// if we have read a full image row
-										// add the row to the row list and clear it
-										// restart row byte count
-										if (intImageRowBytesRead == intImageRowByteSize) {
-											rows.Add(row);
-											row = new System.Collections.Generic.List<byte>();
-											intImageRowBytesRead = 0;
-
-										}
-									}
-
-								} else if ((RLEPacketType) intRLEPacketType == RLEPacketType.RAW) {
-									// get the number of bytes to read based on the read pixel count
-									int intBytesToRead = intRLEPixelCount * (int) this.objTargaHeader.BytesPerPixel;
-
-									// read each byte
-									for (int i = 0; i < intBytesToRead; i++) {
-										row.Add(binReader.ReadByte());
-
-										// increment the byte counts
-										intImageBytesRead++;
-										intImageRowBytesRead++;
-
-										// if we have read a full image row
-										// add the row to the row list and clear it
-										// restart row byte count
-										if (intImageRowBytesRead == intImageRowByteSize) {
-											rows.Add(row);
-											row = new System.Collections.Generic.List<byte>();
-											intImageRowBytesRead = 0;
-										}
-
-									}
-
-								}
-							}
-
-
-
-						} else {
-
-
-							// loop through each row in the image
-							for (int i = 0; i < (int) this.objTargaHeader.Height; i++) {
-								// loop through each byte in the row
-								for (int j = 0; j < intImageRowByteSize; j++) {
-									// add the byte to the row
-									row.Add(binReader.ReadByte());
-								}
-
-								// add row to the list of rows
-								rows.Add(row);
-
-								// create a new row
-								row = new System.Collections.Generic.List<byte>();
-							}
-
-
-
-						}
-
-						// flag that states whether or not to reverse the location of all rows.
+						byte[] padding = new byte[iPadding];
+						MemoryStream msData = null;
+						bool blnEachRowReverse = false;
 						bool blnRowsReverse = false;
 
-						// flag that states whether or not to reverse the bytes in each row.
-						bool blnEachRowReverse = false;
 
-						// use FirstPixelDestination to determine the alignment of the 
-						// image data byte
-						switch (this.objTargaHeader.FirstPixelDestination) {
-							case FirstPixelDestination.TOP_LEFT:
-								blnRowsReverse = false;
-								blnEachRowReverse = true;
-								break;
-
-							case FirstPixelDestination.TOP_RIGHT:
-								blnRowsReverse = false;
-								blnEachRowReverse = false;
-								break;
-
-							case FirstPixelDestination.BOTTOM_LEFT:
-								blnRowsReverse = true;
-								blnEachRowReverse = true;
-								break;
-
-							case FirstPixelDestination.BOTTOM_RIGHT:
-							case FirstPixelDestination.UNKNOWN:
-								blnRowsReverse = true;
-								blnEachRowReverse = false;
-
-								break;
-						}
-
-						// write the bytes from each row into a memory stream and get the 
-						// resulting byte array
 						using (msData = new MemoryStream()) {
+							// get the size in bytes of each row in the image
+							int intImageRowByteSize = iWidth * (this.objTargaHeader.PixelDepth / 8);
 
-							// do we reverse the rows in the row list.
+							// thumbnails are never compressed
+							for (int i = 0; i < iHeight; i++) {
+								for (int j = 0; j < intImageRowByteSize; j++) {
+									objRow.Add(binReader.ReadByte());
+								}
+								objRows.Add(objRow);
+								objRow = new List<byte>();
+							}
+
+							switch (this.objTargaHeader.FirstPixelDestination) {
+								case FirstPixelDestination.TOP_LEFT:
+									break;
+
+								case FirstPixelDestination.TOP_RIGHT:
+									blnRowsReverse = false;
+									blnEachRowReverse = false;
+									break;
+
+								case FirstPixelDestination.BOTTOM_LEFT:
+									break;
+
+								case FirstPixelDestination.BOTTOM_RIGHT:
+								case FirstPixelDestination.UNKNOWN:
+									blnRowsReverse = true;
+									blnEachRowReverse = false;
+
+									break;
+							}
+
 							if (blnRowsReverse == true)
-								rows.Reverse();
+								objRows.Reverse();
 
-							// go through each row
-							for (int i = 0; i < rows.Count; i++) {
-								// do we reverse the bytes in the row
+							for (int i = 0; i < objRows.Count; i++) {
 								if (blnEachRowReverse == true)
-									rows[i].Reverse();
+									objRows[i].Reverse();
 
-								// get the byte array for the row
-								byte[] brow = rows[i].ToArray();
-
-								// write the row bytes and padding bytes to the memory streem
+								byte[] brow = objRows[i].ToArray();
 								msData.Write(brow, 0, brow.Length);
 								msData.Write(padding, 0, padding.Length);
 							}
-							// get the image byte array
-							bimagedata = msData.ToArray();
+							data = msData.ToArray();
+						}
 
-
+						if (data != null && data.Length > 0) {
+							this.ThumbnailByteHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+							this.bmpImageThumbnail = new Bitmap(iWidth, iHeight, iStride, pf,
+															this.ThumbnailByteHandle.AddrOfPinnedObject());
 
 						}
 
-					} else {
-						Dispose(true);
-						throw new IOException(@"Error loading file, No image data in file.");
-					}
 
-					// since the Bitmap constructor requires a poiter to an array of image bytes
-					// we have to pin down the memory used by the byte array and use the pointer 
-					// of this pinned memory to create the Bitmap.
-					// This tells the Garbage Collector to leave the memory alone and DO NOT touch it.
-					this.ImageByteHandle = GCHandle.Alloc(bimagedata, GCHandleType.Pinned);
-
-					// make sure we don't have a phantom Bitmap
-					if (this.bmpTargaImage != null) {
-						this.bmpTargaImage.Dispose();
-					}
-
-					// make sure we don't have a phantom Thumbnail
-					if (this.bmpImageThumbnail != null) {
-						this.bmpImageThumbnail.Dispose();
-					}
-
-
-					// get the Pixel format to use with the Bitmap object
-					PixelFormat pf = PixelFormat.Undefined;
-
-					// first off what is our Pixel Depth (bits per pixel)
-					switch (this.objTargaHeader.PixelDepth) {
-						case 8:
-							pf = PixelFormat.Format8bppIndexed;
-							break;
-
-						case 16:
-							//PixelFormat.Format16bppArgb1555
-							//PixelFormat.Format16bppRgb555
-							if (this.Format == TGAFormat.NEW_TGA) {
-								switch (this.objTargaExtensionArea.AttributesType) {
-									case 0:
-									case 1:
-									case 2: // no alpha data
-										pf = PixelFormat.Format16bppRgb555;
-										break;
-
-									case 3: // useful alpha data
-										pf = PixelFormat.Format16bppArgb1555;
-										break;
-								}
-							} else {
-								pf = PixelFormat.Format16bppRgb555;
-							}
-
-							break;
-
-						case 24:
-							pf = PixelFormat.Format24bppRgb;
-							break;
-
-						case 32:
-							//PixelFormat.Format32bppArgb
-							//PixelFormat.Format32bppPArgb
-							//PixelFormat.Format32bppRgb
-							if (this.Format == TGAFormat.NEW_TGA) {
-								switch (this.objTargaExtensionArea.AttributesType) {
-
-									case 1:
-									case 2: // no alpha data
-										pf = PixelFormat.Format32bppRgb;
-										break;
-
-									case 0:
-									case 3: // useful alpha data
-										pf = PixelFormat.Format32bppArgb;
-										break;
-
-									case 4: // premultiplied alpha data
-										pf = PixelFormat.Format32bppPArgb;
-										break;
-
-								}
-							} else {
-								pf = PixelFormat.Format32bppRgb;
-								break;
-							}
-
-
-
-							break;
-
-					}
-
-					// create a Bitmap object using the image Width, Height,
-					// Stride, PixelFormat and the pointer to the pinned byte array.
-					this.bmpTargaImage = new Bitmap((int) this.objTargaHeader.Width,
-													(int) this.objTargaHeader.Height,
-													this.intStride,
-													pf,
-													this.ImageByteHandle.AddrOfPinnedObject());
-
-
-					// read the Thumbnail image data into a byte array
-					// take into account stride has to be a multiple of 4
-					// use padding to make sure multiple of 4    
-
-					byte[] data = null;
-					if (binReader != null && binReader.BaseStream != null && binReader.BaseStream.Length > 0 && binReader.BaseStream.CanSeek == true) {
-						if (this.ExtensionArea.PostageStampOffset > 0) {
-
-							// seek to the beginning of the image data using the ImageDataOffset value
-							binReader.BaseStream.Seek(this.ExtensionArea.PostageStampOffset, SeekOrigin.Begin);
-
-							int iWidth = (int) binReader.ReadByte();
-							int iHeight = (int) binReader.ReadByte();
-
-							int iStride = ((iWidth * (int) this.objTargaHeader.PixelDepth + 31) & ~31) >> 3; // width in bytes
-							int iPadding = iStride - (((iWidth * (int) this.objTargaHeader.PixelDepth) + 7) / 8);
-
-							System.Collections.Generic.List<System.Collections.Generic.List<byte>> objRows = new System.Collections.Generic.List<System.Collections.Generic.List<byte>>();
-							System.Collections.Generic.List<byte> objRow = new System.Collections.Generic.List<byte>();
-
-
-
-
-							byte[] padding = new byte[iPadding];
-							MemoryStream msData = null;
-							bool blnEachRowReverse = false;
-							bool blnRowsReverse = false;
-
-
-							using (msData = new MemoryStream()) {
-								// get the size in bytes of each row in the image
-								int intImageRowByteSize = iWidth * ((int) this.objTargaHeader.PixelDepth / 8);
-
-								// thumbnails are never compressed
-								for (int i = 0; i < iHeight; i++) {
-									for (int j = 0; j < intImageRowByteSize; j++) {
-										objRow.Add(binReader.ReadByte());
-									}
-									objRows.Add(objRow);
-									objRow = new System.Collections.Generic.List<byte>();
-								}
-
-								switch (this.objTargaHeader.FirstPixelDestination) {
-									case FirstPixelDestination.TOP_LEFT:
-										break;
-
-									case FirstPixelDestination.TOP_RIGHT:
-										blnRowsReverse = false;
-										blnEachRowReverse = false;
-										break;
-
-									case FirstPixelDestination.BOTTOM_LEFT:
-										break;
-
-									case FirstPixelDestination.BOTTOM_RIGHT:
-									case FirstPixelDestination.UNKNOWN:
-										blnRowsReverse = true;
-										blnEachRowReverse = false;
-
-										break;
-								}
-
-								if (blnRowsReverse == true)
-									objRows.Reverse();
-
-								for (int i = 0; i < objRows.Count; i++) {
-									if (blnEachRowReverse == true)
-										objRows[i].Reverse();
-
-									byte[] brow = objRows[i].ToArray();
-									msData.Write(brow, 0, brow.Length);
-									msData.Write(padding, 0, padding.Length);
-								}
-								data = msData.ToArray();
-							}
-
-							if (data != null && data.Length > 0) {
-								this.ThumbnailByteHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-								this.bmpImageThumbnail = new Bitmap(iWidth, iHeight, iStride, pf,
-																this.ThumbnailByteHandle.AddrOfPinnedObject());
-
-							}
-
-
-						} else {
-							if (this.bmpImageThumbnail != null) {
-								this.bmpImageThumbnail.Dispose();
-								this.bmpImageThumbnail = null;
-							}
-						}
 					} else {
 						if (this.bmpImageThumbnail != null) {
 							this.bmpImageThumbnail.Dispose();
 							this.bmpImageThumbnail = null;
 						}
 					}
+				} else {
+					if (this.bmpImageThumbnail != null) {
+						this.bmpImageThumbnail.Dispose();
+						this.bmpImageThumbnail = null;
+					}
+				}
 
-					// load the color map into the Bitmap, if it exists
-					if (this.objTargaHeader.ColorMap.Count > 0) {
-						// get the Bitmap's current palette
+				// load the color map into the Bitmap, if it exists
+				if (this.objTargaHeader.ColorMap.Count > 0) {
+					// get the Bitmap's current palette
+					ColorPalette pal = this.bmpTargaImage.Palette;
+
+					// loop trough each color in the loaded file's color map
+					for (int i = 0; i < this.objTargaHeader.ColorMap.Count; i++) {
+						// is the AttributesType 0 or 1 bit
+						if (this.objTargaExtensionArea.AttributesType == 0 ||
+							this.objTargaExtensionArea.AttributesType == 1)
+							// use 255 for alpha ( 255 = opaque/visible ) so we can see the image
+							pal.Entries[i] = Color.FromArgb(255, this.objTargaHeader.ColorMap[i].R, this.objTargaHeader.ColorMap[i].G, this.objTargaHeader.ColorMap[i].B);
+
+						else
+							// use whatever value is there
+							pal.Entries[i] = this.objTargaHeader.ColorMap[i];
+
+					}
+
+					// set the new palette back to the Bitmap object
+					this.bmpTargaImage.Palette = pal;
+
+					// set the palette to the thumbnail also, if there is one
+					if (this.bmpImageThumbnail != null) {
+						this.bmpImageThumbnail.Palette = pal;
+					}
+				} else { // no color map
+
+
+					// check to see if this is a Black and White (Greyscale)
+					if (this.objTargaHeader.PixelDepth == 8 && (this.objTargaHeader.ImageType == ImageType.UNCOMPRESSED_BLACK_AND_WHITE ||
+						this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_BLACK_AND_WHITE)) {
+						// get the current palette
 						ColorPalette pal = this.bmpTargaImage.Palette;
 
-						// loop trough each color in the loaded file's color map
-						for (int i = 0; i < this.objTargaHeader.ColorMap.Count; i++) {
-							// is the AttributesType 0 or 1 bit
-							if (this.objTargaExtensionArea.AttributesType == 0 ||
-								this.objTargaExtensionArea.AttributesType == 1)
-								// use 255 for alpha ( 255 = opaque/visible ) so we can see the image
-								pal.Entries[i] = Color.FromArgb(255, this.objTargaHeader.ColorMap[i].R, this.objTargaHeader.ColorMap[i].G, this.objTargaHeader.ColorMap[i].B);
-
-							else
-								// use whatever value is there
-								pal.Entries[i] = this.objTargaHeader.ColorMap[i];
-
+						// create the Greyscale palette
+						for (int i = 0; i < 256; i++) {
+							pal.Entries[i] = Color.FromArgb(i, i, i);
 						}
 
 						// set the new palette back to the Bitmap object
@@ -948,34 +958,9 @@ namespace System.Drawing {
 						if (this.bmpImageThumbnail != null) {
 							this.bmpImageThumbnail.Palette = pal;
 						}
-					} else { // no color map
-
-
-						// check to see if this is a Black and White (Greyscale)
-						if (this.objTargaHeader.PixelDepth == 8 && (this.objTargaHeader.ImageType == ImageType.UNCOMPRESSED_BLACK_AND_WHITE ||
-							this.objTargaHeader.ImageType == ImageType.RUN_LENGTH_ENCODED_BLACK_AND_WHITE)) {
-							// get the current palette
-							ColorPalette pal = this.bmpTargaImage.Palette;
-
-							// create the Greyscale palette
-							for (int i = 0; i < 256; i++) {
-								pal.Entries[i] = Color.FromArgb(i, i, i);
-							}
-
-							// set the new palette back to the Bitmap object
-							this.bmpTargaImage.Palette = pal;
-
-							// set the palette to the thumbnail also, if there is one
-							if (this.bmpImageThumbnail != null) {
-								this.bmpImageThumbnail.Palette = pal;
-							}
-						}
-
-
 					}
-				} finally {
-					// clear all 
-					Dispose(true);
+
+
 				}
 			}
 			if (disposeAllButImage)
@@ -986,7 +971,7 @@ namespace System.Drawing {
 		/// Disposes of the image.
 		/// </summary>
 		~TargaImage() {
-			Dispose(true);
+			Dispose(false);
 		}
 
 		/// <summary>

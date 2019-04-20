@@ -783,9 +783,9 @@ namespace System.Graphics.Models {
 		}
 
 		/// <summary>
-		/// Removes all components from the model
+		/// Removes all components from the model, and returns the old components that were used (can be discarded, useful for disposing them separately)
 		/// </summary>
-		public void Clear() {
+		public List<IModel> ClearComponents() {
 			lock (SyncRoot) {
 				List<IModel> oldComponents = componentList;
 				componentList = new List<IModel>();
@@ -793,7 +793,15 @@ namespace System.Graphics.Models {
 				indexCount = 0;
 				foreach (IModel component in oldComponents)
 					component.Parent = null;
+				return oldComponents;
 			}
+		}
+
+		/// <summary>
+		/// Removes all components from the model
+		/// </summary>
+		public void Clear() {
+			ClearComponents();
 		}
 
 		/// <summary>

@@ -109,7 +109,14 @@ namespace System.Graphics.Models.Parsers {
 					if (textures == null || textures.Count == 0) {
 						if ((associatedTextures & MeshTexture.Diffuse) == MeshTexture.Diffuse) { //has texture
 							try {
-								diffuseTexture = TextureParser.Parse(Encoding.UTF8.GetString(reader.ReadBytes(64)).TruncateAtNull());
+								string texturePath = Encoding.UTF8.GetString(reader.ReadBytes(64)).TruncateAtNull();
+								diffuseTexture = TextureParser.Parse(texturePath);
+								if (string.IsNullOrEmpty(diffuseTexture.Name)) {
+									try {
+										diffuseTexture.Name = Path.GetFileName(diffuseTexture.Name);
+									} catch {
+									}
+								}
 							} catch {
 								diffuseTexture = null;
 							}

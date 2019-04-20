@@ -1004,7 +1004,12 @@ namespace System.Graphics.Models {
 				premultiplied = texture.Premultiplied;
 				if (premultiplied)
 					GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
-				texture.Bind();
+				try {
+					texture.Bind();
+				} catch (Exception ex) {
+					Console.WriteLine(ex.Message);
+					Texture2D.UnbindTexture2D();
+				}
 				shader.SetUniformValue(GlobalShaderParams.UseTexture.ToString(), 1f, ShaderSetMode.SetImmediately);
 			}
 			shader.SetUniformValue(GlobalShaderParams.AmbientHue.ToString(), AmbientHue, ShaderSetMode.SetImmediately);

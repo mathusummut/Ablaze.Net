@@ -13,7 +13,7 @@ namespace System.Graphics.Models.Parsers.TextureParsers {
 		/// <param name="source">The location of the file to parse the texture from.</param>
 		/// <returns>A list of the textures parsed.</returns>
 		public static TextureCollection Parse(Stream source) {
-			return new TextureCollection(new Texture2D(new TargaImage(source).Image, NPotTextureScaleMode.ScaleUp, ImageParameterAction.Dispose));
+			return new TextureCollection(new Texture2D(new TargaImage(source, true).Image, NPotTextureScaleMode.ScaleUp, ImageParameterAction.Dispose));
 		}
 	}
 }

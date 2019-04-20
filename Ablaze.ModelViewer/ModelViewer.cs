@@ -258,7 +258,7 @@ namespace Ablaze.ModelViewer {
 
 		private void ChildDialog_ComponentLoaded(MeshComponent obj) {
 			if (Scene.Count != 0)
-				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, new List<IModel>(Scene)));
+				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, Scene.ClearComponents()));
 			Model model = new Model(obj);
 			model.Cull = false;
 			Scene.Add(model);
@@ -293,7 +293,7 @@ namespace Ablaze.ModelViewer {
 
 		private void LoadModel(object param) {
 			if (Scene.Count != 0)
-				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, new List<IModel>(Scene)));
+				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, Scene.ClearComponents()));
 			loading = true;
 			statusLabel.Text = "Loading...";
 			Rectangle rect = statusLabel.Bounds;
@@ -592,7 +592,7 @@ namespace Ablaze.ModelViewer {
 		/// Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here.
 		/// </summary>
 		protected override void OnUnload(EventArgs e) {
-			Dispose3DModel(new List<IModel>(Scene));
+			Dispose3DModel(Scene.ClearComponents());
 			base.OnUnload(e);
 		}
 
@@ -600,7 +600,7 @@ namespace Ablaze.ModelViewer {
 		/// Disposes of the 3D model that is loaded.
 		/// </summary>
 		public static object Dispose3DModel(object param) {
-			foreach (IModel model in (IEnumerable<IModel>) param)
+			foreach (IModel model in (List<IModel>) param)
 				model.Dispose();
 			return null;
 		}
