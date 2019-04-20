@@ -94,7 +94,7 @@ namespace System.Windows.Forms {
 			string fileName = (string) file;
 			try {
 				using (BufferedStream stream = FileUtils.LoadFileBuffered(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, true)) {
-					Bitmap image = Path.GetExtension(fileName).Trim().ToLower() == ".tga" ? new TargaImage(stream, true).Image : new Bitmap(stream);
+					Bitmap image = Path.GetExtension(fileName).Trim().ToLower() == ".tga" ? new TargaImage(stream).ToBitmap(true) : new Bitmap(stream);
 					sizeLabel.Text = "Size: " + image.Width + "x" + image.Height;
 					this.image = image;
 				}

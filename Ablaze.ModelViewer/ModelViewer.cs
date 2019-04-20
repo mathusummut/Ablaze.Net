@@ -18,10 +18,13 @@ using System.Windows.Forms;
 
 namespace Ablaze.ModelViewer {
 	/// <summary>
-	/// The main window of the model viewer.
+	/// The main window of the model viewer
 	/// </summary>
 	public class ModelViewer : GraphicsForm {
-		private static ModelViewer Viewer; //for debugging purposes
+		/// <summary>
+		/// For debugging purposes
+		/// </summary>
+		private static ModelViewer Viewer;
 		private static string Parameters;
 		private UIAnimationHandler processUpdates;
 		private WaitCallback renderUpdates;
@@ -40,7 +43,7 @@ namespace Ablaze.ModelViewer {
 		private FilePrompt filePrompt = new FilePrompt();
 
 		/// <summary>
-		/// Initializes a ModelViewer instance.
+		/// Initializes a ModelViewer instance
 		/// </summary>
 		public ModelViewer() {
 			UIAnimator.SharedAnimator.UpdateOnThreadPool = false;
@@ -158,7 +161,7 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Called when the OpenGL context is initialized.
+		/// Called when the OpenGL context is initialized
 		/// </summary>
 		protected override void OnGLInitialized(EventArgs e) {
 			base.OnGLInitialized(e);
@@ -168,7 +171,7 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Called when the window fade-in animation has completed.
+		/// Called when the window fade-in animation has completed
 		/// </summary>
 		protected override void OnFadeInCompleted(EventArgs e) {
 			base.OnFadeInCompleted(e);
@@ -177,7 +180,7 @@ namespace Ablaze.ModelViewer {
 		}
 
 		private void ContextMenu_PaintBackground(object sender, PaintEventArgs e) {
-			Point offset = (menuStrip.Location + new Size(0, menuStrip.Height)) + (Size) e.ClipRectangle.Location;
+			Point offset = menuStrip.Location + new Size(0, menuStrip.Height) + (Size) e.ClipRectangle.Location;
 			Bitmap bitmap;
 			lock (BorderSyncLock)
 				bitmap = Border.FastCopy();
@@ -206,10 +209,10 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Called when the update timer has ticked.
+		/// Called when the update timer has ticked
 		/// </summary>
 		/// <param name="e">Ignored</param>
-		/// <param name="elapsedMilliseconds">The milliseconds elapsed since the last frame.</param>
+		/// <param name="elapsedMilliseconds">The milliseconds elapsed since the last frame</param>
 		protected override void OnUpdate(EventArgs e, double elapsedMilliseconds) {
 			float elapsed = (float) elapsedMilliseconds;
 			if (isLeftArrowDown || isRightArrowDown || isUpArrowDown || isDownArrowDown) {
@@ -258,7 +261,7 @@ namespace Ablaze.ModelViewer {
 
 		private void ChildDialog_ComponentLoaded(MeshComponent obj) {
 			if (Scene.Count != 0)
-				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, Scene.ClearComponents()));
+				InvokeOnGLThreadAsync(new InvocationData(DisposeModels, Scene.ClearComponents()));
 			Model model = new Model(obj);
 			model.Cull = false;
 			Scene.Add(model);
@@ -293,7 +296,7 @@ namespace Ablaze.ModelViewer {
 
 		private void LoadModel(object param) {
 			if (Scene.Count != 0)
-				InvokeOnGLThreadAsync(new InvocationData(Dispose3DModel, Scene.ClearComponents()));
+				InvokeOnGLThreadAsync(new InvocationData(DisposeModels, Scene.ClearComponents()));
 			loading = true;
 			statusLabel.Text = "Loading...";
 			Rectangle rect = statusLabel.Bounds;
@@ -369,9 +372,9 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Called when the window is shown.
+		/// Called when the window is shown
 		/// </summary>
-		/// <param name="e">Ignored.</param>
+		/// <param name="e">Ignored</param>
 		protected override void OnShown(EventArgs e) {
 			base.OnShown(e);
 			if (Parameters == null)
@@ -468,10 +471,10 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Called when a key or key combination has been pressed.
+		/// Called when a key or key combination has been pressed
 		/// </summary>
-		/// <param name="msg">The corresponding window message.</param>
-		/// <param name="keyData">The keys that were pressed.</param>
+		/// <param name="msg">The corresponding window message</param>
+		/// <param name="keyData">The keys that were pressed</param>
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (menuStrip.ProcessKeys(keyData))
 				return true;
@@ -480,9 +483,9 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		///  Called when a key is pressed.
+		///  Called when a key is pressed
 		/// </summary>
-		/// <param name="e">The key that was pressed.</param>
+		/// <param name="e">The key that was pressed</param>
 		protected override void OnKeyDown(KeyEventArgs e) {
 			base.OnKeyDown(e);
 			switch (e.KeyCode) {
@@ -505,9 +508,9 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		///  Called when a key is released.
+		///  Called when a key is released
 		/// </summary>
-		/// <param name="e">The key that was released.</param>
+		/// <param name="e">The key that was released</param>
 		protected override void OnKeyUp(KeyEventArgs e) {
 			base.OnKeyUp(e);
 			switch (e.KeyCode) {
@@ -559,9 +562,8 @@ namespace Ablaze.ModelViewer {
 			Vector3 up = Vector3.UnitY;
 			Vector3 eye = currentViewDirection * currentDistance;
 			Scene.Camera = Matrix4.CreateRotationZ(angleZ) * Matrix4.CreateRotationY(currentAngleY) * Matrix4.CreateRotationX(currentAngleX) * Matrix4.LookAt(ref eye, ref currentViewTarget, ref up);
-			//Scene.Light.Position = /*eye*/ new Vector3(20f, 0f, 0f);
+			//Scene.Light.Position = eye;
 			//Scene.Light.PointLight = true;
-			//Fade light with distance
 			InvalidateGL(false);
 			if (!loading || IsClosing || IsDisposed) {
 				string text = string.Format("Distance from origin: {0}\v\nAngle: {{{1}, {2}, {3}}}\v\nBounds: {{{4}, {5}, {6}}}\v\nVertices: {7}\v\nTriangles: {8}",
@@ -580,43 +582,44 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Called whenever a GL render takes place.
+		/// Called whenever a GL render takes place
 		/// </summary>
 		protected override void OnPaintGL(EventArgs e) {
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			MeshComponent.Setup3D(GLViewport.Size.ToVector2(), ref Scene.Camera, (float) Math.Max((Math.Pow(currentDistance * 0.5, 0.3)) * 0.75 - 1.5, 0.001));
+			MeshComponent.Setup3D(GLViewport.Size.ToVector2(), ref Scene.Camera, (float) Math.Max(Math.Pow(currentDistance * 0.5, 0.3) * 0.75 - 1.5, 0.001));
 			Scene.Render();
 		}
 
 		/// <summary>
-		/// Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here.
+		/// Called when the window is being closed, but the context is still alive. Place GL-related cleanup code here
 		/// </summary>
 		protected override void OnUnload(EventArgs e) {
-			Dispose3DModel(Scene.ClearComponents());
+			DisposeModels(Scene.ClearComponents());
 			base.OnUnload(e);
 		}
 
 		/// <summary>
-		/// Disposes of the 3D model that is loaded.
+		/// Disposes of the 3D model that is loaded
 		/// </summary>
-		public static object Dispose3DModel(object param) {
-			foreach (IModel model in (List<IModel>) param)
-				model.Dispose();
+		public static object DisposeModels(object param) {
+			List<IModel> models = (List<IModel>) param;
+			for (int i = 0; i < models.Count; i++)
+				models[i].Dispose();
 			return null;
 		}
 
 		/// <summary>
-		/// Whether to close.
+		/// Whether to close
 		/// </summary>
-		/// <param name="reason">The reason to close.</param>
+		/// <param name="reason">The reason to close</param>
 		protected override bool OnQueryClose(CloseReason reason) {
 			return !saving;
 		}
 
 		/// <summary>
-		/// Called when the window is being disposed.
+		/// Called when the window is being disposed
 		/// </summary>
-		/// <param name="e">Whether managed resources are about to be disposed.</param>
+		/// <param name="e">Whether managed resources are about to be disposed</param>
 		protected override void OnDisposing(DisposeFormEventArgs e) {
 			base.OnDisposing(e);
 			if (e.DisposeMode == DisposeOptions.FullDisposal) {
@@ -626,7 +629,7 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// The entry point of the application.
+		/// The entry point of the application
 		/// </summary>
 		[STAThread]
 		public static void Main(string[] args) {
@@ -644,7 +647,7 @@ namespace Ablaze.ModelViewer {
 		}
 
 		/// <summary>
-		/// Initializes the window and its controls.
+		/// Initializes the window and its controls
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModelViewer));
