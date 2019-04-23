@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace System.Graphics.Models {
@@ -218,6 +219,138 @@ namespace System.Graphics.Models {
 							}
 						}
 					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model using the specified key in ascending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		public override void OrderBy<TKey>(Func<IModel, TKey> keySelector) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderBy(keySelector);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model using the specified key in ascending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		/// <param name="comparer">The comparer to use for the keys</param>
+		public override void OrderBy<TKey>(Func<IModel, TKey> keySelector, IComparer<TKey> comparer) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderBy(keySelector, comparer);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model using the specified key in descending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		public override void OrderByDescending<TKey>(Func<IModel, TKey> keySelector) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderByDescending(keySelector);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model using the specified key in descending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		/// <param name="comparer">The comparer to use for the keys</param>
+		public override void OrderByDescending<TKey>(Func<IModel, TKey> keySelector, IComparer<TKey> comparer) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderByDescending(keySelector, comparer);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model recursively using the specified key in ascending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		public override void OrderByRecursive<TKey>(Func<IModel, TKey> keySelector) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderByRecursive(keySelector);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model recursively using the specified key in ascending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		/// <param name="comparer">The comparer to use for the keys</param>
+		public override void OrderByRecursive<TKey>(Func<IModel, TKey> keySelector, IComparer<TKey> comparer) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderByRecursive(keySelector, comparer);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model recursively using the specified key in descending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		public override void OrderByDescendingRecursive<TKey>(Func<IModel, TKey> keySelector) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderByDescendingRecursive(keySelector);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts the meshes in the model recursively using the specified key in descending order
+		/// </summary>
+		/// <typeparam name="TKey">The type of the key returned by keySelector</typeparam>
+		/// <param name="keySelector">A function to extract a key from an element</param>
+		/// <param name="comparer">The comparer to use for the keys</param>
+		public override void OrderByDescendingRecursive<TKey>(Func<IModel, TKey> keySelector, IComparer<TKey> comparer) {
+			lock (SyncRoot) {
+				Model model;
+				for (int i = 0; i < Count; i++) {
+					model = GetComponent(i) as Model;
+					if (model != null)
+						model.OrderByDescendingRecursive(keySelector, comparer);
 				}
 			}
 		}
