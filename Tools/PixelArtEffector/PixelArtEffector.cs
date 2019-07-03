@@ -32,7 +32,7 @@ namespace PixelArtEffector {
 			openToolStripMenuItem, closeMorphologicalToolStripMenuItem, normalizeToolStripMenuItem, saltAndPepperNoiseToolStripMenuItem,
 			grayscaleToolStripMenuItem, sobelEdgeDetectionToolStripMenuItem, prewittEdgeDetectionToolStripMenuItem, premultiplyAlpha,
 			xbrMenuItem, saveMenuItem, saveAsMenuItem, toolStripMenuItem9, antialiasItem, medianEnhance, smoothStretching, ungrayscale,
-			signedDistanceField, scaleItem, highPassFilter, lowPassFilter;
+			signedDistanceField, scaleItem, highPassFilter, lowPassFilter, equalizeMenuItem;
 
 		/// <summary>
 		/// The entry point of the application.
@@ -377,6 +377,14 @@ namespace PixelArtEffector {
 		private void Ungrayscale_Click(object sender, EventArgs e) {
 			if (background != null)
 				UpdateBackground(background.To32Bit());
+		}
+
+		private void equalizeMenuItem_Click(object sender, EventArgs e) {
+			if (background == null)
+				return;
+			Bitmap newBitmap = background.FastCopy();
+			newBitmap.EqualizeHistogram();
+			UpdateBackground(newBitmap);
 		}
 
 		private void ditheredThresholdToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -819,6 +827,7 @@ namespace PixelArtEffector {
 			this.toolStripMenuItem2 = new System.Windows.Forms.StyledItem();
 			this.medianToolStripMenuItem = new System.Windows.Forms.StyledItem();
 			this.toolStripMenuItem3 = new System.Windows.Forms.StyledItem();
+			this.equalizeMenuItem = new System.Windows.Forms.StyledItem();
 			this.ditheredThresholdToolStripMenuItem = new System.Windows.Forms.StyledItem();
 			this.toolStripMenuItem4 = new System.Windows.Forms.StyledItem();
 			this.toolStripMenuItem5 = new System.Windows.Forms.StyledItem();
@@ -881,6 +890,7 @@ namespace PixelArtEffector {
 			this.toolStripMenuItem2,
 			this.medianToolStripMenuItem,
 			this.toolStripMenuItem3,
+			this.equalizeMenuItem,
 			this.ditheredThresholdToolStripMenuItem,
 			this.toolStripMenuItem4,
 			this.toolStripMenuItem5,
@@ -1011,6 +1021,19 @@ namespace PixelArtEffector {
 			this.toolStripMenuItem3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.toolStripMenuItem3.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
+			// 
+			// equalizeMenuItem
+			// 
+			this.equalizeMenuItem.Icon = null;
+			this.equalizeMenuItem.Image = null;
+			this.equalizeMenuItem.MaximumSize = new System.Drawing.Size(0, 0);
+			this.equalizeMenuItem.Name = "equalizeMenuItem";
+			this.equalizeMenuItem.Padding = new System.Windows.Forms.Padding(5, 3, 5, 3);
+			this.equalizeMenuItem.Size = new System.Drawing.Size(69, 25);
+			this.equalizeMenuItem.Text = "Equalize";
+			this.equalizeMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.equalizeMenuItem.TextRenderingStyle = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+			this.equalizeMenuItem.Click += new System.EventHandler(this.equalizeMenuItem_Click);
 			// 
 			// ditheredThresholdToolStripMenuItem
 			// 

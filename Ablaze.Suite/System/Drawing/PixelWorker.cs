@@ -32,6 +32,7 @@ namespace System.Drawing {
 	/// Supports 32-bit BGRA, 24-bit BGR and 8-bit grayscale bitmaps.
 	/// You can use foreach to iterate through all bytes/pixels of the enumerator with maximum speed.
 	/// Enumeration type can be configured in ThreadLocal variables that are present as fields of the instance.
+	/// Stride internally is always corrected such that there are no gaps between rows in memory, to simplify calculations and algorithms.
 	/// </summary>
 	public sealed class PixelWorker : IEnumerable<IntPtr>, IEnumerable, ICloneable, IDisposable {
 		private static ConcurrentDictionary<Bitmap, PixelWorker> WrapperCollection = new ConcurrentDictionary<Bitmap, PixelWorker>();
@@ -52,7 +53,7 @@ namespace System.Drawing {
 		/// <summary>
 		/// What to do when the passed image is no longer used
 		/// </summary>
-		public ImageParameterAction ImageAction = ImageParameterAction.Dispose;
+		public ImageParameterAction ImageAction = ImageParameterAction.KeepReference;
 		/// <summary>
 		/// The pixel components available in the buffer. If no buffering is used, this will be null.
 		/// </summary>
@@ -596,7 +597,7 @@ namespace System.Drawing {
 #if NET45
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static PixelWorker FromImage(Bitmap image, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.RemoveReference, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
+		public static PixelWorker FromImage(Bitmap image, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.KeepReference, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
 			if (image == null)
 				throw new ArgumentNullException(nameof(image), "The image cannot be null.");
 			else if (image.IsDisposed())
@@ -615,7 +616,7 @@ namespace System.Drawing {
 		/// <param name="imageAction">Whether to dispose the image as well on dispose.</param>
 		/// <param name="doNotUseImageDirectly">If true, the image is copied into a buffer and the original is left untouched.</param>
 		/// <param name="lockBitmap">For internal use only.</param>
-		public static PixelWorker FromImage(Bitmap image, Rectangle rect, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.RemoveReference, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
+		public static PixelWorker FromImage(Bitmap image, Rectangle rect, bool useBuffer, bool writeOnDispose, ImageParameterAction imageAction = ImageParameterAction.KeepReference, bool doNotUseImageDirectly = false, bool lockBitmap = true) {
 			if (image == null)
 				throw new ArgumentNullException(nameof(image), "The image cannot be null.");
 			else if (image.IsDisposed())
@@ -4895,13 +4896,9 @@ namespace System.Drawing {
 		/// </summary>
 		/// <param name="writeChanges">Whether to write any modifications to the image.</param>
 		public void Dispose(bool writeChanges) {
-			if (IsDisposed)
+			if (IsDisposed || Interlocked.Decrement(ref referenceCounter) > 0)
 				return;
-			if (!writeOnDispose && writeChanges)
-				writeOnDispose = true;
-			if (Interlocked.Decrement(ref referenceCounter) > 0)
-				return;
-			if (Buffer == null || writeChanges)
+			else if (Buffer == null || writeChanges)
 				WriteChanges(true);
 			if (image != null) {
 				PixelWorker temp;

@@ -894,7 +894,7 @@ namespace System.Windows.Forms {
 						try {
 							int blur = this.blur;
 							Tuple<int, int[][]> val = ImageLib.CalculateBlurKernel(blur);
-							using (PixelWorker worker = PixelWorker.FromImage(shadow, false, true, ImageParameterAction.RemoveReference))
+							using (PixelWorker worker = PixelWorker.FromImage(shadow, false, true))
 								ImageLib.BoxBlurAlpha(worker, blur, 2, shadowOpacity, ImageLib.Clamp(val.Item2[blur][shadowColor.A] * shadowOpacity / val.Item1), ref buffer, size.Width, size.Height);
 						} catch {
 						}

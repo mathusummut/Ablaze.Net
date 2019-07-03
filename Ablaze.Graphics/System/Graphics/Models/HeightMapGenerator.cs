@@ -31,7 +31,7 @@ namespace System.Graphics.Models {
 		/// <param name="flushBuffer">Whether to flush the buffer to VRAM on first render. This frees memory, but means that subsequent operations that
 		/// manipulate the mesh vertices must be performed on an OpenGL thread.</param>
 		/// <param name="bindAction">Determines what to do with the image after binding into GPU memory</param>
-		public static MeshComponent GenerateHeightmap(Bitmap image, Vector2 scale, Vector3 colorHeightMultiplier, float blurRadius, bool optimizeIndices = false, bool flushBuffer = true, ImageParameterAction bindAction = ImageParameterAction.RemoveReference) {
+		public static MeshComponent GenerateHeightmap(Bitmap image, Vector2 scale, Vector3 colorHeightMultiplier, float blurRadius, bool optimizeIndices = false, bool flushBuffer = true, ImageParameterAction bindAction = ImageParameterAction.KeepReference) {
 			if (image == null)
 				return MeshComponent.Empty;
 			float[][] heights;

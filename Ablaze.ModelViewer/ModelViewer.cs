@@ -184,7 +184,7 @@ namespace Ablaze.ModelViewer {
 			Bitmap bitmap;
 			lock (BorderSyncLock)
 				bitmap = Border.FastCopy();
-			using (PixelWorker wrapper = PixelWorker.FromImage(bitmap, false, true, ImageParameterAction.RemoveReference)) {
+			using (PixelWorker wrapper = PixelWorker.FromImage(bitmap, false, true)) {
 				wrapper.ApplyFunctionToAllPixels(delegate (int i, BgraColor color) {
 					return ImageLib.ChangeLightness(color, -60);
 				});
